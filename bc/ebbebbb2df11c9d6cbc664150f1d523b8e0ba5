@@ -1,0 +1,19 @@
+README.md
+  s_f37cc1e1350569::t_70857a6d41d3a2 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bcebbebbb2df11c9d6cbc664150f1d523b8e0ba5",
+  "prompts": {},
+  "sessions": {
+    "s_f37cc1e1350569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a7849e9-7c44-47c6-9234-07e888a6fea6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
