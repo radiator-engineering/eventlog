@@ -1,0 +1,27 @@
+tests/cmd_claims.rs
+  s_387fcfe478d31c::t_875348c0b04f87 58
+  s_387fcfe478d31c::t_c82994c3a99228 1-57,59-108
+src/cmd/claims.rs
+  s_387fcfe478d31c::t_d839ecb063c312 50
+  s_387fcfe478d31c::t_e5f8c8824f43da 48-49
+  s_387fcfe478d31c::t_5d7a3ae19466f1 1-8,10-47,51-77,80-193
+  s_387fcfe478d31c::t_36ad5b91216683 9
+src/cmd/open.rs
+  s_387fcfe478d31c::t_0ae980bf6ceca9 1-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1a7b421c797e1d384c35497c9c974a97381b471d",
+  "prompts": {},
+  "sessions": {
+    "s_387fcfe478d31c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f28758a1-84cd-4234-9e50-9f32987f6483",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
