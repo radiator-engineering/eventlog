@@ -37,7 +37,7 @@ pub struct State {
 | `agents` | Every agent that has appeared in a `spawn` line, keyed by name. |
 | `claims` | Live claims only, in the order they were claimed. A `retire` or a re-`spawn` drops an agent's claims. |
 | `decisions` | The latest value for each decision `key`, and the `seq` that set it. |
-| `escalations` | `escalate` lines with no `approval` naming the same subject after them. |
+| `escalations` | `escalate` lines with no matching `approval` after them. |
 | `intents` | `intent` lines with no `ack for=<that seq>` by the same writer after them. |
 | `reactors` | One `ReactorState` per agent that has written `ack`, `intent`, or `veto`. |
 | `allowlist` | The write allowlist as of `at` — see below. |
@@ -80,6 +80,24 @@ an integer — `seq_done` is stored as a JSON string on disk, so a naive string
 compare would rank `"9"` above `"51"`. `open_intents` lists the seqs of this
 reactor's `intent` lines with no matching `ack for=` after them.
 
+### Escalations and approvals
+
+The fold keys each open `escalate` by its subject and its own `seq`
+(`<subject>#<seq>`), not by subject alone, so two escalations from the same
+worker — or two with no subject at all — stay open as separate entries
+instead of the second collapsing onto the first. An escalation's subject is
+its explicit `subject=` field; failing that, a worker escalation (`by=` set,
+no `agent=`) defaults to its `by=`; failing that, the event's own subject.
+
+An `approval` closes an escalation one of two ways:
+
+- `approval for=<seq>` closes exactly the escalation whose `seq` matches —
+  regardless of subject.
+- `approval subject=<name>` (no `for=`) closes the newest open escalation
+  keyed to that subject.
+
+An approval that matches neither closes nothing.
+
 ### The allowlist is evaluated as of `at`
 
 `state.allowlist` starts from `cfg.writers` and replays every `decision
@@ -121,8 +139,11 @@ impl State {
 repo's own `.context/events.jsonl`, used so the fold is tested against a
 real coordination log rather than only hand-built lines. `tests/query_fold.rs`
 covers claim accumulation, phase advancement through a retire and a
-re-spawn, numeric `last_ack_seq` comparison, and allowlist replay through a
-`log-writers` decision. Run them with:
+re-spawn, numeric `last_ack_seq` comparison, allowlist replay through a
+`log-writers` decision, and escalation keying: three worker escalations with
+no explicit subject staying separately open, `approval for=<seq>` closing
+only that one, and `approval subject=<name>` closing the newest one keyed to
+that subject. Run them with:
 
 ```sh
 cargo test

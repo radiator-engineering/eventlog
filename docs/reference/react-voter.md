@@ -11,13 +11,16 @@ and 4.4 of a reactor's pass over one driving event — see the `Steps` trait in
 pub struct Authorized {
     pub paths: Vec<RelPath>,
     pub excess: Vec<RelPath>,
+    pub subject: String,
 }
 
 pub fn authorize(driving: &Event, state: &State) -> Authorized;
 ```
 
 `authorize` splits a driving event's `paths=` into what the reactor may
-touch and what its writer named but never claimed.
+touch and what its writer named but never claimed. `subject` is whose work
+the driving event is about: its `agent` field, or if that is absent, its
+writer.
 
 - A driving event with no `by` is the controller's own: every named path is
   authorized, and `excess` is empty. The controller's `result` is its own
@@ -50,13 +53,20 @@ the check:
 |---|---|---|
 | Unclaimed paths | `auth.excess` is not empty | `unclaimed-paths` |
 | Log or lock | a path in `auth.paths` is the log file or one of its lock dirs | `log-or-lock` |
-| Claimed by another | a path in `auth.paths` has a live claim owned by an agent other than `reactor` | `claimed-by-other` |
+| Claimed by another | a path in `auth.paths` has a live claim owned by an agent other than `reactor` or `auth.subject` | `claimed-by-other` |
 | Open escalation | an open `escalate` names `reactor`, as either its subject or its writer | `open-escalation` |
 
 The first rule that vetoes wins; `check` does not collect more than one
 `Veto`. `Veto::reason()` returns the `reason=` word, and `Display` formats
 the full detail (for example `claimed-by-other: docs/x.md is claimed by
 doc-worker`).
+
+A claim held by `auth.subject` never triggers "claimed by another": a
+worker's own `result` on the paths it claimed, or the controller's `result
+agent=<worker>` recording that same result, is not "other" just because the
+reactor checking it is a different agent (for example the commit reactor).
+A controller `result` with no `agent` that names a path some other agent
+still has claimed is still vetoed.
 
 ## `veto_binds` — step 4.4, the veto window
 
@@ -74,14 +84,16 @@ that arrived in between.
 
 ## Tests
 
-`tests/react_voter.rs` (20 tests) covers spec section 7 steps 4.1, 4.3, and
+`tests/react_voter.rs` (21 tests) covers spec section 7 steps 4.1, 4.3, and
 4.4: a controller `result` authorizing all its named paths; a reactor
 `result` naming a path outside its claims, producing `UnclaimedPaths` from
 both `authorize` and `check`; a path on the log file or a lock dir producing
 `LogOrLock`; a path claimed by another live agent producing
-`ClaimedByOther`; an open `escalate` naming the reactor producing
-`OpenEscalation`; and a `veto_binds` match even when the veto's `for=`
-targets an intent older than `since_seq`. Run them with:
+`ClaimedByOther`; a worker's own `result` on its claimed paths, or the
+controller's `result agent=<worker>` recording it, passing `check` because
+the claim owner matches `auth.subject`; an open `escalate` naming the
+reactor producing `OpenEscalation`; and a `veto_binds` match even when the
+veto's `for=` targets an intent older than `since_seq`. Run them with:
 
 ```sh
 cargo test
