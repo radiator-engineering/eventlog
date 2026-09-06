@@ -65,8 +65,25 @@ pub struct VocabArgs {}
 #[derive(ClapArgs, Debug)]
 pub struct VerifyArgs {}
 
-#[derive(ClapArgs, Debug)]
-pub struct ViewArgs {}
+#[derive(ClapArgs, Debug, Clone)]
+pub struct ViewArgs {
+    #[arg(short, long)]
+    pub follow: bool,
+    #[arg(long = "type")]
+    pub types: Option<String>,
+    #[arg(long)]
+    pub agent: Option<String>,
+    #[arg(long)]
+    pub by: Option<String>,
+    #[arg(long)]
+    pub since: Option<String>,
+    #[arg(long)]
+    pub last: Option<usize>,
+    #[arg(long)]
+    pub grep: Option<String>,
+    #[arg(long, value_enum, default_value_t = crate::cmd::view::ColorChoice::Auto)]
+    pub color: crate::cmd::view::ColorChoice,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct AgentsArgs {}
@@ -78,10 +95,23 @@ pub struct StateArgs {}
 pub struct WhyArgs {}
 
 #[derive(ClapArgs, Debug)]
-pub struct ClaimsArgs {}
+pub struct ClaimsArgs {
+    /// Agent whose live claims to check against changed files.
+    pub agent: String,
+    /// Base git ref for the diff.
+    pub base: String,
+    /// Head git ref (defaults to HEAD).
+    pub head: Option<String>,
+}
 
 #[derive(ClapArgs, Debug)]
-pub struct OpenArgs {}
+pub struct OpenArgs {
+    /// Sequence number of the event whose ref to open.
+    pub seq: u64,
+    /// Open in $PAGER (default less) instead of $EDITOR.
+    #[arg(long)]
+    pub pager: bool,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct TuiArgs {}
