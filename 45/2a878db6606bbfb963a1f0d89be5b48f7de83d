@@ -1,0 +1,23 @@
+docs/reference/model-contract.md
+  s_62c482f679e119::t_782f0fe875eadd 1-157
+docs/explanation/model-contract-precedence.md
+  s_62c482f679e119::t_1a041e1071d06b 1-53
+README.md
+  s_62c482f679e119::t_3d62115a5f1ddf 15-16,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "452a878db6606bbfb963a1f0d89be5b48f7de83d",
+  "prompts": {},
+  "sessions": {
+    "s_62c482f679e119": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1253216a-0171-4d31-a878-4aa71b5ab80c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
