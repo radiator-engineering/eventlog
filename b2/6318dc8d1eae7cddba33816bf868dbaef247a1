@@ -1,0 +1,20 @@
+src/log/lock.rs
+  h_63f2916b00d585 1-4,6-108
+src/log/mod.rs
+  h_63f2916b00d585 1-3,7-122
+tests/log_lock.rs
+  h_63f2916b00d585 1-27
+tests/log_read.rs
+  h_63f2916b00d585 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b26318dc8d1eae7cddba33816bf868dbaef247a1",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
