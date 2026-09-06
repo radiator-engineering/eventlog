@@ -1,0 +1,20 @@
+.context/bin/commit-action.sh
+  h_63f2916b00d585 1-83
+.context/bin/doc-action.sh
+  h_63f2916b00d585 1-93
+.context/handoffs/cursor-committer.md
+  h_63f2916b00d585 26-29,40,47
+.context/workspace.env
+  h_63f2916b00d585 6-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "9d5e2440eee3a83d0b20acac94cf51514ed0737d",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
