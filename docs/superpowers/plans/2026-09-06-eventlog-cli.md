@@ -6,7 +6,7 @@
 
 **Architecture:** One crate, `lib.rs` plus `main.rs`. `model` defines events, config, vocabulary and allowlist. `log` appends and verifies. `query` folds events into `State`. `react`, `guard`, `scaffold`, `tui` and `skill` sit on those three. A serial scaffold task creates every module file and all shared wiring first, so later tasks run in parallel on disjoint files.
 
-**Tech Stack:** Rust 1.88+ (edition 2024), clap 4 (derive), serde, serde_json, toml, sha2, hex, ratatui + crossterm, notify, include_dir, schemars, assert_cmd, predicates, tempfile, cargo-mutants, cargo-dist.
+**Tech Stack:** Rust 1.88+ (edition 2024), clap 4 (derive) + clap_complete, serde, serde_json, toml, indexmap (serde feature), globset, sha2, hex, chrono, anyhow, thiserror, ratatui + crossterm, notify, include_dir, schemars, assert_cmd, predicates, tempfile, cargo-mutants, cargo-dist.
 
 **Spec:** `docs/superpowers/specs/2026-09-06-event-log-cli-design.md`. The plan argues from the spec; read both.
 
