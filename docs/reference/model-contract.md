@@ -24,7 +24,7 @@ pub struct Event {
 | Function | Behavior |
 |---|---|
 | `Event::parse_line(line: &str) -> Result<Event, ParseError>` | Parses one JSON line. Rejects anything that is not a flat object with an integer `seq`, a string `ts`, and a string `type`. Never panics on bad input. |
-| `to_line(&self) -> String` | Serializes back to a line, field order `seq`, `ts`, `type`, `prev`, `by`, `agent`, then the rest in the order they were read. No trailing newline. |
+| `to_line(&self) -> String` | Serializes back to a line, field order `seq`, `ts`, `type`, `prev`, `by`, `agent`, then the rest in the order they were read. `to_line` skips `seq`, `ts`, `type`, `prev`, `by`, and `agent` if any of them are also present in `fields`, so a caller that left one of those keys in `fields` by mistake does not get it written twice. No trailing newline. |
 | `seq_ref(&self, field: &str) -> Option<u64>` | Reads a reference field (for example `seq_done`) as the `seq` it names. `None` if the field is missing or not a non-negative integer. |
 | `paths(&self) -> Vec<String>` | Splits the `paths` field on `,`. Empty if there is no `paths` field. |
 | `writer(&self) -> &str` | The line's writer: `by`, or `"controller"` if `by` is absent. |
@@ -104,14 +104,19 @@ the file names gets exactly the writers the file lists, replacing that
 type's default; other types keep their default.
 
 `apply_decision` applies one `decision key=log-writers value=...` line.
-`controller-plus-reactors` restores the built-in table. Any other value has
-the form `name:type1|type2;name2:type3` and **replaces the whole map** —
-revoking a writer means a later decision that omits it, not an edit to this
-one. Whatever the value says, `controller` always keeps `spawn`, `prompt`,
-`claim`, `decision`, `retire`, and `approval`.
+`controller-plus-reactors` restores the built-in table. A value with no
+`name:types` clause — a label such as
+`controller-plus-reactors-plus-briefed-workers`, with no `:` in it — changes
+nothing; the grant it describes lives in worker briefs, not in the allowlist.
+Any other value has the form `name:type1|type2;name2:type3` and **replaces
+the whole map** — revoking a writer means a later decision that omits it, not
+an edit to this one. Whatever the value says, `controller` always keeps
+`spawn`, `prompt`, `claim`, `decision`, `retire`, and `approval`.
 
-`permits(writer, ty)` returns `false` for a type the allowlist has no entry
-for.
+`permits(writer, ty)` returns `true` for `controller` regardless of the
+allowlist: the controller may append every event type, including `result`.
+For any other writer, it returns `false` for a type the allowlist has no
+entry for.
 
 Applying `merge_file` (config) and `apply_decision` (log) in that order,
 oldest decision first, evaluates the allowlist as of each line's own `seq` —
@@ -143,7 +148,7 @@ similar) — the ones nothing but the log writer may touch.
 
 ## Tests
 
-20 tests across `tests/model_event.rs`, `tests/model_allow.rs`, and
+22 tests across `tests/model_event.rs`, `tests/model_allow.rs`, and
 `tests/model_paths.rs` cover parsing, round-trip serialization, writer
 allowlists, config precedence, and repo-relative path rules. Run them with:
 

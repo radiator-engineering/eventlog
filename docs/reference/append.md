@@ -51,16 +51,23 @@ built.
 | No reserved field (`seq`, `ts`, `prev`) among `req.fields` | `Reserved(field)` |
 | A `by` field, if present, equals `writer`, and `writer` is not `controller` | `ByMismatch` |
 | `req.r#type` is a known type in `cfg.vocabulary` | `UnknownType(type)` |
-| Every required field for that type is present, and every field is either required or optional for it | `MissingField(field)` |
+| Every required field for that type is present, and every field is either required or optional for it — the resolved `agent` satisfies a type's required `agent` field, so it does not also have to appear in `fields` | `MissingField(field)` |
 | Any `paths` field parses under `model::paths::validate_paths` | `BadPath(reason)` |
 | No field exceeds 2048 bytes | `FieldTooLarge(field)` |
 | `writer` may write `type` under the allowlist (`ctx.allowlist()`, or `cfg.writers` when `ctx` is `None`) | `NotPermitted { writer, ty }` |
 | When `req.strict` and `ctx` is given: no open escalation for `writer`; a `result`/`progress`/`claim`/`retire` names an agent `ctx.agent_is_open` reports open; a `claim`'s paths exist on disk (literal, or a glob match under the repo root) and are not already claimed by another agent | `Strict(rule)` |
 | The log's tail is not torn (see [Log module](log-module.md)) | `TornTail(line)` |
 
-`resolve_agent` fills the `agent` field with `"controller"` when `writer` is
-`"controller"`, the type is `result`, and no `agent` field was given —
-matching how the controller's own `result` lines are written today.
+`resolve_agent` moves an `agent` field out of `fields` and into the event's
+top-level `agent`, so it is not written twice. If no `agent` field was given
+and `writer` is `"controller"` and the type is `result`, it sets `agent` to
+`"controller"` — matching how the controller's own `result` lines are
+written today.
+
+The controller always passes the allowlist check (see
+[`Allowlist::permits`](model-contract.md)), whatever type it appends, so a
+`decision key=log-writers` line can restrict other writers without ever
+locking the controller out of a type such as `result`.
 
 ## Sequencing and the hash chain
 
