@@ -1,0 +1,26 @@
+README.md
+  s_f1e85875b87b89::t_8f0824ce80d559 32
+  s_f1e85875b87b89::t_646a46ff4d7572 30
+docs/reference/eventlog-cli-surface.md
+  s_f1e85875b87b89::t_5eada815f63c1d 34
+  s_f1e85875b87b89::t_731590ba728c3b 6-10
+  s_f1e85875b87b89::t_6e3a582ac73aff 68
+docs/reference/tui.md
+  s_f1e85875b87b89::t_fce5a21ba90c76 1-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "f76ec8b759031cfa58fa45935e36174025bfd462",
+  "prompts": {},
+  "sessions": {
+    "s_f1e85875b87b89": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4bf0cd54-c34e-431c-bc4e-c75343027798",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
