@@ -1,0 +1,30 @@
+[log]
+path = ".context/events.jsonl"
+fsync = true
+
+[log.named]
+review = ".context/review.jsonl"
+
+[vocabulary.result]
+fields = ["agent", "ref"]
+optional = ["paths", "summary", "verdict", "pr"]
+
+[vocabulary.survey]
+fields = ["agent", "ref"]
+optional = ["summary"]
+
+[writers]
+ack = ["cursor-committer", "doc-worker"]
+survey = ["survey-x"]
+
+[view]
+columns = ["seq", "type", "agent", "summary", "ref"]
+
+[view.colors]
+result = "1;36"
+
+[keys]
+filter = "/"
+follow = "f"
+open = "o"
+panes = "tab"
