@@ -1,0 +1,31 @@
+docs/reference/react-command.md
+  s_0dc55dd6899a25::t_959b55060df8c7 47-48,50-51,53-54
+  s_0dc55dd6899a25::t_5937ef1f546192 1-3,5-32,37-39,44-46,49,52,55-99
+  s_0dc55dd6899a25::t_24ed544e4394c6 40
+  s_0dc55dd6899a25::t_5d04c1816b54e6 41-43
+  s_0dc55dd6899a25::t_39fec10aa9010f 33-36
+  s_0dc55dd6899a25::t_5f3508ad6911b9 4
+docs/reference/eventlog-cli-surface.md
+  s_0dc55dd6899a25::t_f088f7406ffd35 7-9
+  s_0dc55dd6899a25::t_ee534cef64f4ff 38
+  s_0dc55dd6899a25::t_beb7dc812629ed 72
+README.md
+  s_0dc55dd6899a25::t_cde934ae421b46 33
+  s_0dc55dd6899a25::t_018ad70cdbdaa8 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6da74a053f183d6c150b5a5506c8e3c99b727e50",
+  "prompts": {},
+  "sessions": {
+    "s_0dc55dd6899a25": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1365f3ca-0a61-458e-9d5a-37441778c354",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
