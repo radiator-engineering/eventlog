@@ -154,12 +154,56 @@ pub struct TuiArgs {}
 pub struct ReactArgs {
     #[command(subcommand)]
     pub inner: Option<ReactInner>,
+
+    #[command(flatten)]
+    pub opts: ReactOpts,
 }
 
 #[derive(Subcommand, Debug)]
 pub enum ReactInner {
     /// Dry-run one reaction against a real sequence number.
-    Test,
+    Test(ReactTestArgs),
+}
+
+#[derive(ClapArgs, Debug)]
+pub struct ReactTestArgs {
+    /// The sequence number to react to.
+    pub seq: u64,
+
+    #[command(flatten)]
+    pub opts: ReactOpts,
+}
+
+/// Options shared by the live loop and its dry run.
+#[derive(ClapArgs, Clone, Debug)]
+pub struct ReactOpts {
+    /// Reactor name: the `by=` on every line it writes.
+    #[arg(long = "as")]
+    pub name: Option<String>,
+
+    /// Event types to react to, comma-separated.
+    #[arg(long, value_delimiter = ',')]
+    pub on: Vec<String>,
+
+    /// Extra `k=v` condition the driving event must meet (repeatable).
+    #[arg(long)]
+    pub filter: Vec<String>,
+
+    /// How long to wait for a veto after declaring intent (for example `2s`).
+    #[arg(long, default_value = "0s")]
+    pub window: String,
+
+    /// Snapshot git before and after, and report writes outside the claim.
+    #[arg(long)]
+    pub git: bool,
+
+    /// How long the action command may run (for example `300s`).
+    #[arg(long, default_value = "600s")]
+    pub timeout: String,
+
+    /// The action command, after `--`.
+    #[arg(last = true)]
+    pub command: Vec<String>,
 }
 
 #[derive(ClapArgs, Debug)]
