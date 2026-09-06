@@ -1,0 +1,37 @@
+docs/reference/schema.md
+  s_0ea55fb27f1d84::t_af8940311a48d6 1-35,38-62
+  s_0ea55fb27f1d84::t_a6359f7dd6d0d8 36-37
+README.md
+  s_0ea55fb27f1d84::t_09c85b961e6446 21
+  s_a649f829a6c304::t_5eca0d2ab5b5ab 22,24
+  s_0ea55fb27f1d84::t_da2f1f017686d9 19-20
+docs/reference/eventlog-cli-surface.md
+  s_0ea55fb27f1d84::t_3c133bad342ed4 59
+  s_0ea55fb27f1d84::t_b757ea7fd95933 3-7
+  s_0ea55fb27f1d84::t_3c98f77f6bb853 37
+  s_0ea55fb27f1d84::t_56a90693ffdf7c 58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c76430185a961e18669718cd0432136950e7bb11",
+  "prompts": {},
+  "sessions": {
+    "s_0ea55fb27f1d84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12120349-3193-492a-aaa9-6f95e1d02900",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_a649f829a6c304": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b2b8bb-3206-4ee2-97ab-75e62e766f22",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
