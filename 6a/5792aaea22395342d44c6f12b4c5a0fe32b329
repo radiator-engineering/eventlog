@@ -1,0 +1,28 @@
+tests/query_why.rs
+  s_bb4cf93cf4b909::t_0804e34a725115 1-5,7-55
+  s_bb4cf93cf4b909::t_17763ea084d3a9 6
+src/query/why.rs
+  s_bb4cf93cf4b909::t_c957c4ddc1453c 113-115
+  s_bb4cf93cf4b909::t_336a329ad0aefe 9,51-54,67-69
+  s_bb4cf93cf4b909::t_1678735cbbb67e 1-5,7-8,10-24,26-39,42-50,55-66,70-87,89-112,117
+  s_bb4cf93cf4b909::t_5ef00f2eb79a28 88
+  s_bb4cf93cf4b909::t_664559c6ac56e6 40-41
+  s_bb4cf93cf4b909::t_132793eab49d2f 25
+  s_bb4cf93cf4b909::t_2b912159f8b29b 116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6a5792aaea22395342d44c6f12b4c5a0fe32b329",
+  "prompts": {},
+  "sessions": {
+    "s_bb4cf93cf4b909": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d69960b7-f8e8-42d4-bae6-03a3b32a8a42",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
