@@ -1,0 +1,21 @@
+README.md
+  s_873e65429d4b76::t_dd8b7725511f53 29,31
+docs/reference/react-action.md
+  s_873e65429d4b76::t_5bd74a2ceffa67 1-108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "85ea3d1cd9827e5a51bf87f8021179d6e119f528",
+  "prompts": {},
+  "sessions": {
+    "s_873e65429d4b76": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37724517-50bc-433b-be3e-c8c86fb49964",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
