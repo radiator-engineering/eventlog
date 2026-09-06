@@ -57,10 +57,33 @@ pub enum Command {
 }
 
 #[derive(ClapArgs, Debug)]
-pub struct AppendArgs {}
+#[command(after_help = crate::cmd::append::DEFAULT_AFTER_HELP)]
+pub struct AppendArgs {
+    /// Event type (lowercase slug).
+    pub r#type: String,
+
+    /// Fields as key=value pairs.
+    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+    pub fields: Vec<String>,
+
+    /// Writer identity (default: controller, or $EVENTLOG_AS).
+    #[arg(long = "as")]
+    pub writer: Option<String>,
+
+    /// Validate and print the line without writing.
+    #[arg(long)]
+    pub dry_run: bool,
+
+    /// Skip strict fold checks (for repair work).
+    #[arg(long)]
+    pub no_strict: bool,
+}
 
 #[derive(ClapArgs, Debug)]
-pub struct VocabArgs {}
+pub struct VocabArgs {
+    /// Event type to describe (omit for all types).
+    pub r#type: Option<String>,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct VerifyArgs {}
