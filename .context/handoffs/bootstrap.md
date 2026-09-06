@@ -43,6 +43,13 @@ The TUI replaces `eventlog-view.sh -f`, which runs in the lower pane of the
    - open the ref: from any event, open its `ref=` file in a pager or `$EDITOR`
 3. The tool must **read and query** logs, not only write them (user's words).
 4. It must be **configurable** (user's word; not yet defined, see below).
+5. **This repo is the tool; the skill ships with it.** `skill/` holds the
+   skill as plain files (SKILL.md, references; no scripts, the CLI replaces
+   them). The binary embeds them at build time and installs them with a
+   `skill install` subcommand, stamped with the binary version, so skill and
+   CLI cannot drift. `SKILL.md` names subcommands, never script paths. The
+   GitHub repo `radiator-engineering/event-log-coordination` stops being the
+   source: it mirrors `skill/` or is archived.
 
 ## Open questions (ask these next, one at a time)
 
@@ -58,8 +65,6 @@ create this repo. Do not re-ask what is settled above.
   (`seq`, `ts`, `type`, flat string fields, `by=` for non-controller writers;
   see `.context/EVENTLOG.md` in any log-driven repo). Confirm whether a hash
   chain (`prev` = sha256 of the previous line) is in scope for v1.
-- **Skill layout**: where the skill lives in this repo (e.g. `skill/`) and how
-  it is installed into `~/.claude/skills/`.
 
 ## Then
 
