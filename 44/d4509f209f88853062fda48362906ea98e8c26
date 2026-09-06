@@ -1,0 +1,49 @@
+src/cmd/vocab.rs
+  s_f967523fddc2ab::t_9ede9461a841cb 1-80
+src/cmd/append.rs
+  s_f967523fddc2ab::t_aacc680fa7ba38 1-2,4-7,9-35,37-47,69-97,101-167
+  s_f967523fddc2ab::t_e254391dcac6bb 48-68
+  s_08b5d21fa4af3d::t_8b32f2a993a8a7 8,36
+  s_f967523fddc2ab::t_f07d2f938e3621 3
+  s_f967523fddc2ab::t_4a787aa06cdbee 98-100
+tests/cmd_append.rs
+  s_f967523fddc2ab::t_16a1f7fda945ab 99-100
+  s_f967523fddc2ab::t_8c526247da8958 1-2,4-67,72-98,101-102,114-131
+  s_f967523fddc2ab::t_12048371dd5030 103-113
+  s_f967523fddc2ab::t_dfe6a071f968fb 68-71
+  s_f967523fddc2ab::t_699cb7f04b1c47 3
+src/cli.rs
+  s_5a6e9f7dee5a8c::t_3331049c96dc4d 60-80,83-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "44d4509f209f88853062fda48362906ea98e8c26",
+  "prompts": {},
+  "sessions": {
+    "s_08b5d21fa4af3d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4eee47c3-b209-42ec-9867-518f7fe454df",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_5a6e9f7dee5a8c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7872eb2c-792a-4a92-b413-16398c8fc095",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
