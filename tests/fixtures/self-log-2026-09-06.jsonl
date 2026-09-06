@@ -1,0 +1,128 @@
+{"seq":1,"ts":"2026-09-06T20:08:41Z","type":"decision","key":"log-writers","value":"controller-plus-reactors","ref":".context/DECISIONS.md"}
+{"seq":2,"ts":"2026-09-06T20:08:41Z","type":"decision","key":"commit-agent","value":"cursor-commit-reactor+composer-2.5-fast","mode":"autonomous","ref":".context/DECISIONS.md"}
+{"seq":3,"ts":"2026-09-06T20:08:41Z","type":"decision","key":"doc-agent","value":"doc-sync-reactor+claude-sonnet","mode":"autonomous","ref":".context/DECISIONS.md"}
+{"seq":4,"ts":"2026-09-06T20:11:01Z","type":"ack","by":"cursor-committer","seq_done":"3","outcome":"skipped","detail":"baseline: cold start, prior events not replayed"}
+{"seq":5,"ts":"2026-09-06T20:11:01Z","type":"ack","by":"doc-worker","seq_done":"4","outcome":"skipped","detail":"baseline: cold start, prior events not replayed"}
+{"seq":6,"ts":"2026-09-06T20:11:01Z","type":"spawn","agent":"cursor-committer","model":"composer-2.5-fast","tab":"w2F:t2","pane":"w2F:p2","role":"commit-reactor","runtime":"cursor-headless"}
+{"seq":7,"ts":"2026-09-06T20:11:01Z","type":"prompt","agent":"cursor-committer","ref":".context/handoffs/cursor-committer.md"}
+{"seq":8,"ts":"2026-09-06T20:11:01Z","type":"spawn","agent":"doc-worker","model":"sonnet","tab":"w2F:t3","pane":"w2F:p3","role":"doc-sync","runtime":"claude-headless"}
+{"seq":9,"ts":"2026-09-06T20:11:01Z","type":"prompt","agent":"doc-worker","ref":".context/handoffs/doc-worker.md"}
+{"seq":10,"ts":"2026-09-06T20:12:08Z","type":"retire","agent":"cursor-committer","disposition":"stopped","detail":"teardown.sh"}
+{"seq":11,"ts":"2026-09-06T20:12:08Z","type":"retire","agent":"doc-worker","disposition":"stopped","detail":"teardown.sh"}
+{"seq":12,"ts":"2026-09-06T20:12:08Z","type":"retire","agent":"controller","disposition":"aborted","reason":"wrong-session"}
+{"seq":13,"ts":"2026-09-06T20:26:11Z","type":"spawn","agent":"cursor-committer","model":"composer-2.5-fast","tab":"w2:t2","pane":"w2:p2","role":"commit-reactor","runtime":"cursor-headless"}
+{"seq":14,"ts":"2026-09-06T20:26:11Z","type":"prompt","agent":"cursor-committer","ref":".context/handoffs/cursor-committer.md"}
+{"seq":15,"ts":"2026-09-06T20:26:11Z","type":"spawn","agent":"doc-worker","model":"sonnet","tab":"w2:t3","pane":"w2:p3","role":"doc-sync","runtime":"claude-headless"}
+{"seq":16,"ts":"2026-09-06T20:26:11Z","type":"prompt","agent":"doc-worker","ref":".context/handoffs/doc-worker.md"}
+{"seq":17,"ts":"2026-09-06T20:26:40Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"DECISIONS: record that the log is not yet OS-protected and how to opt in"}
+{"seq":18,"ts":"2026-09-06T20:26:40Z","type":"ack","by":"cursor-committer","seq_done":"17","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":19,"ts":"2026-09-06T20:27:34Z","type":"result","ref":"README.md","paths":"README.md","summary":"README: describe what the repo holds and note the Rust CLI/TUI is not in the tree yet"}
+{"seq":20,"ts":"2026-09-06T20:27:52Z","type":"ack","by":"cursor-committer","seq_done":"19","origin":"controller","outcome":"committed","ref":"5cce68e","model":"composer-2.5-fast"}
+{"seq":21,"ts":"2026-09-06T20:28:31Z","type":"ack","by":"doc-worker","seq_done":"20","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":22,"ts":"2026-09-06T20:33:51Z","type":"decision","key":"log-writers","value":"controller-plus-reactors-plus-research-workers","ref":".context/DECISIONS.md","detail":"research workers may append progress/result/escalate with by=<name>"}
+{"seq":23,"ts":"2026-09-06T20:34:44Z","type":"spawn","agent":"logact-deep-read","model":"sonnet","runtime":"claudewho-radiator","tab":"w4:t1","pane":"w4:p1","role":"research"}
+{"seq":24,"ts":"2026-09-06T20:34:44Z","type":"prompt","agent":"logact-deep-read","ref":".context/handoffs/logact-deep-read.md"}
+{"seq":25,"ts":"2026-09-06T20:34:44Z","type":"claim","agent":"logact-deep-read","paths":"research/logact-2604.07988.md"}
+{"seq":26,"ts":"2026-09-06T20:34:44Z","type":"spawn","agent":"survey-event-sourcing","model":"auto","runtime":"cursor-agent","tab":"w4:t2","pane":"w4:p2","role":"research"}
+{"seq":27,"ts":"2026-09-06T20:34:45Z","type":"prompt","agent":"survey-event-sourcing","ref":".context/handoffs/survey-event-sourcing.md"}
+{"seq":28,"ts":"2026-09-06T20:34:45Z","type":"claim","agent":"survey-event-sourcing","paths":"research/survey-event-sourcing.md"}
+{"seq":29,"ts":"2026-09-06T20:34:45Z","type":"spawn","agent":"survey-agent-coordination","model":"auto","runtime":"cursor-agent","tab":"w4:t3","pane":"w4:p3","role":"research"}
+{"seq":30,"ts":"2026-09-06T20:34:45Z","type":"prompt","agent":"survey-agent-coordination","ref":".context/handoffs/survey-agent-coordination.md"}
+{"seq":31,"ts":"2026-09-06T20:34:45Z","type":"claim","agent":"survey-agent-coordination","paths":"research/survey-agent-coordination.md"}
+{"seq":32,"ts":"2026-09-06T20:35:21Z","type":"progress","by":"survey-event-sourcing","msg":"Sections 1-3 drafted; writing tamper/concurrency/retention and recommendations table","ref":"research/survey-event-sourcing.md"}
+{"seq":33,"ts":"2026-09-06T20:35:23Z","type":"result","by":"survey-event-sourcing","ref":"research/survey-event-sourcing.md","paths":"research/survey-event-sourcing.md","summary":"Prior-art survey: event sourcing, log durability, ack pattern, tamper evidence, concurrency, retention; ranked CLI recommendations"}
+{"seq":34,"ts":"2026-09-06T20:36:21Z","type":"progress","by":"survey-agent-coordination","msg":"Research gathered; drafting six sections and recommendations table","ref":"research/survey-agent-coordination.md"}
+{"seq":35,"ts":"2026-09-06T20:36:50Z","type":"result","by":"survey-agent-coordination","ref":"research/survey-agent-coordination.md","paths":"research/survey-agent-coordination.md","summary":"Survey of multi-agent coordination literature with ranked CLI recommendations (~240 lines)"}
+{"seq":36,"ts":"2026-09-06T20:39:42Z","type":"note","agent":"logact-deep-read","msg":"worker hit API server error mid-response before writing; re-prompted to resume"}
+{"seq":37,"ts":"2026-09-06T20:39:57Z","type":"retire","agent":"survey-event-sourcing","disposition":"accepted","ref":"research/survey-event-sourcing.md"}
+{"seq":38,"ts":"2026-09-06T20:39:57Z","type":"retire","agent":"survey-agent-coordination","disposition":"accepted","ref":"research/survey-agent-coordination.md"}
+{"seq":39,"ts":"2026-09-06T20:40:04Z","type":"result","ref":"research/neuroarxiv-report.md","paths":"research/README.md,research/neuroarxiv-report.md,research/survey-agent-coordination.md,research/survey-event-sourcing.md","summary":"Research: neuroarxiv prior-art pass (path: log intent before reactors act), two worker surveys, research index"}
+{"seq":40,"ts":"2026-09-06T20:41:07Z","type":"progress","by":"logact-deep-read","msg":"read paper, wrote report","ref":"research/logact-2604.07988.md"}
+{"seq":41,"ts":"2026-09-06T20:41:07Z","type":"result","by":"logact-deep-read","ref":"research/logact-2604.07988.md","paths":"research/logact-2604.07988.md","summary":"LogAct paper summary: abstraction, safety/recovery, mapping table, ranked recommendations, intent/voter analysis for commit reactor"}
+{"seq":42,"ts":"2026-09-06T20:41:12Z","type":"ack","by":"cursor-committer","seq_done":"39","origin":"controller","outcome":"committed","ref":"3d3909e,7fc3f24,beb583f","model":"composer-2.5-fast"}
+{"seq":43,"ts":"2026-09-06T20:41:19Z","type":"result","ref":"research/logact-2604.07988.md","paths":"research/logact-2604.07988.md","summary":"Research: LogAct deep read with mapping table, ranked borrow/reject/verify recommendations, intent+voter analysis"}
+{"seq":44,"ts":"2026-09-06T20:41:19Z","type":"retire","agent":"logact-deep-read","disposition":"accepted","ref":"research/logact-2604.07988.md"}
+{"seq":45,"ts":"2026-09-06T20:41:49Z","type":"result","by":"doc-worker","agent":"doc-worker","ref":".context/handoffs/doc-worker.md","paths":"docs,README.md,AGENTS.md","summary":"docs synced to 3d3909e,7fc3f24,beb583f (1 file(s))","for_ack":"42"}
+{"seq":46,"ts":"2026-09-06T20:41:49Z","type":"ack","by":"doc-worker","seq_done":"42","outcome":"updated","files":"1","ref":"3d3909e,7fc3f24,beb583f","model":"sonnet"}
+{"seq":47,"ts":"2026-09-06T20:42:44Z","type":"ack","by":"cursor-committer","seq_done":"43","origin":"controller","outcome":"committed","ref":"433c6af","model":"composer-2.5-fast"}
+{"seq":48,"ts":"2026-09-06T20:43:08Z","type":"ack","by":"cursor-committer","seq_done":"45","origin":"doc-worker","outcome":"committed","ref":"e81ed80","model":"composer-2.5-fast"}
+{"seq":49,"ts":"2026-09-06T20:43:28Z","type":"ack","by":"doc-worker","seq_done":"47","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":50,"ts":"2026-09-06T20:58:37Z","type":"result","ref":"docs/superpowers/specs/2026-09-06-event-log-cli-design.md","paths":"docs/superpowers/specs/2026-09-06-event-log-cli-design.md","summary":"Spec: eventlog CLI design (format, config, modules, commands, reactor runtime with intent/veto, guard for three agents, phases)"}
+{"seq":51,"ts":"2026-09-06T20:58:58Z","type":"ack","by":"cursor-committer","seq_done":"50","origin":"controller","outcome":"committed","ref":"b195e30","model":"composer-2.5-fast"}
+{"seq":52,"ts":"2026-09-06T20:59:31Z","type":"result","by":"doc-worker","agent":"doc-worker","ref":".context/handoffs/doc-worker.md","paths":"docs,README.md,AGENTS.md","summary":"docs synced to b195e30 (1 file(s))","for_ack":"51"}
+{"seq":53,"ts":"2026-09-06T20:59:31Z","type":"ack","by":"doc-worker","seq_done":"51","outcome":"updated","files":"1","ref":"b195e30","model":"sonnet"}
+{"seq":54,"ts":"2026-09-06T20:59:47Z","type":"ack","by":"cursor-committer","seq_done":"52","origin":"doc-worker","outcome":"committed","ref":"249b46e","model":"composer-2.5-fast"}
+{"seq":55,"ts":"2026-09-06T21:05:16Z","type":"result","ref":"docs/superpowers/specs/2026-09-06-event-log-cli-design.md","paths":"docs/superpowers/specs/2026-09-06-event-log-cli-design.md","summary":"Spec revised after adversarial reviews: authorized-set voter, violation detection, bound hash chain, no-substring guard passthrough, veto by driving seq, typed refs, lock reclaim, no default retry, torn-tail refusal, strict append, why/vocab/schema commands"}
+{"seq":56,"ts":"2026-09-06T21:05:33Z","type":"ack","by":"cursor-committer","seq_done":"55","origin":"controller","outcome":"committed","ref":"20571dc","model":"composer-2.5-fast"}
+{"seq":57,"ts":"2026-09-06T21:06:05Z","type":"ack","by":"doc-worker","seq_done":"56","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":58,"ts":"2026-09-06T21:45:03Z","type":"result","ref":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","paths":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","summary":"Implementation plan for the eventlog CLI: 21 tasks in 4 phases, each a herdr worker brief with claimed paths, parallel groups, and the controller's spawn/claim/result/retire protocol"}
+{"seq":59,"ts":"2026-09-06T21:45:23Z","type":"ack","by":"cursor-committer","seq_done":"58","origin":"controller","outcome":"committed","ref":"295006a","model":"composer-2.5-fast"}
+{"seq":60,"ts":"2026-09-06T21:46:00Z","type":"result","by":"doc-worker","agent":"doc-worker","ref":".context/handoffs/doc-worker.md","paths":"docs,README.md,AGENTS.md","summary":"docs synced to 295006a (1 file(s))","for_ack":"59"}
+{"seq":61,"ts":"2026-09-06T21:46:00Z","type":"ack","by":"doc-worker","seq_done":"59","outcome":"updated","files":"1","ref":"295006a","model":"sonnet"}
+{"seq":62,"ts":"2026-09-06T21:46:17Z","type":"ack","by":"cursor-committer","seq_done":"60","origin":"doc-worker","outcome":"committed","ref":"5812f1a","model":"composer-2.5-fast"}
+{"seq":63,"ts":"2026-09-06T22:27:48Z","type":"decision","key":"log-writers","value":"controller-plus-reactors-plus-briefed-workers","ref":".context/DECISIONS.md","detail":"build-* workers from the eventlog CLI plan may append progress/result/escalate with by=<name>"}
+{"seq":64,"ts":"2026-09-06T22:27:49Z","type":"spawn","agent":"build-scaffold","model":"sonnet","runtime":"claudewho-radiator","pane":"w5:p1","role":"build","task":"1"}
+{"seq":65,"ts":"2026-09-06T22:27:49Z","type":"prompt","agent":"build-scaffold","ref":".context/handoffs/build-scaffold.md"}
+{"seq":66,"ts":"2026-09-06T22:27:49Z","type":"claim","agent":"build-scaffold","paths":"Cargo.toml,Cargo.lock,rustfmt.toml,.gitattributes,.gitignore,src/**,tests/cli_surface.rs,tests/fixtures/drove-events.jsonl"}
+{"seq":67,"ts":"2026-09-06T22:28:47Z","type":"result","ref":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","paths":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","summary":"Plan: complete the Tech Stack dependency list (indexmap, globset, chrono, thiserror, clap_complete)"}
+{"seq":68,"ts":"2026-09-06T22:29:07Z","type":"ack","by":"cursor-committer","seq_done":"67","origin":"controller","outcome":"committed","ref":"9d5e8e2","model":"composer-2.5-fast"}
+{"seq":69,"ts":"2026-09-06T22:29:35Z","type":"ack","by":"doc-worker","seq_done":"68","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":70,"ts":"2026-09-06T22:30:30Z","type":"progress","by":"build-scaffold","msg":"failing tests written and passing after scaffold built","ref":"src/cli.rs"}
+{"seq":71,"ts":"2026-09-06T22:30:30Z","type":"result","by":"build-scaffold","ref":"src/cli.rs","paths":".gitattributes,.gitignore,Cargo.toml,rustfmt.toml,src/,tests/","summary":"crate scaffold: frozen CLI surface, module stubs, cmd stubs, fixtures, cli_surface test; cargo test/clippy/fmt clean"}
+{"seq":72,"ts":"2026-09-06T22:31:03Z","type":"result","agent":"build-scaffold","ref":".context/handoffs/build-scaffold.md","paths":".gitignore,.gitattributes,Cargo.lock,Cargo.toml,rustfmt.toml,src/**,tests/**","summary":"Task 1: eventlog crate scaffold with frozen CLI surface, module and command stubs, fixtures, cli_surface test; controller added missing deps and unhid claims"}
+{"seq":73,"ts":"2026-09-06T22:31:03Z","type":"retire","agent":"build-scaffold","disposition":"accepted"}
+{"seq":74,"ts":"2026-09-06T22:31:03Z","type":"spawn","agent":"build-model","model":"opus","runtime":"claudewho-radiator","pane":"w5:p2","role":"build","task":"2"}
+{"seq":75,"ts":"2026-09-06T22:31:03Z","type":"prompt","agent":"build-model","ref":".context/handoffs/build-model.md"}
+{"seq":76,"ts":"2026-09-06T22:31:03Z","type":"claim","agent":"build-model","paths":"src/model/**,tests/model_event.rs,tests/model_allow.rs,tests/model_paths.rs,tests/fixtures/eventlog.toml"}
+{"seq":77,"ts":"2026-09-06T22:31:29Z","type":"ack","by":"cursor-committer","seq_done":"72","origin":"controller","outcome":"committed","ref":"c8aa4cf","model":"composer-2.5-fast"}
+{"seq":78,"ts":"2026-09-06T22:32:43Z","type":"result","by":"doc-worker","agent":"doc-worker","ref":".context/handoffs/doc-worker.md","paths":"docs,README.md,AGENTS.md","summary":"docs synced to c8aa4cf (3 file(s))","for_ack":"77"}
+{"seq":79,"ts":"2026-09-06T22:32:43Z","type":"ack","by":"doc-worker","seq_done":"77","outcome":"updated","files":"3","ref":"c8aa4cf","model":"sonnet"}
+{"seq":80,"ts":"2026-09-06T22:33:04Z","type":"ack","by":"cursor-committer","seq_done":"78","origin":"doc-worker","outcome":"committed","ref":"d76586d","model":"composer-2.5-fast"}
+{"seq":81,"ts":"2026-09-06T22:33:07Z","type":"progress","by":"build-model","msg":"failing model tests written (event, allow, config, paths); implementing next","ref":"src/model/mod.rs"}
+{"seq":82,"ts":"2026-09-06T22:35:27Z","type":"result","by":"build-model","ref":"src/model/mod.rs","paths":"src/model/mod.rs,src/model/event.rs,src/model/config.rs,src/model/vocab.rs,src/model/allow.rs,src/model/paths.rs,tests/model_event.rs,tests/model_allow.rs,tests/model_paths.rs,tests/fixtures/eventlog.toml","summary":"Task 2: model contract — Event parse/serialize, Config load+resolve_log, Vocabulary, Allowlist, path rules; 20 model tests green, clippy+fmt clean"}
+{"seq":83,"ts":"2026-09-06T22:36:03Z","type":"result","agent":"build-model","ref":".context/handoffs/build-model.md","paths":"src/model/mod.rs,src/model/event.rs,src/model/config.rs,src/model/vocab.rs,src/model/allow.rs,src/model/paths.rs,tests/model_event.rs,tests/model_allow.rs,tests/model_paths.rs,tests/fixtures/eventlog.toml","summary":"Task 2: model contract (Event, Config, Vocabulary, Allowlist, path rules), 20 tests green"}
+{"seq":84,"ts":"2026-09-06T22:36:04Z","type":"retire","agent":"build-model","disposition":"accepted"}
+{"seq":85,"ts":"2026-09-06T22:36:04Z","type":"decision","key":"model-contract","value":"src/model as landed by result seq 83","ref":".context/DECISIONS.md","detail":"public signatures in src/model/*.rs are frozen; later tasks build against them and escalate rather than change them"}
+{"seq":86,"ts":"2026-09-06T22:36:04Z","type":"spawn","agent":"build-log","model":"sonnet","runtime":"claudewho-radiator","pane":"w5:p3","role":"build","task":"3"}
+{"seq":87,"ts":"2026-09-06T22:36:04Z","type":"prompt","agent":"build-log","ref":".context/handoffs/build-log.md"}
+{"seq":88,"ts":"2026-09-06T22:36:04Z","type":"claim","agent":"build-log","paths":"src/log/mod.rs,src/log/lock.rs,tests/log_read.rs,tests/log_lock.rs"}
+{"seq":89,"ts":"2026-09-06T22:36:27Z","type":"ack","by":"cursor-committer","seq_done":"83","origin":"controller","outcome":"committed","ref":"44bddca","model":"composer-2.5-fast"}
+{"seq":90,"ts":"2026-09-06T22:38:06Z","type":"result","by":"doc-worker","agent":"doc-worker","ref":".context/handoffs/doc-worker.md","paths":"docs,README.md,AGENTS.md","summary":"docs synced to 44bddca (3 file(s))","for_ack":"89"}
+{"seq":91,"ts":"2026-09-06T22:38:06Z","type":"ack","by":"doc-worker","seq_done":"89","outcome":"updated","files":"3","ref":"44bddca","model":"sonnet"}
+{"seq":92,"ts":"2026-09-06T22:38:29Z","type":"ack","by":"cursor-committer","seq_done":"90","origin":"doc-worker","outcome":"committed","ref":"452a878","model":"composer-2.5-fast"}
+{"seq":93,"ts":"2026-09-06T22:39:41Z","type":"progress","by":"build-log","msg":"tests written and failing before implementation cycle; now green","ref":"src/log/mod.rs"}
+{"seq":94,"ts":"2026-09-06T22:39:41Z","type":"result","by":"build-log","ref":"src/log/mod.rs","paths":"src/log/mod.rs,src/log/lock.rs,tests/log_read.rs,tests/log_lock.rs","summary":"Log open/read/tail/hash_line and directory-based Lock with dead-pid reclaim"}
+{"seq":95,"ts":"2026-09-06T22:39:54Z","type":"result","agent":"build-log","ref":".context/handoffs/build-log.md","paths":"src/log/mod.rs,src/log/lock.rs,tests/log_read.rs,tests/log_lock.rs","summary":"Task 3: Log open/read/tail/hash_line and mkdir Lock with dead-pid reclaim; tests green"}
+{"seq":96,"ts":"2026-09-06T22:39:54Z","type":"retire","agent":"build-log","disposition":"accepted"}
+{"seq":97,"ts":"2026-09-06T22:39:54Z","type":"spawn","agent":"build-append 4 w5:p4 src/log/append.rs,tests/log_append.rs","model":"auto","runtime":"cursor-agent","pane":"","role":"build","task":""}
+{"seq":98,"ts":"2026-09-06T22:39:55Z","type":"prompt","agent":"build-append 4 w5:p4 src/log/append.rs,tests/log_append.rs","ref":".context/handoffs/build-append 4 w5:p4 src/log/append.rs,tests/log_append.rs.md"}
+{"seq":99,"ts":"2026-09-06T22:39:55Z","type":"claim","agent":"build-append 4 w5:p4 src/log/append.rs,tests/log_append.rs","paths":""}
+{"seq":100,"ts":"2026-09-06T22:39:55Z","type":"spawn","agent":"build-verify 5 w5:p5 src/log/verify.rs,src/cmd/verify.rs,tests/log_verify.rs,tests/fixtures/chain_ok.jsonl,tests/fixtures/chain_break.jsonl,tests/fixtures/chain_unchained_after.jsonl","model":"auto","runtime":"cursor-agent","pane":"","role":"build","task":""}
+{"seq":101,"ts":"2026-09-06T22:39:55Z","type":"prompt","agent":"build-verify 5 w5:p5 src/log/verify.rs,src/cmd/verify.rs,tests/log_verify.rs,tests/fixtures/chain_ok.jsonl,tests/fixtures/chain_break.jsonl,tests/fixtures/chain_unchained_after.jsonl","ref":".context/handoffs/build-verify 5 w5:p5 src/log/verify.rs,src/cmd/verify.rs,tests/log_verify.rs,tests/fixtures/chain_ok.jsonl,tests/fixtures/chain_break.jsonl,tests/fixtures/chain_unchained_after.jsonl.md"}
+{"seq":102,"ts":"2026-09-06T22:39:55Z","type":"claim","agent":"build-verify 5 w5:p5 src/log/verify.rs,src/cmd/verify.rs,tests/log_verify.rs,tests/fixtures/chain_ok.jsonl,tests/fixtures/chain_break.jsonl,tests/fixtures/chain_unchained_after.jsonl","paths":""}
+{"seq":103,"ts":"2026-09-06T22:39:55Z","type":"spawn","agent":"build-view 7 w5:p6 src/cmd/view.rs,tests/cmd_view.rs","model":"auto","runtime":"cursor-agent","pane":"","role":"build","task":""}
+{"seq":104,"ts":"2026-09-06T22:39:55Z","type":"prompt","agent":"build-view 7 w5:p6 src/cmd/view.rs,tests/cmd_view.rs","ref":".context/handoffs/build-view 7 w5:p6 src/cmd/view.rs,tests/cmd_view.rs.md"}
+{"seq":105,"ts":"2026-09-06T22:39:55Z","type":"claim","agent":"build-view 7 w5:p6 src/cmd/view.rs,tests/cmd_view.rs","paths":""}
+{"seq":106,"ts":"2026-09-06T22:39:55Z","type":"spawn","agent":"build-schema 8 w5:p7 src/cmd/schema.rs,tests/cmd_schema.rs","model":"auto","runtime":"cursor-agent","pane":"","role":"build","task":""}
+{"seq":107,"ts":"2026-09-06T22:39:55Z","type":"prompt","agent":"build-schema 8 w5:p7 src/cmd/schema.rs,tests/cmd_schema.rs","ref":".context/handoffs/build-schema 8 w5:p7 src/cmd/schema.rs,tests/cmd_schema.rs.md"}
+{"seq":108,"ts":"2026-09-06T22:39:55Z","type":"claim","agent":"build-schema 8 w5:p7 src/cmd/schema.rs,tests/cmd_schema.rs","paths":""}
+{"seq":109,"ts":"2026-09-06T22:40:15Z","type":"ack","by":"cursor-committer","seq_done":"95","origin":"controller","outcome":"committed","ref":"b26318d","model":"composer-2.5-fast"}
+{"seq":110,"ts":"2026-09-06T22:40:28Z","type":"note","msg":"seqs 97-108 are malformed (agent field holds a whole argument line: zsh did not word-split); superseded by the spawn/prompt/claim events that follow"}
+{"seq":111,"ts":"2026-09-06T22:40:28Z","type":"spawn","agent":"build-append","model":"auto","runtime":"cursor-agent","pane":"w5:p4","role":"build","task":"4"}
+{"seq":112,"ts":"2026-09-06T22:40:28Z","type":"prompt","agent":"build-append","ref":".context/handoffs/build-append.md"}
+{"seq":113,"ts":"2026-09-06T22:40:28Z","type":"claim","agent":"build-append","paths":"src/log/append.rs,tests/log_append.rs"}
+{"seq":114,"ts":"2026-09-06T22:40:28Z","type":"spawn","agent":"build-verify","model":"auto","runtime":"cursor-agent","pane":"w5:p5","role":"build","task":"5"}
+{"seq":115,"ts":"2026-09-06T22:40:28Z","type":"prompt","agent":"build-verify","ref":".context/handoffs/build-verify.md"}
+{"seq":116,"ts":"2026-09-06T22:40:28Z","type":"claim","agent":"build-verify","paths":"src/log/verify.rs,src/cmd/verify.rs,tests/log_verify.rs,tests/fixtures/chain_ok.jsonl,tests/fixtures/chain_break.jsonl,tests/fixtures/chain_unchained_after.jsonl"}
+{"seq":117,"ts":"2026-09-06T22:40:28Z","type":"spawn","agent":"build-view","model":"auto","runtime":"cursor-agent","pane":"w5:p6","role":"build","task":"7"}
+{"seq":118,"ts":"2026-09-06T22:40:28Z","type":"prompt","agent":"build-view","ref":".context/handoffs/build-view.md"}
+{"seq":119,"ts":"2026-09-06T22:40:28Z","type":"claim","agent":"build-view","paths":"src/cmd/view.rs,tests/cmd_view.rs"}
+{"seq":120,"ts":"2026-09-06T22:40:28Z","type":"spawn","agent":"build-schema","model":"auto","runtime":"cursor-agent","pane":"w5:p7","role":"build","task":"8"}
+{"seq":121,"ts":"2026-09-06T22:40:28Z","type":"prompt","agent":"build-schema","ref":".context/handoffs/build-schema.md"}
+{"seq":122,"ts":"2026-09-06T22:40:28Z","type":"claim","agent":"build-schema","paths":"src/cmd/schema.rs,tests/cmd_schema.rs"}
+{"seq":123,"ts":"2026-09-06T22:40:48Z","type":"spawn","agent":"build-query","model":"opus","runtime":"claudewho-radiator","pane":"w5:p8","role":"build","task":"9"}
+{"seq":124,"ts":"2026-09-06T22:40:48Z","type":"prompt","agent":"build-query","ref":".context/handoffs/build-query.md"}
+{"seq":125,"ts":"2026-09-06T22:40:48Z","type":"claim","agent":"build-query","paths":"src/query/mod.rs,tests/query_fold.rs,tests/fixtures/self-log-2026-09-06.jsonl"}
+{"seq":126,"ts":"2026-09-06T22:41:08Z","type":"result","ref":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","paths":"docs/superpowers/plans/2026-09-06-eventlog-cli.md","summary":"Plan Task 6: vocab command lives in its own stub src/cmd/vocab.rs"}
+{"seq":127,"ts":"2026-09-06T22:41:24Z","type":"ack","by":"cursor-committer","seq_done":"126","origin":"controller","outcome":"committed","ref":"c91b5f9","model":"composer-2.5-fast"}
+{"seq":128,"ts":"2026-09-06T22:41:34Z","type":"progress","by":"build-view","msg":"failing cmd_view integration tests written","ref":"src/cmd/view.rs"}
