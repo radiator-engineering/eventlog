@@ -1,0 +1,24 @@
+.context/DECISIONS.md
+  h_63f2916b00d585 143-152
+src/cmd/react.rs
+  h_63f2916b00d585 203,207-210
+src/query/mod.rs
+  h_63f2916b00d585 121-142,149-152,289-291,293-299
+src/react/voter.rs
+  h_63f2916b00d585 21-23,90-94,99,104-107,132-134,137
+tests/query_fold.rs
+  h_63f2916b00d585 279-305
+tests/react_voter.rs
+  h_63f2916b00d585 310-332
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "0d98a112aa0a345f35235558445a1312f3ba1787",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
