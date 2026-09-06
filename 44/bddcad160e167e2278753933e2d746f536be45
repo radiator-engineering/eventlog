@@ -1,0 +1,32 @@
+src/model/allow.rs
+  h_63f2916b00d585 1-8,10-116
+src/model/config.rs
+  h_63f2916b00d585 1-5,7-189
+src/model/event.rs
+  h_63f2916b00d585 1-7,9-189
+src/model/mod.rs
+  h_63f2916b00d585 1-6
+src/model/paths.rs
+  h_63f2916b00d585 1-6,8-153
+src/model/vocab.rs
+  h_63f2916b00d585 1-15,17-124
+tests/fixtures/eventlog.toml
+  h_63f2916b00d585 1-30
+tests/model_allow.rs
+  h_63f2916b00d585 1-125
+tests/model_event.rs
+  h_63f2916b00d585 1-92
+tests/model_paths.rs
+  h_63f2916b00d585 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "44bddcad160e167e2278753933e2d746f536be45",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
