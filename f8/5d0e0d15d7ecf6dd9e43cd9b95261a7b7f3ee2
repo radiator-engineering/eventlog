@@ -1,0 +1,23 @@
+.cursor/hooks.json
+  s_1506791244fab7::t_0af8678bdeb93e 1-10
+.claude/settings.json
+  s_1506791244fab7::t_0af8678bdeb93e 3-13,18-19
+.codex/hooks.json
+  s_1506791244fab7::t_0af8678bdeb93e 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "f85d0e0d15d7ecf6dd9e43cd9b95261a7b7f3ee2",
+  "prompts": {},
+  "sessions": {
+    "s_1506791244fab7": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "9d162664-0da1-4d50-96ef-b642fa669783",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
