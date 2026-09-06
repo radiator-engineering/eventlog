@@ -1,0 +1,16 @@
+research/README.md
+  h_63f2916b00d585 1-16
+research/neuroarxiv-report.md
+  h_63f2916b00d585 1-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "3d3909ebe551836af76a9bca3327e5b3220ad425",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
