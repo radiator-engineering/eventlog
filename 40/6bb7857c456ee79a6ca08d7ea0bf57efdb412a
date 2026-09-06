@@ -1,0 +1,24 @@
+Drovefile
+  s_f37cc1e1350569::t_d00c1e890930b2 1-13,15-31
+  s_f37cc1e1350569::t_314b806b6b9ed3 14
+.context/handoffs/bootstrap.md
+  s_f37cc1e1350569::t_3488f46074a114 1-93
+drove/reactors.star
+  s_f37cc1e1350569::t_9013d8f79d1ff1 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "406bb7857c456ee79a6ca08d7ea0bf57efdb412a",
+  "prompts": {},
+  "sessions": {
+    "s_f37cc1e1350569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a7849e9-7c44-47c6-9234-07e888a6fea6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
