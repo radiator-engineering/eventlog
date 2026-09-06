@@ -1,0 +1,287 @@
+{"seq":1,"ts":"2026-09-06T14:21:47Z","type":"decision","key":"log-writers","value":"controller-plus-reactors","ref":".context/DECISIONS.md"}
+{"seq":2,"ts":"2026-09-06T14:21:47Z","type":"decision","key":"commit-agent","value":"cursor-commit-reactor+composer-2.5-fast","mode":"autonomous","ref":".context/DECISIONS.md"}
+{"seq":3,"ts":"2026-09-06T14:21:47Z","type":"decision","key":"doc-agent","value":"doc-sync-reactor+claude-sonnet","mode":"autonomous","ref":".context/DECISIONS.md"}
+{"seq":4,"ts":"2026-09-06T14:21:52Z","type":"ack","by":"cursor-committer","seq_done":"3","outcome":"skipped","detail":"baseline: cold start, prior events not replayed"}
+{"seq":5,"ts":"2026-09-06T14:21:52Z","type":"ack","by":"doc-worker","seq_done":"4","outcome":"skipped","detail":"baseline: cold start, prior events not replayed"}
+{"seq":6,"ts":"2026-09-06T14:21:52Z","type":"spawn","agent":"cursor-committer","model":"composer-2.5-fast","tab":"w2:t2","pane":"w2:p2","role":"commit-reactor","runtime":"cursor-headless"}
+{"seq":7,"ts":"2026-09-06T14:21:52Z","type":"prompt","agent":"cursor-committer","ref":".context/handoffs/cursor-committer.md"}
+{"seq":8,"ts":"2026-09-06T14:21:52Z","type":"spawn","agent":"doc-worker","model":"sonnet","tab":"w2:t3","pane":"w2:p3","role":"doc-sync","runtime":"claude-headless"}
+{"seq":9,"ts":"2026-09-06T14:21:53Z","type":"prompt","agent":"doc-worker","ref":".context/handoffs/doc-worker.md"}
+{"seq":10,"ts":"2026-09-06T14:22:07Z","type":"result","ref":"Cargo.toml","paths":"Cargo.toml","summary":"Add readme field to Cargo package metadata"}
+{"seq":11,"ts":"2026-09-06T14:22:24Z","type":"ack","by":"cursor-committer","seq_done":"10","origin":"controller","outcome":"committed","ref":"c769fb2","model":"composer-2.5-fast"}
+{"seq":12,"ts":"2026-09-06T14:22:39Z","type":"ack","by":"doc-worker","seq_done":"11","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":13,"ts":"2026-09-06T14:34:42Z","type":"spawn","agent":"recon-radiator cursor composer-2.5-fast w4","kind":"","model":"","workspace":"","role":"recon"}
+{"seq":14,"ts":"2026-09-06T14:34:42Z","type":"prompt","agent":"recon-radiator cursor composer-2.5-fast w4","ref":".context/handoffs/recon-radiator cursor composer-2.5-fast w4.md"}
+{"seq":15,"ts":"2026-09-06T14:34:42Z","type":"claim","agent":"recon-radiator cursor composer-2.5-fast w4","paths":".context/handoffs/recon-radiator cursor composer-2.5-fast w4-report.md"}
+{"seq":16,"ts":"2026-09-06T14:34:42Z","type":"spawn","agent":"recon-herdr-api cursor composer-2.5-fast w5","kind":"","model":"","workspace":"","role":"recon"}
+{"seq":17,"ts":"2026-09-06T14:34:42Z","type":"prompt","agent":"recon-herdr-api cursor composer-2.5-fast w5","ref":".context/handoffs/recon-herdr-api cursor composer-2.5-fast w5.md"}
+{"seq":18,"ts":"2026-09-06T14:34:42Z","type":"claim","agent":"recon-herdr-api cursor composer-2.5-fast w5","paths":".context/handoffs/recon-herdr-api cursor composer-2.5-fast w5-report.md"}
+{"seq":19,"ts":"2026-09-06T14:34:42Z","type":"spawn","agent":"recon-setup-skill cursor composer-2.5-fast w6","kind":"","model":"","workspace":"","role":"recon"}
+{"seq":20,"ts":"2026-09-06T14:34:42Z","type":"prompt","agent":"recon-setup-skill cursor composer-2.5-fast w6","ref":".context/handoffs/recon-setup-skill cursor composer-2.5-fast w6.md"}
+{"seq":21,"ts":"2026-09-06T14:34:42Z","type":"claim","agent":"recon-setup-skill cursor composer-2.5-fast w6","paths":".context/handoffs/recon-setup-skill cursor composer-2.5-fast w6-report.md"}
+{"seq":22,"ts":"2026-09-06T14:34:42Z","type":"spawn","agent":"recon-prior-art cursor composer-2.5-fast w7","kind":"","model":"","workspace":"","role":"recon"}
+{"seq":23,"ts":"2026-09-06T14:34:42Z","type":"prompt","agent":"recon-prior-art cursor composer-2.5-fast w7","ref":".context/handoffs/recon-prior-art cursor composer-2.5-fast w7.md"}
+{"seq":24,"ts":"2026-09-06T14:34:42Z","type":"claim","agent":"recon-prior-art cursor composer-2.5-fast w7","paths":".context/handoffs/recon-prior-art cursor composer-2.5-fast w7-report.md"}
+{"seq":25,"ts":"2026-09-06T14:34:42Z","type":"spawn","agent":"recon-dsl-critique claude sonnet w8","kind":"","model":"","workspace":"","role":"recon"}
+{"seq":26,"ts":"2026-09-06T14:34:42Z","type":"prompt","agent":"recon-dsl-critique claude sonnet w8","ref":".context/handoffs/recon-dsl-critique claude sonnet w8.md"}
+{"seq":27,"ts":"2026-09-06T14:34:42Z","type":"claim","agent":"recon-dsl-critique claude sonnet w8","paths":".context/handoffs/recon-dsl-critique claude sonnet w8-report.md"}
+{"seq":28,"ts":"2026-09-06T14:34:56Z","type":"message","subject":"events 13-27 carry malformed agent names (shell word-splitting); corrected spawn/prompt/claim follow"}
+{"seq":29,"ts":"2026-09-06T14:34:56Z","type":"spawn","agent":"recon-radiator","kind":"cursor","model":"composer-2.5-fast","workspace":"w4","role":"recon"}
+{"seq":30,"ts":"2026-09-06T14:34:56Z","type":"prompt","agent":"recon-radiator","ref":".context/handoffs/recon-radiator.md"}
+{"seq":31,"ts":"2026-09-06T14:34:56Z","type":"claim","agent":"recon-radiator","paths":".context/handoffs/recon-radiator-report.md"}
+{"seq":32,"ts":"2026-09-06T14:34:56Z","type":"spawn","agent":"recon-herdr-api","kind":"cursor","model":"composer-2.5-fast","workspace":"w5","role":"recon"}
+{"seq":33,"ts":"2026-09-06T14:34:56Z","type":"prompt","agent":"recon-herdr-api","ref":".context/handoffs/recon-herdr-api.md"}
+{"seq":34,"ts":"2026-09-06T14:34:56Z","type":"claim","agent":"recon-herdr-api","paths":".context/handoffs/recon-herdr-api-report.md"}
+{"seq":35,"ts":"2026-09-06T14:34:56Z","type":"spawn","agent":"recon-setup-skill","kind":"cursor","model":"composer-2.5-fast","workspace":"w6","role":"recon"}
+{"seq":36,"ts":"2026-09-06T14:34:56Z","type":"prompt","agent":"recon-setup-skill","ref":".context/handoffs/recon-setup-skill.md"}
+{"seq":37,"ts":"2026-09-06T14:34:56Z","type":"claim","agent":"recon-setup-skill","paths":".context/handoffs/recon-setup-skill-report.md"}
+{"seq":38,"ts":"2026-09-06T14:34:56Z","type":"spawn","agent":"recon-prior-art","kind":"cursor","model":"composer-2.5-fast","workspace":"w7","role":"recon"}
+{"seq":39,"ts":"2026-09-06T14:34:56Z","type":"prompt","agent":"recon-prior-art","ref":".context/handoffs/recon-prior-art.md"}
+{"seq":40,"ts":"2026-09-06T14:34:56Z","type":"claim","agent":"recon-prior-art","paths":".context/handoffs/recon-prior-art-report.md"}
+{"seq":41,"ts":"2026-09-06T14:34:56Z","type":"spawn","agent":"recon-dsl-critique","kind":"claude","model":"sonnet","workspace":"w8","role":"recon"}
+{"seq":42,"ts":"2026-09-06T14:34:56Z","type":"prompt","agent":"recon-dsl-critique","ref":".context/handoffs/recon-dsl-critique.md"}
+{"seq":43,"ts":"2026-09-06T14:34:56Z","type":"claim","agent":"recon-dsl-critique","paths":".context/handoffs/recon-dsl-critique-report.md"}
+{"seq":44,"ts":"2026-09-06T14:37:05Z","type":"spawn","agent":"recon-forward-build","kind":"claude","model":"opus","workspace":"w9","role":"research"}
+{"seq":45,"ts":"2026-09-06T14:37:05Z","type":"prompt","agent":"recon-forward-build","ref":".context/handoffs/recon-forward-build.md"}
+{"seq":46,"ts":"2026-09-06T14:37:05Z","type":"claim","agent":"recon-forward-build","paths":".context/handoffs/recon-forward-build-report.md"}
+{"seq":47,"ts":"2026-09-06T14:37:26Z","type":"result","agent":"recon-setup-skill","ref":".context/handoffs/recon-setup-skill-report.md","verdict":"accepted","summary":"capability inventory; gaps: adoption, lifecycle policies, readiness, conditional commands, events"}
+{"seq":48,"ts":"2026-09-06T14:37:26Z","type":"result","agent":"recon-prior-art","ref":".context/handoffs/recon-prior-art-report.md","verdict":"pending","summary":"prior-art survey landed"}
+{"seq":49,"ts":"2026-09-06T14:37:26Z","type":"ack","by":"cursor-committer","seq_done":"47","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":50,"ts":"2026-09-06T14:37:26Z","type":"ack","by":"cursor-committer","seq_done":"48","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":51,"ts":"2026-09-06T14:38:04Z","type":"result","agent":"recon-herdr-api","ref":".context/handoffs/recon-herdr-api-report.md","verdict":"pending","summary":"herdr api survey landed"}
+{"seq":52,"ts":"2026-09-06T14:38:04Z","type":"ack","by":"cursor-committer","seq_done":"51","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":53,"ts":"2026-09-06T14:38:28Z","type":"result","agent":"recon-radiator","ref":".context/handoffs/recon-radiator-report.md","verdict":"pending","summary":"radiator recon landed"}
+{"seq":54,"ts":"2026-09-06T14:38:28Z","type":"ack","by":"cursor-committer","seq_done":"53","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":55,"ts":"2026-09-06T14:40:05Z","type":"result","agent":"recon-dsl-critique","ref":".context/handoffs/recon-dsl-critique-report.md","verdict":"accepted","summary":"DSL critique; demo 96 to 29 lines under lighter syntax"}
+{"seq":56,"ts":"2026-09-06T14:40:05Z","type":"ack","by":"cursor-committer","seq_done":"55","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":57,"ts":"2026-09-06T14:42:01Z","type":"retire","agent":"recon-radiator","disposition":"accepted"}
+{"seq":58,"ts":"2026-09-06T14:42:01Z","type":"retire","agent":"recon-herdr-api","disposition":"accepted"}
+{"seq":59,"ts":"2026-09-06T14:42:01Z","type":"retire","agent":"recon-setup-skill","disposition":"accepted"}
+{"seq":60,"ts":"2026-09-06T14:42:01Z","type":"retire","agent":"recon-prior-art","disposition":"accepted"}
+{"seq":61,"ts":"2026-09-06T14:42:01Z","type":"retire","agent":"recon-dsl-critique","disposition":"accepted"}
+{"seq":62,"ts":"2026-09-06T14:43:08Z","type":"result","agent":"recon-forward-build","ref":".context/handoffs/recon-forward-build-report.md","verdict":"accepted","summary":"keep declarative format; forward model inside planner: hazards, observed digests, disjointness"}
+{"seq":63,"ts":"2026-09-06T14:43:08Z","type":"retire","agent":"recon-forward-build","disposition":"accepted"}
+{"seq":64,"ts":"2026-09-06T14:43:08Z","type":"ack","by":"cursor-committer","seq_done":"62","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":65,"ts":"2026-09-06T14:45:19Z","type":"decision","key":"agent-topology","value":"parallel-worktrees","ref":".context/DECISIONS.md"}
+{"seq":66,"ts":"2026-09-06T14:45:19Z","type":"decision","key":"worker-commits","value":"own-branch","ref":".context/DECISIONS.md"}
+{"seq":67,"ts":"2026-09-06T14:45:19Z","type":"decision","key":"design-v2","value":"docs/superpowers/specs/2026-09-06-drove-v2-design.md","ref":".context/DECISIONS.md"}
+{"seq":68,"ts":"2026-09-06T14:45:23Z","type":"spawn","agent":"pr1-model-ir","kind":"claude","model":"sonnet","workspace":"wA","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr1-model-ir","branch":"v2/pr1-model-ir"}
+{"seq":69,"ts":"2026-09-06T14:45:23Z","type":"prompt","agent":"pr1-model-ir","ref":".context/handoffs/pr1-model-ir.md"}
+{"seq":70,"ts":"2026-09-06T14:45:23Z","type":"claim","agent":"pr1-model-ir","paths":"src/model.rs,src/dsl.rs,src/ir.rs,src/backend/,src/herdr.rs,src/cli.rs,docs/drovefile.md,examples/"}
+{"seq":71,"ts":"2026-09-06T14:45:23Z","type":"result","ref":"docs/superpowers/specs/2026-09-06-drove-v2-design.md","paths":"docs/superpowers/specs/2026-09-06-drove-v2-design.md,.context/DECISIONS.md","summary":"Drove v2 design spec from six recon reports; decisions D1-D20; PR breakdown"}
+{"seq":72,"ts":"2026-09-06T14:45:43Z","type":"ack","by":"cursor-committer","seq_done":"71","origin":"controller","outcome":"committed","ref":"e4e6f6e","model":"composer-2.5-fast"}
+{"seq":73,"ts":"2026-09-06T14:46:29Z","type":"ack","by":"doc-worker","seq_done":"72","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":74,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"content-addressed-resources","value":"D21","ref":".context/DECISIONS.md"}
+{"seq":75,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"restart-in-place","value":"D22","ref":".context/DECISIONS.md"}
+{"seq":76,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"readiness-host-side","value":"D23","ref":".context/DECISIONS.md"}
+{"seq":77,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"adopt-no-caller","value":"D24","ref":".context/DECISIONS.md"}
+{"seq":78,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"prompt-file","value":"D25","ref":".context/DECISIONS.md"}
+{"seq":79,"ts":"2026-09-06T14:51:20Z","type":"decision","key":"lint-later","value":"D26","ref":".context/DECISIONS.md"}
+{"seq":80,"ts":"2026-09-06T14:51:20Z","type":"result","ref":"docs/superpowers/research/2026-09-06-neuroarxiv-drove-v2.md","paths":"docs/superpowers/research/2026-09-06-neuroarxiv-drove-v2.md,docs/superpowers/specs/2026-09-06-drove-v2-design.md,.context/DECISIONS.md","summary":"NeuroArxiv pass: content-addressed resources chosen; spec amended D21-D26; open questions answered"}
+{"seq":81,"ts":"2026-09-06T14:51:44Z","type":"spawn","agent":"recon-radiator-gaps","kind":"cursor","model":"composer-2.5-fast","role":"recon","workspace":"w"}
+{"seq":82,"ts":"2026-09-06T14:51:44Z","type":"prompt","agent":"recon-radiator-gaps","ref":".context/handoffs/recon-radiator-gaps.md"}
+{"seq":83,"ts":"2026-09-06T14:51:44Z","type":"claim","agent":"recon-radiator-gaps","paths":".context/handoffs/recon-radiator-gaps-report.md"}
+{"seq":84,"ts":"2026-09-06T14:51:54Z","type":"ack","by":"cursor-committer","seq_done":"80","origin":"controller","outcome":"committed","ref":"d631775,4e85c1f","model":"composer-2.5-fast"}
+{"seq":85,"ts":"2026-09-06T14:52:28Z","type":"ack","by":"doc-worker","seq_done":"84","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":86,"ts":"2026-09-06T14:54:18Z","type":"result","agent":"recon-radiator-gaps","ref":".context/handoffs/recon-radiator-gaps-report.md","summary":"Radiator hub gaps: metadata tokens, process info, pane.tail, workspace.rename missing; events exist"}
+{"seq":87,"ts":"2026-09-06T14:54:18Z","type":"retire","agent":"recon-radiator-gaps"}
+{"seq":88,"ts":"2026-09-06T14:54:18Z","type":"ack","by":"cursor-committer","seq_done":"86","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":89,"ts":"2026-09-06T14:54:18Z","type":"decision","key":"radiator-hub-protocol","value":"metadata+process+tail+rename","ref":".context/DECISIONS.md"}
+{"seq":90,"ts":"2026-09-06T14:54:22Z","type":"spawn","agent":"radiator-hub-protocol","kind":"claude","model":"sonnet","workspace":"wC","role":"pr-worker","repo":"radiator-cli","branch":"drove/hub-protocol"}
+{"seq":91,"ts":"2026-09-06T14:54:22Z","type":"prompt","agent":"radiator-hub-protocol","ref":".context/handoffs/radiator-hub-protocol.md"}
+{"seq":92,"ts":"2026-09-06T14:54:22Z","type":"claim","agent":"radiator-hub-protocol","paths":"external:radiator-cli"}
+{"seq":93,"ts":"2026-09-06T15:00:03Z","type":"spawn","agent":"ci-setup","kind":"claude","model":"claude-opus-4-8","workspace":"wD","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/ci-setup","branch":"chore/ci"}
+{"seq":94,"ts":"2026-09-06T15:00:07Z","type":"prompt","agent":"ci-setup","ref":".context/handoffs/ci-setup.md"}
+{"seq":95,"ts":"2026-09-06T15:00:07Z","type":"claim","agent":"ci-setup","paths":".github/,Cargo.lock,Makefile,justfile,README.md,scripts/smoke-herdr.sh"}
+{"seq":96,"ts":"2026-09-06T15:09:23Z","type":"result","agent":"pr1-model-ir","ref":".context/handoffs/pr1-model-ir.md","summary":"PR 1 open: https://github.com/radiator-engineering/Drove/pull/2 (model v2, IR with digests, DSL prelude, Backend trait, drove render)"}
+{"seq":97,"ts":"2026-09-06T15:09:23Z","type":"ack","by":"cursor-committer","seq_done":"96","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":98,"ts":"2026-09-06T15:09:27Z","type":"spawn","agent":"review-pr2","kind":"claude","model":"sonnet","workspace":"wE","role":"pr-reviewer","pr":"2"}
+{"seq":99,"ts":"2026-09-06T15:09:27Z","type":"prompt","agent":"review-pr2","ref":".context/handoffs/pr-review-template.md"}
+{"seq":100,"ts":"2026-09-06T15:14:18Z","type":"decision","key":"repo-visibility","value":"public","ref":".context/DECISIONS.md"}
+{"seq":101,"ts":"2026-09-06T15:14:18Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Repo made public for free Actions minutes"}
+{"seq":102,"ts":"2026-09-06T15:14:18Z","type":"ack","by":"cursor-committer","seq_done":"101","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":103,"ts":"2026-09-06T15:18:52Z","type":"decision","key":"pr-review-process","value":"cubic+agent-reviewer","ref":".context/DECISIONS.md"}
+{"seq":104,"ts":"2026-09-06T15:18:52Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Cubic reviews added to the PR process"}
+{"seq":105,"ts":"2026-09-06T15:18:52Z","type":"ack","by":"cursor-committer","seq_done":"104","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":106,"ts":"2026-09-06T15:19:22Z","type":"message","agent":"pr1-model-ir","summary":"PR 2 CHANGES_REQUESTED forwarded: four missing validation tests, strip attribution trailers, keep inclusive ratio"}
+{"seq":107,"ts":"2026-09-06T15:19:32Z","type":"result","ref":"docs/superpowers/specs/2026-09-06-drove-v2-design.md","paths":"docs/superpowers/specs/2026-09-06-drove-v2-design.md","summary":"Spec: ratio bounds are inclusive, matching the PR 1 implementation"}
+{"seq":108,"ts":"2026-09-06T15:19:49Z","type":"ack","by":"cursor-committer","seq_done":"107","origin":"controller","outcome":"committed","ref":"8c8b338","model":"composer-2.5-fast"}
+{"seq":109,"ts":"2026-09-06T15:20:23Z","type":"ack","by":"doc-worker","seq_done":"108","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":110,"ts":"2026-09-06T15:21:29Z","type":"decision","key":"main-protection","value":"ruleset-protect-main","ref":".context/DECISIONS.md"}
+{"seq":111,"ts":"2026-09-06T15:21:29Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"main protected by ruleset with required CI checks"}
+{"seq":112,"ts":"2026-09-06T15:21:29Z","type":"ack","by":"cursor-committer","seq_done":"111","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":113,"ts":"2026-09-06T15:22:55Z","type":"result","agent":"ci-setup","ref":".context/handoffs/ci-setup.md","summary":"CI PR 1 merged by the worker (no review): fmt/clippy/test/docs/audit/herdr-smoke green on main; Windows leg dropped over two path-separator test failures"}
+{"seq":114,"ts":"2026-09-06T15:22:55Z","type":"retire","agent":"ci-setup"}
+{"seq":115,"ts":"2026-09-06T15:22:55Z","type":"ack","by":"cursor-committer","seq_done":"113","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":116,"ts":"2026-09-06T15:22:56Z","type":"decision","key":"windows-path-bug","value":"after-planner-v2","ref":".context/DECISIONS.md"}
+{"seq":117,"ts":"2026-09-06T15:22:56Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Windows path bug scheduled after planner v2"}
+{"seq":118,"ts":"2026-09-06T15:22:56Z","type":"ack","by":"cursor-committer","seq_done":"117","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":119,"ts":"2026-09-06T15:23:27Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Ruleset: admin bypass so local reactor commits on main can be pushed; local main rebased onto origin and pushed"}
+{"seq":120,"ts":"2026-09-06T15:23:27Z","type":"ack","by":"cursor-committer","seq_done":"119","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":121,"ts":"2026-09-06T15:25:13Z","type":"decision","key":"pr-lifecycle","value":".context/PR-WORKFLOW.md","ref":".context/DECISIONS.md"}
+{"seq":122,"ts":"2026-09-06T15:25:13Z","type":"result","ref":".context/PR-WORKFLOW.md","paths":".context/PR-WORKFLOW.md,AGENTS.md,.context/DECISIONS.md","summary":"PR workflow contract: worker drives comments and checks to done, reviewer re-reviews until APPROVE"}
+{"seq":123,"ts":"2026-09-06T15:25:50Z","type":"ack","by":"cursor-committer","seq_done":"122","origin":"controller","outcome":"committed","ref":"58af048,e851d50","model":"composer-2.5-fast"}
+{"seq":124,"ts":"2026-09-06T15:26:22Z","type":"ack","by":"doc-worker","seq_done":"123","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":125,"ts":"2026-09-06T15:29:54Z","type":"result","ref":".context/PR-WORKFLOW.md","paths":".context/PR-WORKFLOW.md","summary":"PR workflow: conflicts checked on every poll and fixed first; reviewer blocks CONFLICTING PRs"}
+{"seq":126,"ts":"2026-09-06T15:29:54Z","type":"ack","by":"cursor-committer","seq_done":"125","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":127,"ts":"2026-09-06T15:35:37Z","type":"result","agent":"radiator-hub-protocol","ref":".context/handoffs/radiator-hub-protocol.md","summary":"Hub protocol PR open: https://github.com/radiator-engineering/radiator-cli/pull/21 (metadata, process info, tail, workspace.rename, hub.capabilities)"}
+{"seq":128,"ts":"2026-09-06T15:35:37Z","type":"ack","by":"cursor-committer","seq_done":"127","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":129,"ts":"2026-09-06T15:35:41Z","type":"spawn","agent":"review-hub-pr21","kind":"claude","model":"sonnet","workspace":"wF","role":"pr-reviewer","repo":"radiator-cli","pr":"21"}
+{"seq":130,"ts":"2026-09-06T15:35:41Z","type":"prompt","agent":"review-hub-pr21","ref":".context/handoffs/pr-review-template.md"}
+{"seq":131,"ts":"2026-09-06T15:43:31Z","type":"result","agent":"pr1-model-ir","ref":".context/handoffs/pr1-model-ir.md","summary":"PR 2 merged (squash): v2 model, IR with digests, DSL prelude, Backend trait, drove render"}
+{"seq":132,"ts":"2026-09-06T15:43:31Z","type":"result","agent":"review-pr2","ref":".context/handoffs/pr-review-template.md","summary":"PR 2 reviewed: CHANGES_REQUESTED then APPROVE after tests, trailer cleanup, rebase"}
+{"seq":133,"ts":"2026-09-06T15:43:31Z","type":"retire","agent":"pr1-model-ir"}
+{"seq":134,"ts":"2026-09-06T15:43:31Z","type":"retire","agent":"review-pr2"}
+{"seq":135,"ts":"2026-09-06T15:43:31Z","type":"ack","by":"cursor-committer","seq_done":"131","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":136,"ts":"2026-09-06T15:43:31Z","type":"ack","by":"cursor-committer","seq_done":"132","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":137,"ts":"2026-09-06T15:43:34Z","type":"spawn","agent":"pr2-planner v2/pr2-planner","kind":"claude","model":"sonnet","workspace":"","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr2-planner v2/pr2-planner","branch":""}
+{"seq":138,"ts":"2026-09-06T15:43:34Z","type":"prompt","agent":"pr2-planner v2/pr2-planner","ref":".context/handoffs/pr2-planner v2/pr2-planner.md"}
+{"seq":139,"ts":"2026-09-06T15:43:34Z","type":"spawn","agent":"pr3-herdr-backend v2/pr3-herdr-backend","kind":"claude","model":"sonnet","workspace":"","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr3-herdr-backend v2/pr3-herdr-backend","branch":""}
+{"seq":140,"ts":"2026-09-06T15:43:34Z","type":"prompt","agent":"pr3-herdr-backend v2/pr3-herdr-backend","ref":".context/handoffs/pr3-herdr-backend v2/pr3-herdr-backend.md"}
+{"seq":141,"ts":"2026-09-06T15:43:34Z","type":"spawn","agent":"pr5-radiator-backend v2/pr5-radiator-backend","kind":"claude","model":"sonnet","workspace":"","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr5-radiator-backend v2/pr5-radiator-backend","branch":""}
+{"seq":142,"ts":"2026-09-06T15:43:34Z","type":"prompt","agent":"pr5-radiator-backend v2/pr5-radiator-backend","ref":".context/handoffs/pr5-radiator-backend v2/pr5-radiator-backend.md"}
+{"seq":143,"ts":"2026-09-06T15:43:34Z","type":"claim","agent":"pr2-planner","paths":"src/planner.rs,src/state.rs"}
+{"seq":144,"ts":"2026-09-06T15:43:34Z","type":"claim","agent":"pr3-herdr-backend","paths":"src/backend/herdr.rs,src/readiness.rs,scripts/smoke-herdr.sh"}
+{"seq":145,"ts":"2026-09-06T15:43:34Z","type":"claim","agent":"pr5-radiator-backend","paths":"src/backend/radiator.rs,scripts/smoke-radiator.sh,docs/radiator-backend.md"}
+{"seq":146,"ts":"2026-09-06T15:43:34Z","type":"result","ref":".context/PR-WORKFLOW.md","paths":".context/PR-WORKFLOW.md,.context/handoffs/pr-review-template.md","summary":"PR workflow: self-approval workaround and out-of-scope thread rule"}
+{"seq":147,"ts":"2026-09-06T15:43:34Z","type":"ack","by":"cursor-committer","seq_done":"146","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":148,"ts":"2026-09-06T15:43:58Z","type":"message","summary":"Events 137-142 carry malformed agent names (shell word-splitting); no worktree, workspace or agent was created by them. Correct spawn/prompt events follow."}
+{"seq":149,"ts":"2026-09-06T15:44:02Z","type":"spawn","agent":"pr2-planner","kind":"claude","model":"sonnet","workspace":"wG","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr2-planner","branch":"v2/pr2-planner"}
+{"seq":150,"ts":"2026-09-06T15:44:02Z","type":"prompt","agent":"pr2-planner","ref":".context/handoffs/pr2-planner.md"}
+{"seq":151,"ts":"2026-09-06T15:44:06Z","type":"spawn","agent":"pr3-herdr-backend","kind":"claude","model":"sonnet","workspace":"wH","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr3-herdr-backend","branch":"v2/pr3-herdr-backend"}
+{"seq":152,"ts":"2026-09-06T15:44:06Z","type":"prompt","agent":"pr3-herdr-backend","ref":".context/handoffs/pr3-herdr-backend.md"}
+{"seq":153,"ts":"2026-09-06T15:44:10Z","type":"spawn","agent":"pr5-radiator-backend","kind":"claude","model":"sonnet","workspace":"wJ","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr5-radiator-backend","branch":"v2/pr5-radiator-backend"}
+{"seq":154,"ts":"2026-09-06T15:44:10Z","type":"prompt","agent":"pr5-radiator-backend","ref":".context/handoffs/pr5-radiator-backend.md"}
+{"seq":155,"ts":"2026-09-06T15:44:31Z","type":"result","ref":".context/handoffs/scaffold-hardening.md","paths":".context/handoffs/scaffold-hardening.md","summary":"Follow-up brief from ten out-of-scope CodeRabbit findings on the workspace scaffold; to be scheduled after the v2 PRs"}
+{"seq":156,"ts":"2026-09-06T15:44:31Z","type":"ack","by":"cursor-committer","seq_done":"155","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":157,"ts":"2026-09-06T16:00:01Z","type":"result","agent":"pr3-herdr-backend","ref":".context/handoffs/pr3-herdr-backend.md","summary":"PR 3 open: https://github.com/radiator-engineering/Drove/pull/3"}
+{"seq":158,"ts":"2026-09-06T16:00:02Z","type":"ack","by":"cursor-committer","seq_done":"157","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":159,"ts":"2026-09-06T16:00:05Z","type":"spawn","agent":"review-pr3","kind":"claude","model":"sonnet","workspace":"wM","role":"pr-reviewer","pr":"3"}
+{"seq":160,"ts":"2026-09-06T16:00:05Z","type":"prompt","agent":"review-pr3","ref":".context/handoffs/pr-review-template.md"}
+{"seq":161,"ts":"2026-09-06T16:00:05Z","type":"result","agent":"pr2-planner","ref":".context/handoffs/pr2-planner.md","summary":"PR 4 open: https://github.com/radiator-engineering/Drove/pull/4"}
+{"seq":162,"ts":"2026-09-06T16:00:06Z","type":"ack","by":"cursor-committer","seq_done":"161","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":163,"ts":"2026-09-06T16:00:09Z","type":"spawn","agent":"review-pr4","kind":"claude","model":"sonnet","workspace":"wN","role":"pr-reviewer","pr":"4"}
+{"seq":164,"ts":"2026-09-06T16:00:09Z","type":"prompt","agent":"review-pr4","ref":".context/handoffs/pr-review-template.md"}
+{"seq":165,"ts":"2026-09-06T16:00:09Z","type":"result","agent":"pr5-radiator-backend","ref":".context/handoffs/pr5-radiator-backend.md","summary":"PR 5 open: https://github.com/radiator-engineering/Drove/pull/5"}
+{"seq":166,"ts":"2026-09-06T16:00:10Z","type":"ack","by":"cursor-committer","seq_done":"165","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":167,"ts":"2026-09-06T16:00:13Z","type":"spawn","agent":"review-pr5","kind":"claude","model":"sonnet","workspace":"wP","role":"pr-reviewer","pr":"5"}
+{"seq":168,"ts":"2026-09-06T16:00:13Z","type":"prompt","agent":"review-pr5","ref":".context/handoffs/pr-review-template.md"}
+{"seq":169,"ts":"2026-09-06T16:00:59Z","type":"result","agent":"radiator-hub-protocol","ref":".context/handoffs/radiator-hub-protocol.md","summary":"radiator-cli PR 21 merged: pane/workspace metadata, process info, pane.tail, workspace.rename, hub.capabilities"}
+{"seq":170,"ts":"2026-09-06T16:00:59Z","type":"result","agent":"review-hub-pr21","ref":".context/handoffs/pr-review-template.md","summary":"radiator-cli PR 21 reviewed: APPROVE"}
+{"seq":171,"ts":"2026-09-06T16:00:59Z","type":"ack","by":"cursor-committer","seq_done":"169","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":172,"ts":"2026-09-06T16:00:59Z","type":"ack","by":"cursor-committer","seq_done":"170","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":173,"ts":"2026-09-06T16:00:59Z","type":"retire","agent":"radiator-hub-protocol"}
+{"seq":174,"ts":"2026-09-06T16:00:59Z","type":"retire","agent":"review-hub-pr21"}
+{"seq":175,"ts":"2026-09-06T16:01:34Z","type":"message","summary":"Stray workspace drove-smoke (wK) found in the live Herdr session, created by a worker's smoke run; closed by the controller. Workers must use an isolated named session for smoke tests."}
+{"seq":176,"ts":"2026-09-06T16:22:28Z","type":"decision","key":"thread-resolution","value":"worker-resolves-reviewer-verifies","ref":".context/DECISIONS.md"}
+{"seq":177,"ts":"2026-09-06T16:22:28Z","type":"result","ref":".context/PR-WORKFLOW.md","paths":".context/PR-WORKFLOW.md,.context/DECISIONS.md","summary":"PR workflow: worker resolves all inline threads incl CodeRabbit; reviewer verifies zero unresolved before APPROVE"}
+{"seq":178,"ts":"2026-09-06T16:22:28Z","type":"ack","by":"cursor-committer","seq_done":"177","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":179,"ts":"2026-09-06T16:26:35Z","type":"result","agent":"pr2-planner","ref":".context/handoffs/pr2-planner.md","summary":"PR 4 merged: planner v2 (snapshot diff, token ownership, hazards, incremental convergence)"}
+{"seq":180,"ts":"2026-09-06T16:26:35Z","type":"result","agent":"review-pr4","ref":".context/handoffs/pr-review-template.md","summary":"PR 4 reviewed: APPROVE"}
+{"seq":181,"ts":"2026-09-06T16:26:35Z","type":"retire","agent":"pr2-planner"}
+{"seq":182,"ts":"2026-09-06T16:26:35Z","type":"ack","by":"cursor-committer","seq_done":"179","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":183,"ts":"2026-09-06T16:26:35Z","type":"retire","agent":"review-pr4"}
+{"seq":184,"ts":"2026-09-06T16:26:35Z","type":"ack","by":"cursor-committer","seq_done":"180","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":185,"ts":"2026-09-06T16:29:48Z","type":"spawn","agent":"pr-tasks-hooks","kind":"claude","model":"sonnet","workspace":"wS","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/pr-tasks-hooks","branch":"v2/pr-tasks-hooks"}
+{"seq":186,"ts":"2026-09-06T16:29:48Z","type":"prompt","agent":"pr-tasks-hooks","ref":".context/handoffs/pr-tasks-hooks.md"}
+{"seq":187,"ts":"2026-09-06T16:29:48Z","type":"claim","agent":"pr-tasks-hooks","paths":"src/executor.rs,src/cli.rs,src/state.rs"}
+{"seq":188,"ts":"2026-09-06T16:30:03Z","type":"spawn","agent":"scaffold-hardening","kind":"claude","model":"sonnet","workspace":"wT","role":"pr-worker","worktree":"/Users/jjmartin/Development/Drove-worktrees/scaffold-hardening","branch":"chore/scaffold-hardening"}
+{"seq":189,"ts":"2026-09-06T16:30:03Z","type":"prompt","agent":"scaffold-hardening","ref":".context/handoffs/scaffold-hardening.md"}
+{"seq":190,"ts":"2026-09-06T16:30:03Z","type":"claim","agent":"scaffold-hardening","paths":".context/bin/,.githooks/,AGENTS.md"}
+{"seq":191,"ts":"2026-09-06T16:30:53Z","type":"result","agent":"pr5-radiator-backend","ref":".context/handoffs/pr5-radiator-backend.md","summary":"PR 5 merged: Radiator hub backend implementing Backend trait with capability degradation"}
+{"seq":192,"ts":"2026-09-06T16:30:53Z","type":"result","agent":"review-pr5","ref":".context/handoffs/pr-review-template.md","summary":"PR 5 reviewed: APPROVE"}
+{"seq":193,"ts":"2026-09-06T16:30:53Z","type":"ack","by":"cursor-committer","seq_done":"191","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":194,"ts":"2026-09-06T16:30:53Z","type":"ack","by":"cursor-committer","seq_done":"192","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":195,"ts":"2026-09-06T16:30:54Z","type":"retire","agent":"pr5-radiator-backend"}
+{"seq":196,"ts":"2026-09-06T16:30:54Z","type":"retire","agent":"review-pr5"}
+{"seq":197,"ts":"2026-09-06T16:31:46Z","type":"message","summary":"Controller used git reset --hard origin/main after the PR 5 merge, which reverted the tracked DECISIONS.md to origin and dropped the thread-resolution line; line restored. Going forward the controller updates local main with fetch + merge --ff-only, never reset --hard, because the commit reactor commits to local main."}
+{"seq":198,"ts":"2026-09-06T16:31:46Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Restore thread-resolution decision dropped by a hard reset"}
+{"seq":199,"ts":"2026-09-06T16:31:46Z","type":"ack","by":"cursor-committer","seq_done":"198","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":200,"ts":"2026-09-06T16:39:15Z","type":"message","summary":"Controller resolved PR 3's blocked rebase: dropped two stray .context/AGENTS reactor commits from the branch, resolved the smoke-herdr.sh conflict, force-pushed. Remaining are 4 real compile errors in radiator.rs (PR 3 extended the Backend trait; PR 5's radiator impl needs the new items) handed back to the worker."}
+{"seq":201,"ts":"2026-09-06T16:39:48Z","type":"decision","key":"worktree-base","value":"origin-main","ref":".context/DECISIONS.md"}
+{"seq":202,"ts":"2026-09-06T16:39:48Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Decision: branch PR worktrees from origin/main to avoid reactor .context commits polluting worker branches"}
+{"seq":203,"ts":"2026-09-06T16:39:48Z","type":"ack","by":"cursor-committer","seq_done":"202","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":204,"ts":"2026-09-06T16:49:47Z","type":"result","ref":"README.md","paths":"README.md","summary":"Rewrite README for v2: backend-agnostic framing (Herdr current, Radiator in progress), v2 DSL example, task/readiness terms, honest command status, backend-neutral exit code 3"}
+{"seq":205,"ts":"2026-09-06T16:50:09Z","type":"ack","by":"cursor-committer","seq_done":"204","origin":"controller","outcome":"committed","ref":"db183fb","model":"composer-2.5-fast"}
+{"seq":206,"ts":"2026-09-06T16:51:03Z","type":"ack","by":"doc-worker","seq_done":"205","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":207,"ts":"2026-09-06T17:23:27Z","type":"spawn","agent":"review-pr6","kind":"claude","model":"sonnet","workspace":"wV","role":"pr-reviewer","pr":"6"}
+{"seq":208,"ts":"2026-09-06T17:23:27Z","type":"prompt","agent":"review-pr6","ref":".context/handoffs/pr-review-template.md"}
+{"seq":209,"ts":"2026-09-06T17:23:31Z","type":"spawn","agent":"review-pr7","kind":"claude","model":"sonnet","workspace":"wW","role":"pr-reviewer","pr":"7"}
+{"seq":210,"ts":"2026-09-06T17:23:31Z","type":"prompt","agent":"review-pr7","ref":".context/handoffs/pr-review-template.md"}
+{"seq":211,"ts":"2026-09-06T17:28:01Z","type":"result","agent":"pr3-herdr-backend","ref":".context/handoffs/pr3-herdr-backend.md","paths":"src/backend/herdr.rs,src/backend/mod.rs,src/readiness.rs","summary":"PR 3 merged (#3, squash 8414458): Herdr backend v2 — incremental convergence, tokens, readiness probes; APPROVE at e617e26, all checks green"}
+{"seq":212,"ts":"2026-09-06T17:28:01Z","type":"retire","agent":"pr3-herdr-backend"}
+{"seq":213,"ts":"2026-09-06T17:28:01Z","type":"ack","by":"cursor-committer","seq_done":"211","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":214,"ts":"2026-09-06T17:28:01Z","type":"retire","agent":"review-pr3"}
+{"seq":215,"ts":"2026-09-06T17:32:03Z","type":"spawn","agent":"review-pr6b","kind":"claude","model":"opus","role":"pr-reviewer","pr":"6"}
+{"seq":216,"ts":"2026-09-06T17:32:03Z","type":"prompt","agent":"review-pr6b","ref":".context/handoffs/pr-review-template.md"}
+{"seq":217,"ts":"2026-09-06T17:32:03Z","type":"spawn","agent":"review-pr7b","kind":"claude","model":"opus","role":"pr-reviewer","pr":"7"}
+{"seq":218,"ts":"2026-09-06T17:32:03Z","type":"prompt","agent":"review-pr7b","ref":".context/handoffs/pr-review-template.md"}
+{"seq":219,"ts":"2026-09-06T17:34:44Z","type":"result","agent":"scaffold-hardening","ref":".context/handoffs/scaffold-hardening.md","paths":".context/bin,.githooks,AGENTS.md","summary":"PR 6 merged (#6, squash 2f4cd7b): harden log-driven scaffold vs CodeRabbit findings — NUL-delimited status parsing, portable now(), nanosecond stop-gate; APPROVE, all checks green"}
+{"seq":220,"ts":"2026-09-06T17:34:44Z","type":"retire","agent":"scaffold-hardening"}
+{"seq":221,"ts":"2026-09-06T17:34:44Z","type":"ack","by":"cursor-committer","seq_done":"219","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":222,"ts":"2026-09-06T17:34:44Z","type":"retire","agent":"review-pr6b"}
+{"seq":223,"ts":"2026-09-06T17:49:15Z","type":"result","agent":"pr-tasks-hooks","ref":".context/handoffs/pr-tasks-hooks.md","paths":"src/executor.rs,src/cli.rs,src/state.rs","summary":"PR 7 merged (#7, squash 5fea37c): tasks and hooks — drove run, drove down, auto tasks in drove up; failed-run-not-converged (D18) + CodeRabbit fixes (--json outcomes, resilient check spawn, doc wording); APPROVE at 3681db7, all checks green"}
+{"seq":224,"ts":"2026-09-06T17:49:15Z","type":"retire","agent":"pr-tasks-hooks"}
+{"seq":225,"ts":"2026-09-06T17:49:15Z","type":"ack","by":"cursor-committer","seq_done":"223","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":226,"ts":"2026-09-06T17:49:15Z","type":"retire","agent":"review-pr7b"}
+{"seq":227,"ts":"2026-09-06T18:04:12Z","type":"decision","key":"distribution","value":"dist-0.32+homebrew-tap+crates.io","ref":".context/DECISIONS.md"}
+{"seq":228,"ts":"2026-09-06T18:04:12Z","type":"spawn","agent":"review-pr8","kind":"claude","model":"opus","role":"pr-reviewer","pr":"8"}
+{"seq":229,"ts":"2026-09-06T18:04:12Z","type":"prompt","agent":"review-pr8","ref":".context/handoffs/pr-review-template.md"}
+{"seq":230,"ts":"2026-09-06T18:08:06Z","type":"result","ref":"dist-workspace.toml","paths":"dist-workspace.toml,.github/workflows/release.yml,.github/workflows/publish-crate.yml,Cargo.toml,README.md","summary":"PR 8 merged (#8, squash 048adfb): accessible installs — cargo-dist (binaries+shell/ps/homebrew installers), Homebrew tap auto-publish, crates.io publish workflow, README install paths. Needs CARGO_REGISTRY_TOKEN + HOMEBREW_TAP_TOKEN secrets and a v* tag to release"}
+{"seq":231,"ts":"2026-09-06T18:08:06Z","type":"retire","agent":"review-pr8"}
+{"seq":232,"ts":"2026-09-06T18:08:06Z","type":"ack","by":"cursor-committer","seq_done":"230","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":233,"ts":"2026-09-06T18:33:01Z","type":"result","ref":".context/DECISIONS.md","paths":".context/DECISIONS.md","summary":"Record post-PR8 decisions: distribution (dist+tap+crates.io), thread-resolution, worktree-base=origin/main"}
+{"seq":234,"ts":"2026-09-06T18:33:01Z","type":"ack","by":"cursor-committer","seq_done":"233","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":235,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"v3-design","value":"docs/superpowers/specs/2026-09-06-drove-v3-core-and-flavors-design.md","ref":".context/DECISIONS.md"}
+{"seq":236,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"backend-seam","value":"core-trait+ext-traits+typed-accessor (D27-D28)","ref":".context/DECISIONS.md"}
+{"seq":237,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"action-placement","value":"nested-Action+tagged-Placement+content/topology-digests, IR schema 3 (D29-D30)","ref":".context/DECISIONS.md"}
+{"seq":238,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"dsl-v3","value":"prelude-namespaces+groups+value-refs (D31)","ref":".context/DECISIONS.md"}
+{"seq":239,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"project-target","value":"backend()+herdr.session()+radiator.hub(); flag>env>file>builtin; select.rs (D32-D33)","ref":".context/DECISIONS.md"}
+{"seq":240,"ts":"2026-09-06T19:11:44Z","type":"decision","key":"worker-models","value":"opus-4.8 for PR11/PR13, sonnet otherwise, no fable","ref":".context/DECISIONS.md"}
+{"seq":241,"ts":"2026-09-06T19:12:29Z","type":"result","ref":"docs/superpowers/specs/2026-09-06-drove-v3-core-and-flavors-design.md","paths":"docs/superpowers/specs/2026-09-06-drove-v3-core-and-flavors-design.md,.context/DECISIONS.md","summary":"Drove v3 design: core and flavors (D27-D37); backend seam, nested actions, tagged placement, DSL namespaces, project target, was= rename"}
+{"seq":242,"ts":"2026-09-06T19:12:48Z","type":"ack","by":"cursor-committer","seq_done":"241","origin":"controller","outcome":"committed","ref":"14c0e17","model":"composer-2.5-fast"}
+{"seq":243,"ts":"2026-09-06T19:13:12Z","type":"ack","by":"doc-worker","seq_done":"242","outcome":"skipped","detail":"no documentation change needed"}
+{"seq":244,"ts":"2026-09-06T19:13:26Z","type":"spawn","agent":"pr9-windows","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t2","pane":"w17:p2","role":"pr-worker","pr":"9"}
+{"seq":245,"ts":"2026-09-06T19:13:27Z","type":"prompt","agent":"pr9-windows","ref":".context/handoffs/pr9-windows.md"}
+{"seq":246,"ts":"2026-09-06T19:13:27Z","type":"claim","agent":"pr9-windows","paths":"src/paths.rs,src/planner.rs,.github/workflows/ci.yml,src/main.rs,src/lib.rs"}
+{"seq":247,"ts":"2026-09-06T19:13:31Z","type":"spawn","agent":"pr10-radiator-catchup","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t3","pane":"w17:p3","role":"pr-worker","pr":"10"}
+{"seq":248,"ts":"2026-09-06T19:13:31Z","type":"prompt","agent":"pr10-radiator-catchup","ref":".context/handoffs/pr10-radiator-catchup.md"}
+{"seq":249,"ts":"2026-09-06T19:13:31Z","type":"claim","agent":"pr10-radiator-catchup","paths":"src/backend/radiator.rs"}
+{"seq":250,"ts":"2026-09-06T19:13:35Z","type":"spawn","agent":"pr11-backend-seam","kind":"claude","model":"claude-opus-4-8","workspace":"w17","tab":"w17:t4","pane":"w17:p4","role":"pr-worker","pr":"11"}
+{"seq":251,"ts":"2026-09-06T19:13:35Z","type":"prompt","agent":"pr11-backend-seam","ref":".context/handoffs/pr11-backend-seam.md"}
+{"seq":252,"ts":"2026-09-06T19:13:35Z","type":"claim","agent":"pr11-backend-seam","paths":"src/backend/mod.rs,src/backend/herdr.rs,src/backend/radiator.rs,src/planner.rs,src/ir.rs,src/executor.rs,src/state.rs,src/dsl.rs,src/readiness.rs"}
+{"seq":253,"ts":"2026-09-06T19:13:39Z","type":"spawn","agent":"pr12-backend-select","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t5","pane":"w17:p5","role":"pr-worker","pr":"12"}
+{"seq":254,"ts":"2026-09-06T19:13:39Z","type":"prompt","agent":"pr12-backend-select","ref":".context/handoffs/pr12-backend-select.md"}
+{"seq":255,"ts":"2026-09-06T19:13:39Z","type":"claim","agent":"pr12-backend-select","paths":"src/cli.rs,src/backend/select.rs,src/model.rs,src/dsl.rs,src/backend/mod.rs"}
+{"seq":256,"ts":"2026-09-06T19:16:59Z","type":"progress","agent":"pr9-windows","msg":"BLOCKED then rescoped: D36 bug and tests were deleted in planner v2 (d9ee701), CI comment stale; new scope = restore windows CI leg + normalize cwd in digest input (paths.rs, one call in ir.rs)","ref":".context/handoffs/pr9-windows.md"}
+{"seq":257,"ts":"2026-09-06T19:16:59Z","type":"claim","agent":"pr9-windows","paths":"src/paths.rs,src/ir.rs,.github/workflows/ci.yml,src/main.rs,src/lib.rs"}
+{"seq":258,"ts":"2026-09-06T19:25:07Z","type":"spawn","agent":"review-pr10","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t6","pane":"w17:p6","role":"pr-reviewer","pr":"10"}
+{"seq":259,"ts":"2026-09-06T19:25:07Z","type":"prompt","agent":"review-pr10","ref":".context/handoffs/pr-review-template.md"}
+{"seq":260,"ts":"2026-09-06T19:25:11Z","type":"spawn","agent":"review-pr9","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t7","pane":"w17:p7","role":"pr-reviewer","pr":"9"}
+{"seq":261,"ts":"2026-09-06T19:25:11Z","type":"prompt","agent":"review-pr9","ref":".context/handoffs/pr-review-template.md"}
+{"seq":262,"ts":"2026-09-06T19:27:50Z","type":"spawn","agent":"review-pr11","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:t8","pane":"w17:p8","role":"pr-reviewer","pr":"11"}
+{"seq":263,"ts":"2026-09-06T19:27:50Z","type":"prompt","agent":"review-pr11","ref":".context/handoffs/pr-review-template.md"}
+{"seq":264,"ts":"2026-09-06T19:46:47Z","type":"spawn","agent":"review-pr12","kind":"claude","model":"claude-opus-4-8","workspace":"w17","tab":"w17:t9","pane":"w17:p9","role":"pr-reviewer","pr":"12"}
+{"seq":265,"ts":"2026-09-06T19:46:47Z","type":"prompt","agent":"review-pr12","ref":".context/handoffs/pr-review-template.md"}
+{"seq":266,"ts":"2026-09-06T19:50:15Z","type":"result","agent":"pr10-radiator-catchup","ref":".context/handoffs/pr10-radiator-catchup.md","paths":"src/backend/radiator.rs","summary":"PR #9 merged (squash 48dcd9d): Radiator backend reads hub.capabilities at connect (single-flight, transport failures not cached), metadata+process_info live, journal cleared only after authoritative write, real workspace.rename (D35); APPROVE, all checks green"}
+{"seq":267,"ts":"2026-09-06T19:50:15Z","type":"retire","agent":"pr10-radiator-catchup"}
+{"seq":268,"ts":"2026-09-06T19:50:15Z","type":"ack","by":"cursor-committer","seq_done":"266","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":269,"ts":"2026-09-06T19:50:15Z","type":"retire","agent":"review-pr9"}
+{"seq":270,"ts":"2026-09-06T19:52:57Z","type":"result","agent":"pr12-backend-select","ref":".context/handoffs/pr12-backend-select.md","paths":"src/cli.rs,src/backend/select.rs,src/model.rs,src/dsl.rs,src/backend/mod.rs","summary":"PR #11 merged (squash a9e590a): project declares backend()+herdr.session()+radiator.hub(); precedence flag>env>file>builtin; select.rs factory; CLI reaches Radiator (D32-D33); APPROVE, all checks green"}
+{"seq":271,"ts":"2026-09-06T19:52:57Z","type":"retire","agent":"pr12-backend-select"}
+{"seq":272,"ts":"2026-09-06T19:52:57Z","type":"ack","by":"cursor-committer","seq_done":"270","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":273,"ts":"2026-09-06T19:52:57Z","type":"retire","agent":"review-pr11"}
+{"seq":274,"ts":"2026-09-06T19:59:32Z","type":"result","agent":"pr11-backend-seam","ref":".context/handoffs/pr11-backend-seam.md","paths":"src/backend/mod.rs,src/backend/herdr.rs,src/backend/radiator.rs,src/planner.rs,src/ir.rs,src/executor.rs,src/state.rs,src/dsl.rs,src/readiness.rs,src/cli.rs,src/backend/select.rs,tests/core_module_grep.rs","summary":"PR #12 merged (squash db54ddd): Backend intersection + HerdrExt/RadiatorExt accessors, nested Action{Core,Herdr,Radiator}, tagged Placement, IR schema 3, content/topology digests (D27-D30); APPROVE on 1c57d92, all checks green"}
+{"seq":275,"ts":"2026-09-06T19:59:32Z","type":"retire","agent":"pr11-backend-seam"}
+{"seq":276,"ts":"2026-09-06T19:59:32Z","type":"retire","agent":"review-pr12"}
+{"seq":277,"ts":"2026-09-06T19:59:32Z","type":"ack","by":"cursor-committer","seq_done":"274","origin":"controller","outcome":"skipped","detail":"clean tree (nothing outside .context)"}
+{"seq":278,"ts":"2026-09-06T20:00:07Z","type":"spawn","agent":"pr13-dsl-v3","kind":"claude","model":"claude-opus-4-8","workspace":"w17","tab":"w17:tA","pane":"w17:pA","role":"pr-worker","pr":"13"}
+{"seq":279,"ts":"2026-09-06T20:00:07Z","type":"prompt","agent":"pr13-dsl-v3","ref":".context/handoffs/pr13-dsl-v3.md"}
+{"seq":280,"ts":"2026-09-06T20:00:07Z","type":"claim","agent":"pr13-dsl-v3","paths":"src/dsl.rs,src/model.rs,src/cli.rs,examples/,tests/"}
+{"seq":281,"ts":"2026-09-06T20:00:07Z","type":"spawn","agent":"pr14-was-rename","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:tB","pane":"w17:pB","role":"pr-worker","pr":"14"}
+{"seq":282,"ts":"2026-09-06T20:00:07Z","type":"prompt","agent":"pr14-was-rename","ref":".context/handoffs/pr14-was-rename.md"}
+{"seq":283,"ts":"2026-09-06T20:00:07Z","type":"claim","agent":"pr14-was-rename","paths":"src/model.rs,src/dsl.rs,src/planner.rs,src/state.rs,src/cli.rs"}
+{"seq":284,"ts":"2026-09-06T20:09:04Z","type":"spawn","agent":"review-pr13","kind":"claude","model":"sonnet","workspace":"w17","tab":"w17:tC","pane":"w17:pC","role":"pr-reviewer","pr":"13"}
+{"seq":285,"ts":"2026-09-06T20:09:04Z","type":"prompt","agent":"review-pr13","ref":".context/handoffs/pr-review-template.md"}
+{"seq":286,"ts":"2026-09-06T20:15:05Z","type":"spawn","agent":"review-pr14","kind":"claude","model":"claude-opus-4-8","workspace":"w17","tab":"w17:tD","pane":"w17:pD","role":"pr-reviewer","pr":"14"}
+{"seq":287,"ts":"2026-09-06T20:15:05Z","type":"prompt","agent":"review-pr14","ref":".context/handoffs/pr-review-template.md"}
