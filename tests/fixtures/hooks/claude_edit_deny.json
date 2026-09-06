@@ -1,0 +1,10 @@
+{
+  "session_id": "s-2",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/repo/.context/events.jsonl",
+    "old_string": "{\"seq\":1}",
+    "new_string": "{\"seq\":2}"
+  }
+}

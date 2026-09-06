@@ -1,0 +1,14 @@
+# Commands crafted to slip past the denylist. Every line must be denied.
+# Grows with every bypass found. Lines starting with # are comments.
+cat .context/events.jsonl | tee .context/events.jsonl
+python3 -c "open('.context/events.jsonl','w')"
+env X=1 rm .context/events.jsonl
+bash -c 'rm .context/events.jsonl'
+git checkout -- .context/events.jsonl
+cp /dev/null .context/events.jsonl
+truncate -s0 .context/events.jsonl
+perl -i -pe s/a/b/ .context/events.jsonl
+sed -i '' d .context/events.jsonl
+mv .context/events.jsonl x
+: >| .context/events.jsonl
+eventlog append a b=c && rm .context/events.jsonl

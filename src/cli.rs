@@ -164,14 +164,22 @@ pub enum ReactInner {
 
 #[derive(ClapArgs, Debug)]
 pub struct GuardArgs {
+    /// Which agent's payload shape to expect (default: detect from the shape).
+    #[arg(long, value_enum)]
+    pub agent: Option<crate::guard::Agent>,
+
     #[command(subcommand)]
     pub inner: Option<GuardInner>,
 }
 
 #[derive(Subcommand, Debug)]
 pub enum GuardInner {
-    /// Install the guard hook for an agent.
-    Install,
+    /// Install the guard hook for an agent (default: all three).
+    Install {
+        /// Agent to install for: claude, cursor or codex.
+        #[arg(long, value_enum)]
+        agent: Option<crate::guard::Agent>,
+    },
 }
 
 #[derive(ClapArgs, Debug)]

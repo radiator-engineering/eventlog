@@ -1,0 +1,5 @@
+{
+  "turn_id": "t-1",
+  "tool_name": "shell",
+  "tool_input": { "command": ["bash", "-lc", "truncate -s0 .context/events.jsonl"] }
+}

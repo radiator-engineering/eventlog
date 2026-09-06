@@ -1,0 +1,5 @@
+{
+  "conversation_id": "c-1",
+  "command": "sed -i '' '1d' .context/events.jsonl",
+  "cwd": "/repo"
+}

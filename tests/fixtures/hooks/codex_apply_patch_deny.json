@@ -1,0 +1,7 @@
+{
+  "turn_id": "t-2",
+  "tool_name": "apply_patch",
+  "tool_input": {
+    "input": "*** Begin Patch\n*** Update File: .context/events.jsonl\n@@\n-{\"seq\":1}\n+{\"seq\":9}\n*** End Patch\n"
+  }
+}

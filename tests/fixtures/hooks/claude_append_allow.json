@@ -1,0 +1,6 @@
+{
+  "session_id": "s-3",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": { "command": "append-event.sh result ref=x" }
+}
