@@ -247,7 +247,8 @@ pub fn decide(action: &Action, log_path: &Path) -> Decision {
             if !names_log(command, &base) {
                 return Decision::Allow;
             }
-            if OPERATORS.iter().any(|op| command.contains(op)) {
+            let visible = outside_quotes(command);
+            if OPERATORS.iter().any(|op| visible.contains(op)) {
                 return Decision::Deny(format!(
                     "compound command naming {base} (';', '&&', '||', '|', '$(', backtick or newline); \
                      run the read alone, or append through append-event.sh."
@@ -261,9 +262,62 @@ pub fn decide(action: &Action, log_path: &Path) -> Decision {
     }
 }
 
+/// The command with quoted text removed, so an operator inside a quoted
+/// argument (`jq 'select(.a) | .b' log`) is not read as a shell operator.
+/// Single quotes hide everything; double quotes still expose `$(` and
+/// backticks, which the shell expands inside them.
+fn outside_quotes(command: &str) -> String {
+    let mut out = String::with_capacity(command.len());
+    let mut chars = command.chars().peekable();
+    while let Some(c) = chars.next() {
+        match c {
+            '\\' => {
+                chars.next();
+            }
+            '\'' => {
+                for q in chars.by_ref() {
+                    if q == '\'' {
+                        break;
+                    }
+                }
+            }
+            '"' => {
+                while let Some(q) = chars.next() {
+                    match q {
+                        '"' => break,
+                        '\\' => {
+                            chars.next();
+                        }
+                        '`' => out.push('`'),
+                        '$' if chars.peek() == Some(&'(') => {
+                            chars.next();
+                            out.push_str("$(");
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn operators_inside_quotes_are_not_compound() {
+        assert_eq!(
+            outside_quotes("jq -c 'select(.a) | {b}' .context/events.jsonl"),
+            "jq -c  .context/events.jsonl"
+        );
+        assert_eq!(outside_quotes(r#"grep "a|b" log"#), "grep  log");
+        assert!(outside_quotes(r#"echo "$(cat log)""#).contains("$("));
+        assert!(outside_quotes("echo \"`cat log`\"").contains('`'));
+        assert!(outside_quotes("a 'x' ; b").contains(';'));
+    }
 
     fn log() -> &'static Path {
         Path::new(".context/events.jsonl")

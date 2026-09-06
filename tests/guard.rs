@@ -185,3 +185,19 @@ fn install_keeps_settings_it_did_not_write() {
     let entries = json["hooks"]["PreToolUse"].as_array().unwrap();
     assert_eq!(entries.len(), 2, "{text}");
 }
+
+#[test]
+fn a_pipe_inside_a_quoted_jq_filter_is_a_read_not_a_compound_command() {
+    let cmd = r#"jq -c 'select(.type=="ack") | {seq,outcome}' .context/events.jsonl"#;
+    let action = eventlog::guard::Action::Shell {
+        command: cmd.to_string(),
+    };
+    let dec = eventlog::guard::deny::decide(&action, std::path::Path::new(".context/events.jsonl"));
+    assert_eq!(dec, eventlog::guard::deny::Decision::Allow);
+    let cmd = r#"jq -c 'select(.type=="ack")' .context/events.jsonl | head"#;
+    let action = eventlog::guard::Action::Shell {
+        command: cmd.to_string(),
+    };
+    let dec = eventlog::guard::deny::decide(&action, std::path::Path::new(".context/events.jsonl"));
+    assert!(matches!(dec, eventlog::guard::deny::Decision::Deny(_)));
+}
