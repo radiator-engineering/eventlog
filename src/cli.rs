@@ -186,10 +186,24 @@ pub enum GuardInner {
 pub struct InitArgs {}
 
 #[derive(ClapArgs, Debug)]
-pub struct DoctorArgs {}
+pub struct DoctorArgs {
+    /// Install guards, remove old script symlinks, install the skill.
+    #[arg(long)]
+    pub fix: bool,
+    /// Enable OS-level append-only protection on the log.
+    #[arg(long)]
+    pub protect: bool,
+}
 
 #[derive(ClapArgs, Debug)]
-pub struct ProtectArgs {}
+pub struct ProtectArgs {
+    /// Remove append-only protection.
+    #[arg(long)]
+    pub off: bool,
+    /// Exit 0 when protected, 1 when not.
+    #[arg(long)]
+    pub status: bool,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct SchemaArgs {
