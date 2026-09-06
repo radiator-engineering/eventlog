@@ -1,0 +1,6 @@
+# coordination event log (event-log-coordination)
+.context/events.jsonl
+.context/events.jsonl.lock
+.context/*.reactor.lock/
+.context/layout.json
+.DS_Store
