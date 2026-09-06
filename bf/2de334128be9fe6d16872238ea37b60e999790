@@ -1,0 +1,20 @@
+src/log/append.rs
+  h_63f2916b00d585 76,123-126,138,145-147
+src/model/allow.rs
+  h_63f2916b00d585 70-75,109-111,113-115
+src/model/event.rs
+  h_63f2916b00d585 142-144
+tests/model_allow.rs
+  h_63f2916b00d585 126-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bf2de334128be9fe6d16872238ea37b60e999790",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
