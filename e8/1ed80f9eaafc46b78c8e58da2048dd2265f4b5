@@ -1,0 +1,19 @@
+README.md
+  s_b900e5f0041025::t_397188352531f1 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "e81ed80f9eaafc46b78c8e58da2048dd2265f4b5",
+  "prompts": {},
+  "sessions": {
+    "s_b900e5f0041025": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e772ae9b-8ccb-41e5-86bd-388e981209ec",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
