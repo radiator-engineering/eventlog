@@ -1,0 +1,14 @@
+docs/superpowers/specs/2026-09-06-event-log-cli-design.md
+  h_63f2916b00d585 3-4,36-38,40,51-53,56-97,110-112,131-147,150,158-161,171-172,175-176,178,180-182,185-190,192,194-207,209-210,220-225,228-267,270,272-273,275-278,280-283,289-293,297-299,303-320,322,329-336,340-347
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "20571dc155ed4b57ff2a5be93f4d6515b41a6d1c",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
