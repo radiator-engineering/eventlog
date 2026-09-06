@@ -1,0 +1,19 @@
+research/survey-agent-coordination.md
+  s_8af84e25e0c579::t_4c314e2a9e5753 1-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "7fc3f241434d41edb78c4602c44f8e1eaa00f6f6",
+  "prompts": {},
+  "sessions": {
+    "s_8af84e25e0c579": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "dbc6c87d-6156-443c-8775-2e7c4c64d06f",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
