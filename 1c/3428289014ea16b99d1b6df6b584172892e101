@@ -1,0 +1,22 @@
+docs/explanation/reactor-runtime-switch.md
+  s_fdd8767e720f4e::t_bf24f93ceafb7f 1-43,48-70
+  s_fdd8767e720f4e::t_1af3f17565727c 44-47
+README.md
+  s_fdd8767e720f4e::t_83c9a0377f7cf3 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1c3428289014ea16b99d1b6df6b584172892e101",
+  "prompts": {},
+  "sessions": {
+    "s_fdd8767e720f4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f2714d3-08cd-4f32-80a1-db1469601937",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
