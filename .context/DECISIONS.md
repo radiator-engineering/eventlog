@@ -12,10 +12,24 @@ Sanctioned writers:
 - the **doc worker** reactor (`by=doc-worker`: `result` for its doc edits,
   plus its own `ack`/`escalate`).
 
-Breach = any `by=` value outside {`controller`, `cursor-committer`, `doc-worker`}.
+- **research workers** (2026-09-06, user's request): a spawned research
+  worker whose brief in `.context/handoffs/` grants it may append `progress`,
+  `result` and `escalate` tagged `by=<its name>`, only through
+  `append-event.sh`. The controller still records `spawn`, `prompt`, `claim`
+  and `retire`, and the committer ignores `result by=<worker>`; the controller
+  reviews the report and appends its own `result` to land it. Current grant:
+  `logact-deep-read`, `survey-event-sourcing`, `survey-agent-coordination`.
+- **build workers** (2026-09-06, eventlog CLI plan): the same grant applies to
+  every worker spawned from `docs/superpowers/plans/2026-09-06-eventlog-cli.md`.
+  Their names start with `build-`; each brief in `.context/handoffs/build-*.md`
+  repeats the grant. Types allowed: `progress`, `result`, `escalate`.
+
+Breach = any `by=` value outside {`controller`, `cursor-committer`,
+`doc-worker`} plus the workers whose briefs grant it, or a `by=` worker line
+of a type other than `progress`, `result`, `escalate`.
 
 Breach check:
-`jq -c 'select(.by != null and (.by|IN("controller","cursor-committer","doc-worker")|not))' .context/events.jsonl`
+`jq -c 'select(.by != null and (.by|(IN("controller","cursor-committer","doc-worker","logact-deep-read","survey-event-sourcing","survey-agent-coordination") or startswith("build-"))|not))' .context/events.jsonl`
 
 ## commit-agent = cursor-commit-reactor + composer-2.5-fast (autonomous)
 Commits are landed by an **autonomous reactor**, `.context/bin/cursor-commit-reactor.sh`,
@@ -71,7 +85,45 @@ environment so headless Claude uses the claude.ai login (`DOC_USE_API_KEY=1`
 keeps the key). The prompt is piped on stdin because `--allowedTools` is
 variadic and swallows a trailing positional prompt.
 
-## log = OS-protected (append-only)
-`.context/events.jsonl` is `chflags uappnd` / `chattr +a` protected when
-`setup.sh --protect` was used, so a non-Claude agent cannot rewrite or delete
-it; `>>` appends still succeed.
+## log = not OS-protected (opt-in pending)
+`.context/events.jsonl` is guarded only by the Claude PreToolUse hook. It is
+not `chflags uappnd` / `chattr +a` protected: `setup.sh --protect` has not been
+run, so a non-Claude agent (the Cursor committer included) could still rewrite
+or delete it. Opt in with `setup.sh --protect` or
+`safety-check.sh --protect .context/events.jsonl`; `>>` appends keep working
+afterwards, and `protect-log.sh --unprotect` lifts it.
+
+## model-contract = src/model as landed by result seq 83
+The public items in `src/model/{event,config,vocab,allow,paths}.rs` are the
+contract every later eventlog task builds against (plan
+`docs/superpowers/plans/2026-09-06-eventlog-cli.md`, Task 2). A worker that
+needs a signature changed appends `escalate`; the controller makes the change
+and records it. Later contracts (`query-contract`, `react-contract`) follow the
+same rule.
+
+## cli-args-ownership = each command task owns its own Args struct
+Task 1 scaffolded `src/cli.rs` with empty `<Cmd>Args` structs. A command task
+may add fields to its own `<Cmd>Args` struct only, with a targeted edit (never
+a whole-file rewrite, since several workers share the file). The `Command`
+enum, the global flags and every other struct stay frozen; changes there go
+through `escalate`. Recorded after build-schema edited `SchemaArgs` (seq of the
+violation event precedes this decision).
+
+## append-strict-context = append takes a StrictContext trait
+Plan Task 4 had `append` take a fold callback returning `query::State`, which
+Task 9 builds in parallel; that import broke the build for every worker. The
+`log` module must not depend on `query`. `src/log/append.rs` defines
+`pub trait StrictContext` with exactly the queries its strict rules need
+(allowlist at tip, agent open or not, claim owner of a path, open escalations),
+takes `Option<&dyn StrictContext>`, and Task 6 (`build-append-cmd`) implements
+the trait for `query::State` in `src/cmd/append.rs`.
+
+## query-contract = src/query/mod.rs as landed by result seq 161
+Same rule as `model-contract`: the public items in `src/query/mod.rs` are
+frozen for Tasks 10-13. Change requests go through `escalate`.
+
+## react-contract = src/react as landed by result seq 283
+Same rule as `model-contract`: the public items in `src/react/{mod,lock,voter,action}.rs`
+(`ReactorConfig`, `Steps`, `Reactor`, `ReactorLock`, `supervise`, the voter and
+action functions) are frozen for Task 17 (`build-react-cmd`). Change requests go
+through `escalate`.
