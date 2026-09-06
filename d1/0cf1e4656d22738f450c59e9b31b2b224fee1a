@@ -1,0 +1,19 @@
+docs/superpowers/plans/2026-09-06-eventlog-cli.md
+  s_9d6772a5fa1484::t_3008d34ca9a0e6 303-309,312,336
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "d10cf1e4656d22738f450c59e9b31b2b224fee1a",
+  "prompts": {},
+  "sessions": {
+    "s_9d6772a5fa1484": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "de8cfdc9-ec2c-4185-8ede-99cac9853291",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
