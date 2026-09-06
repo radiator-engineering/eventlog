@@ -1,0 +1,25 @@
+docs/explanation/lock-reclaim.md
+  s_25733a3eeb18d3::t_1cba3e04a9b6d0 1-64
+README.md
+  s_25733a3eeb18d3::t_dfa21b4eb28aef 17-18,20
+docs/reference/model-contract.md
+  s_25733a3eeb18d3::t_427e4117d7b0ea 158
+docs/reference/log-module.md
+  s_25733a3eeb18d3::t_f59208af748c99 1-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c251a2ea019b58a1299647d1bddb3389c58e796b",
+  "prompts": {},
+  "sessions": {
+    "s_25733a3eeb18d3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bdfb580-7f41-4f50-9972-c40b17fb4eee",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
