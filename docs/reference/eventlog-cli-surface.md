@@ -2,9 +2,10 @@
 
 Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 `schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
-([reference](claims.md)), and `open` ([reference](open.md)) are implemented,
-the rest still print `eventlog <name>: not implemented` to stderr and exit
-1. `append`'s underlying library function is implemented
+([reference](claims.md)), `open` ([reference](open.md)), and `agents`,
+`state`, `why` ([reference](query-commands.md)) are implemented, the rest
+still print `eventlog <name>: not implemented` to stderr and exit 1.
+`append`'s underlying library function is implemented
 ([reference](append.md)), but the `eventlog append` command itself is not
 wired up yet. This page documents the frozen command set so later tasks can
 fill in behavior without changing names or flags.
@@ -26,9 +27,9 @@ Every command accepts:
 | `vocab` | Show required and optional fields per event type. |
 | `verify` | Walk the hash chain and report the first break. |
 | `view` | Print log rows, optionally following new ones ([reference](view.md)). |
-| `agents` | Per-agent lifecycle table. |
-| `state` | Folded state as of a sequence number. |
-| `why` | Explain how one event was acted on. |
+| `agents` | Per-agent lifecycle table ([reference](query-commands.md)). |
+| `state` | Folded state as of a sequence number ([reference](query-commands.md)). |
+| `why` | Explain how one event was acted on ([reference](query-commands.md)). |
 | `claims` | Report files a worker's claim does not cover ([reference](claims.md)). Hidden alias: `check-claims`. |
 | `open` | Open an event's ref in `$EDITOR` or `$PAGER` ([reference](open.md)). |
 | `tui` | Interactive terminal UI over the log. |
@@ -63,4 +64,5 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [View](view.md) — filtered, colored log display with follow mode.
 - [Claims](claims.md) — compare changed files against an agent's live claims.
 - [Open](open.md) — open an event's ref in `$EDITOR` or `$PAGER`.
+- [Query commands](query-commands.md) — `agents`, `state`, and `why`.
 - [Append](append.md) — the `append` library function; the CLI command is still a stub.
