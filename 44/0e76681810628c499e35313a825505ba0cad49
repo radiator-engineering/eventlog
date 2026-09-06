@@ -1,0 +1,25 @@
+docs/reference/append.md
+  s_03bca68697fb13::t_2b9ee0a09eaf5b 67-70
+  s_03bca68697fb13::t_681de6adcfc7e1 61-66
+  s_03bca68697fb13::t_00a28621adfc25 54
+docs/reference/model-contract.md
+  s_03bca68697fb13::t_07091b97f7cb49 27
+  s_03bca68697fb13::t_44b39f7c06cb32 107-119
+  s_03bca68697fb13::t_19be9d7504b7af 151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "440e76681810628c499e35313a825505ba0cad49",
+  "prompts": {},
+  "sessions": {
+    "s_03bca68697fb13": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b2e15f0-7e66-4cf2-a0f7-4fee8285d311",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
