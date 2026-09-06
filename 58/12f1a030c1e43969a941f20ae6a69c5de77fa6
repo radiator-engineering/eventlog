@@ -1,0 +1,19 @@
+README.md
+  s_126431f316e478::t_be6c370c50aacb 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "5812f1a030c1e43969a941f20ae6a69c5de77fa6",
+  "prompts": {},
+  "sessions": {
+    "s_126431f316e478": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f0f4e50c-bfb6-429e-beee-3cb17631f9a9",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
