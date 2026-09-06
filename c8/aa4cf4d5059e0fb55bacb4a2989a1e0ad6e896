@@ -1,0 +1,19 @@
+src/lib.rs
+  s_d94242a56b5808::t_09d0f4b02071f4 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c8aa4cf4d5059e0fb55bacb4a2989a1e0ad6e896",
+  "prompts": {},
+  "sessions": {
+    "s_d94242a56b5808": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7d3e518c-1d7f-46fd-a706-b79cbf2bd492",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
