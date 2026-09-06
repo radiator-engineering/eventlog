@@ -31,6 +31,7 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `docs/reference/react-lock.md` — `src/react/lock.rs`: `Token` and `ReactorLock`, the pid/start-time/hostname/boot-id lock a reactor holds for as long as it runs.
 - `docs/explanation/reactor-lock-liveness.md` — why the reactor lock checks more than a pid.
 - `docs/reference/react-command.md` — `src/cmd/react.rs`: `eventlog react` and `eventlog react test`, wiring the reactor loop to the rule voter and the action runner.
+- `docs/explanation/reactor-runtime-switch.md` — why this repo's own `.context/bin/run-reactor.sh` now dispatches to `eventlog react` by default (`REACTOR_RUNTIME`, shell loop as fallback), and why the doc worker appends its own `result` and then skips the ack that result's own commit produces.
 - `docs/reference/tui.md` — `eventlog tui`: the live terminal UI, its follow/agents/state/why panes, key bindings, and filtering.
 - `docs/reference/guard.md` — `eventlog guard` and `eventlog guard install`: parsing Claude, Cursor, and Codex hook payloads and judging them against the one denylist.
 - `docs/explanation/guard-fail-modes.md` — why the guard fails open on non-JSON but closed on an unrecognized payload shape, and why the sanctioned-writer check parses command shape instead of matching a substring.
