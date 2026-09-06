@@ -1,0 +1,95 @@
+.context/handoffs/bootstrap.md
+  s_f37cc1e1350569::t_e303694350025f 74-83
+.context/research/README.md
+  s_f37cc1e1350569::t_5f86e261d7d0cf 1-45
+.context/research/recon-herdr-api-report.md
+  s_f37cc1e1350569::t_4db06c3c8f0919 1-300
+.context/research/recon-setup-skill-report.md
+  s_f37cc1e1350569::t_324375d6a9c1a3 1-173
+.context/research/samples/EVENTLOG.md
+  s_f37cc1e1350569::t_5903d7aa182bfc 1-53
+.context/research/samples/drove-events.jsonl
+  s_f37cc1e1350569::t_a5108400c0248e 1-287
+.context/research/samples/drove-log-driven.Drovefile
+  s_f37cc1e1350569::t_55993d47f1057d 1-39
+.context/research/setup-log-driven-workspace/SKILL.md
+  s_f37cc1e1350569::t_7ecd8eb05f92b7 1-187
+.context/research/setup-log-driven-workspace/scripts/agent-since.sh
+  s_f37cc1e1350569::t_42a9b71c54589f 1-27
+.context/research/setup-log-driven-workspace/scripts/layout.sh
+  s_f37cc1e1350569::t_cbd56831cf5f01 1-200
+.context/research/setup-log-driven-workspace/scripts/setup.sh
+  s_f37cc1e1350569::t_5f7bf31856f6b1 1-214
+.context/research/setup-log-driven-workspace/scripts/status.sh
+  s_f37cc1e1350569::t_ed7dea4fe5c1ed 1-58
+.context/research/setup-log-driven-workspace/scripts/teardown.sh
+  s_f37cc1e1350569::t_66a71d8bce3dd4 1-71
+.context/research/setup-log-driven-workspace/templates/CONTROLLER.md
+  s_f37cc1e1350569::t_c0f03ad22e1c8d 1-33
+.context/research/setup-log-driven-workspace/templates/DECISIONS.md
+  s_f37cc1e1350569::t_6f0a3decd0c6e0 1-77
+.context/research/setup-log-driven-workspace/templates/agentsview-follow
+  s_f37cc1e1350569::t_935c0aa8303716 1-64
+.context/research/setup-log-driven-workspace/templates/commit-msg
+  s_f37cc1e1350569::t_bb81a08eced6b0 1-14
+.context/research/setup-log-driven-workspace/templates/controller-stop-hook.sh
+  s_f37cc1e1350569::t_a427c12f086ae6 1-51
+.context/research/setup-log-driven-workspace/templates/cursor-commit-reactor.sh
+  s_f37cc1e1350569::t_ac921502a4208c 1-200
+.context/research/setup-log-driven-workspace/templates/cursor-committer.md
+  s_f37cc1e1350569::t_bd43bf1f13a6d9 1-48
+.context/research/setup-log-driven-workspace/templates/doc-sync-reactor.sh
+  s_f37cc1e1350569::t_c6457b1e0a8358 1-164
+.context/research/setup-log-driven-workspace/templates/doc-worker.md
+  s_f37cc1e1350569::t_73f20bb7243c94 1-53
+.context/research/setup-log-driven-workspace/templates/run-reactor.sh
+  s_f37cc1e1350569::t_bff83bfcef59de 1-53
+skill/event-log-coordination/.gitignore
+  s_f37cc1e1350569::t_c1bac585d0805b 1-3
+skill/event-log-coordination/README.md
+  s_f37cc1e1350569::t_fe83df8ced42ab 1-167
+skill/event-log-coordination/SKILL.md
+  s_f37cc1e1350569::t_0a5cd6f1d66fd3 1-356
+skill/event-log-coordination/references/herdr-integration.md
+  s_f37cc1e1350569::t_93bc9cd395a533 1-74
+skill/event-log-coordination/references/log-reactors.md
+  s_f37cc1e1350569::t_4b9f67c1d23a63 1-115
+skill/event-log-coordination/references/reactor-example.sh
+  s_f37cc1e1350569::t_be6ace9c9d4a97 1-93
+skill/event-log-coordination/scripts/append-event.sh
+  s_f37cc1e1350569::t_e1aab2dba2f13c 1-84
+skill/event-log-coordination/scripts/check-claims.sh
+  s_f37cc1e1350569::t_159565357fcab1 1-85
+skill/event-log-coordination/scripts/eventlog-guard.sh
+  s_f37cc1e1350569::t_6b1ad1076c8fa9 1-94
+skill/event-log-coordination/scripts/eventlog-view.sh
+  s_f37cc1e1350569::t_5a39844f7e714d 1-197
+skill/event-log-coordination/scripts/init-eventlog.sh
+  s_f37cc1e1350569::t_53b4999e55b521 1-114
+skill/event-log-coordination/scripts/install-guard.sh
+  s_f37cc1e1350569::t_b865e29a24c3a8 1-73
+skill/event-log-coordination/scripts/link-scripts.sh
+  s_f37cc1e1350569::t_bb9eeab028e7d7 1-23
+skill/event-log-coordination/scripts/protect-log.sh
+  s_f37cc1e1350569::t_813df781cade73 1-47
+skill/event-log-coordination/scripts/safety-check.sh
+  s_f37cc1e1350569::t_600e0875346130 1-107
+skill/event-log-coordination/scripts/setup.sh
+  s_f37cc1e1350569::t_4db754198e04bc 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "eedf5a534172a4de6aa702d5b3e73f7dda03e20a",
+  "prompts": {},
+  "sessions": {
+    "s_f37cc1e1350569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a7849e9-7c44-47c6-9234-07e888a6fea6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
