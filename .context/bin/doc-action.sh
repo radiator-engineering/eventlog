@@ -4,7 +4,8 @@
 # The runtime owns the lock, the resume point, the intent, the voter and the
 # ack. This script is only the pass: hand the commits that just landed to
 # headless Claude with the documentation-writer skill, then report how many doc
-# files changed. It NEVER touches the log and never runs git commit.
+# files changed, then appends its own `result by=doc-worker` so the committer
+# lands the edits. It never runs git commit.
 #
 # Run it as:
 #   eventlog react --as doc-worker --on ack --filter by=cursor-committer \
@@ -32,6 +33,17 @@ report() { printf '%s\n' "$@" > "$OUT"; }
 command -v claude >/dev/null || {
   report "outcome=skipped" "detail=claude not on PATH"; exit 0; }
 [ -n "$SHAS" ] || { report "outcome=skipped" "detail=driving event carried no commit ref"; exit 0; }
+
+# Loop guard: the committer's ack for one of OUR results must not drive another
+# pass. The driving ack names the result it landed in seq_done; skip when that
+# result was written by doc-worker.
+EVENT="$(cat)"
+LOGFILE="${EVENTLOG_LOG:-$REPO/.context/events.jsonl}"
+SEQ_DONE="$(jq -r '.seq_done // empty' <<<"$EVENT" 2>/dev/null)"
+if [ -n "$SEQ_DONE" ]; then
+  drv_by="$(jq -r --argjson s "$SEQ_DONE" 'select(.seq==$s) | .by // ""' "$LOGFILE" 2>/dev/null | tail -1)"
+  [ "$drv_by" = doc-worker ] && { report "outcome=skipped" "detail=doc commit (origin=doc-worker); loop guard"; exit 0; }
+fi
 
 # Files already dirty under the doc roots, so only this pass's edits count.
 dirty_docs() {
@@ -84,7 +96,14 @@ changed="$(comm -13 <(printf '%s\n' "$before") <(printf '%s\n' "$after") | grep 
 
 if [ -n "$changed" ]; then
   n="$(printf '%s\n' "$changed" | grep -c .)"
-  report "outcome=updated" "files=$n" "ref=$SHAS" "model=$DOC_MODEL" "paths=$(printf '%s\n' "$changed" | paste -sd, -)"
+  plist="$(printf '%s\n' "$changed" | paste -sd, -)"
+  first="$(printf '%s\n' "$changed" | head -1)"
+  # Report as a real worker: the committer reacts to this result, with its
+  # scope cut to the claim the controller recorded for doc-worker.
+  eventlog append --as doc-worker result agent=doc-worker ref="$first" paths="$plist" \
+    summary="docs synced to $SHAS ($n file(s))" >/dev/null \
+    || { report "outcome=failed" "detail=edited $n file(s) but could not append result by=doc-worker"; exit 0; }
+  report "outcome=updated" "files=$n" "ref=$SHAS" "model=$DOC_MODEL" "paths=$plist"
 elif [ "$rc" -ne 0 ]; then
   report "outcome=skipped" "detail=claude failed (rc=$rc)"
 else

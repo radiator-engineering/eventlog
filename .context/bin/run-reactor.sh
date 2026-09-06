@@ -23,6 +23,19 @@ case "$NAME" in
   doc-sync-reactor)      BY=doc-worker ;;
   *)                     BY="$NAME" ;;
 esac
+# REACTOR_RUNTIME=eventlog (workspace.env): hand the loop to the Rust runtime,
+# which owns the lock, resume, intent, voter, ack and its own supervision. The
+# shell loop below stays as the fallback (REACTOR_RUNTIME=shell).
+[ -f "$HERE/../workspace.env" ] && . "$HERE/../workspace.env"
+if [ "${REACTOR_RUNTIME:-eventlog}" = eventlog ]; then
+  command -v eventlog >/dev/null || { echo "supervisor: eventlog not on PATH (cargo install --path .)" >&2; exit 2; }
+  case "$BY" in
+    cursor-committer) exec eventlog react --as cursor-committer --on result --git \
+                        --timeout "${PASS_TIMEOUT:-300}s" -- bash "$HERE/commit-action.sh" ;;
+    doc-worker)       exec eventlog react --as doc-worker --on ack --filter by=cursor-committer \
+                        --filter outcome=committed --timeout "${PASS_TIMEOUT:-300}s" -- bash "$HERE/doc-action.sh" ;;
+  esac
+fi
 PAUSE="${SUPERVISOR_PAUSE:-5}"
 MAX_RAPID="${SUPERVISOR_MAX_RAPID:-5}"   # this many crashes inside RAPID_WINDOW s => stop, something is wrong
 RAPID_WINDOW=120

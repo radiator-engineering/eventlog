@@ -127,3 +127,16 @@ Same rule as `model-contract`: the public items in `src/react/{mod,lock,voter,ac
 (`ReactorConfig`, `Steps`, `Reactor`, `ReactorLock`, `supervise`, the voter and
 action functions) are frozen for Task 17 (`build-react-cmd`). Change requests go
 through `escalate`.
+
+## reactor-runtime = eventlog react (Phase 3 switch, 2026-09-06)
+`run-reactor.sh` reads `REACTOR_RUNTIME` from `workspace.env`; with `eventlog`
+(the default) it execs `eventlog react --as cursor-committer --on result --git
+-- commit-action.sh` and `eventlog react --as doc-worker --on ack --filter
+by=cursor-committer --filter outcome=committed -- doc-action.sh`. The Rust
+runtime owns lock, resume, intent, voter, ack and supervision; the shell loops
+stay as the `shell` fallback. The doc action appends its own
+`result by=doc-worker` through `eventlog append` (spec section 7 allows a
+reactor's own result; the committer cuts its scope to the doc-worker claim at
+seq 337) and skips when the driving ack landed a doc-worker result (loop
+guard, replacing the old `origin=` field). `layout.sh` is unchanged: it still
+runs `run-reactor.sh`, which now dispatches.
