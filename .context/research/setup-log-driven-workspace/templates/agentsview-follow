@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Follow the most recently active agentsview session and print each new
+# message as a one-line entry. Re-targets when a newer session becomes active.
+#
+#   AGENTSVIEW_FOLLOW_POLL   seconds between "is there a newer session" checks (default 10)
+#   AGENTSVIEW_FOLLOW_WIDTH  max chars of message text per line (default 150)
+set -u
+POLL="${AGENTSVIEW_FOLLOW_POLL:-10}"
+WIDTH="${AGENTSVIEW_FOLLOW_WIDTH:-150}"
+ESC=$'\033'
+current=""; watch_pid=""
+
+newest() {
+  agentsview session list --resume --limit 1 --json 2>/dev/null \
+    | jq -r '.sessions[0] | select(. != null) | "\(.id)\t\(.agent)\t\(.project)\t\(.first_message // "")"'
+}
+
+# Print messages of $1 with ordinal > $2 (display goes to stderr); echo the new last ordinal.
+print_new() {
+  local id="$1" last="$2" json newlast
+  json=$(agentsview session messages "$id" --from $((last + 1)) --direction asc --limit 50 --json 2>/dev/null)
+  [ -z "$json" ] && { echo "$last"; return; }
+  printf '%s' "$json" | jq -r --arg esc "$ESC" --argjson w "$WIDTH" '
+      .messages[]?
+      | ( .timestamp // .created_at // "" | tostring | .[11:19] ) as $t
+      | ( if .role == "user" then "[1;32m" elif .role == "assistant" then "[1;34m" else "[1;35m" end ) as $c
+      | ( (.content // .text // "") | tostring | gsub("[\n\r\t]+"; " ") | gsub(" +"; " ") | .[0:$w] ) as $body
+      | "\($t) \($esc)\($c)\(.role|.[0:9]|ascii_upcase)\($esc)[0m \($body)"' >&2
+  newlast=$(printf '%s' "$json" | jq -r '[.messages[]?.ordinal] | max // empty')
+  echo "${newlast:-$last}"
+}
+
+follow() {
+  local id="$1" last=-1
+  # Show the tail of what already happened, then stream new updates.
+  last=$(agentsview session messages "$id" --direction desc --limit 1 --json 2>/dev/null | jq -r '.last_ordinal // -1')
+  [ "$last" -gt 6 ] && last=$((last - 6))
+  last=$(print_new "$id" "$last")
+  agentsview session watch "$id" 2>/dev/null | while IFS= read -r ev; do
+    case "$ev" in *'"event":"session_updated"'*|*'"event":"message'*)
+      last=$(print_new "$id" "$last") ;;
+    esac
+  done
+}
+
+stop_watch() { [ -n "$watch_pid" ] && { pkill -P "$watch_pid" 2>/dev/null; kill "$watch_pid" 2>/dev/null; }; watch_pid=""; }
+trap 'stop_watch; exit 0' INT TERM
+
+while :; do
+  line="$(newest)"
+  id="${line%%$'\t'*}"
+  if [ -n "$id" ] && [ "$id" != "$current" ]; then
+    stop_watch
+    current="$id"
+    IFS=$'\t' read -r _ agent project title <<<"$line"
+    printf '\n%s[1;36m== %s  following %s | %s | %s%s[0m\n' "$ESC" "$(date +%H:%M:%S)" "$agent" "$project" "${title:0:70}" "$ESC"
+    printf '%s[2m   %s%s[0m\n' "$ESC" "$id" "$ESC"
+    follow "$id" &
+    watch_pid=$!
+  elif [ -z "$id" ] && [ -z "$current" ]; then
+    printf '\r%s[2m%s  no session active in the last 15 min...%s[0m' "$ESC" "$(date +%H:%M:%S)" "$ESC"
+  fi
+  sleep "$POLL"
+done

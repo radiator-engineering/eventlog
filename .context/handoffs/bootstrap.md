@@ -71,11 +71,16 @@ binary; spec it whole, plan it in phases.
 
 ## Pointers
 
-- Existing scripts to replace: `~/.claude/skills/event-log-coordination/scripts/`
-  (`append-event.sh` is the format authority: seq, ts, mkdir lock, 2 KB field
-  and 4 KB event caps, `--log PATH`, `EVENTLOG_PATH`).
-- Reactor rules: `~/.claude/skills/event-log-coordination/references/log-reactors.md`.
-- A real 280-event log to test against: `~/Development/Drove/.context/events.jsonl`.
+Everything below is inside this repo; start with `.context/research/README.md`.
+
+- The skill to replace and version: `skill/event-log-coordination/` (copied
+  from `github.com/radiator-engineering/event-log-coordination` at `6d9dac4`).
+  `scripts/append-event.sh` is the format authority: seq, ts, mkdir lock, 2 KB
+  field and 4 KB event caps, `--log PATH`, `EVENTLOG_PATH`.
+- Reactor rules: `skill/event-log-coordination/references/log-reactors.md`; the
+  reactors in real use: `.context/research/setup-log-driven-workspace/templates/`.
+- Research reports and findings: `.context/research/`.
+- A real 283-event log to test against: `.context/research/samples/drove-events.jsonl`.
 - Drove's Drovefile reference: `~/Development/Drove/docs/drovefile.md`. This
   repo's own `Drovefile` starts the workspace you are in.
 - Drove's release setup to copy for distribution: `~/Development/Drove/dist-workspace.toml`

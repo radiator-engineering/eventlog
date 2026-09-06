@@ -1,0 +1,3 @@
+*.bak.*
+.context/events.jsonl.lock
+.DS_Store
