@@ -1,0 +1,19 @@
+docs/reference/query-module.md
+  s_a649f829a6c304::t_2dc6cbf58aba14 1-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "15082f01ca998605cd420fd01d3a75295d860f5f",
+  "prompts": {},
+  "sessions": {
+    "s_a649f829a6c304": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b2b8bb-3206-4ee2-97ab-75e62e766f22",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
