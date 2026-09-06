@@ -1,0 +1,16 @@
+Drovefile
+  h_63f2916b00d585 3-5,8-9,13-14,19,21,23,27-28,30,32-33
+drove/reactors.star
+  h_63f2916b00d585 1-7,9-15,17,20-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "dd93b1435aaaf1f26740b55411671d72b2381397",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
