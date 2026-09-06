@@ -1,4 +1,4 @@
-# Why the guard fails open on non-JSON, closed on an unknown shape, and checks command shape instead of a substring
+# Why the guard fails open on non-JSON, closed on an unknown shape, checks command shape instead of a substring, and ignores operators inside quotes
 
 [`eventlog guard`](../reference/guard.md) sits in the hot path of every tool
 call an agent makes. Two design choices keep it safe without making it
@@ -44,3 +44,23 @@ the sanctioned binary's name and still deletes the log. Requiring the
 binary to be argv[0] of a command with no operators closes that gap,
 because a compound command by definition has more than one command in it,
 and the sanctioned-writer exemption only ever covers exactly one.
+
+## Why an operator inside quotes is not compound
+
+`decide` used to scan a `Shell` command's full text for `;`, `&&`, `||`,
+`|`, `$(`, a backtick, or a newline, and denied on a match. That broke the
+one read the coordination workflow recommends for filtering the log: a
+quoted `jq` filter such as `jq -c 'select(.type=="ack") | {seq}'
+.context/events.jsonl`. The `|` sits inside the single-quoted filter
+argument, where the shell treats it as a literal character, not a pipe.
+The guard denied the command anyway, because it read the text, not what
+the shell would run.
+
+`decide` now scans only `outside_quotes(command)`, which strips quoted
+text before the operator check. A single-quoted span hides everything
+between the quotes, since the shell never expands anything inside single
+quotes. A double-quoted span keeps `` ` `` and `$(`, because the shell
+still expands a backtick or a command substitution inside double quotes,
+so a command hidden that way must still be caught. This makes the check
+match what the shell itself would treat as one command instead of
+flagging any command that merely mentions an operator character.

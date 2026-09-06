@@ -5,7 +5,7 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 ## What is in this repo
 
 - `skill/event-log-coordination/` — the skill source: the append-only log helpers, the PreToolUse guard, and the reactor references.
-- `.context/` — this repo's own coordination log, decisions, worker briefs and reactor scripts. The repo runs on the tool it ships.
+- `.context/` — this repo's own coordination log, decisions, worker briefs and reactor scripts. The repo runs on the tool it ships: `eventlog guard` hooks are installed for Claude (`.claude/settings.json`), Cursor (`.cursor/hooks.json`), and Codex (`.codex/hooks.json`), so every edit and shell command an agent runs here passes through the guard.
 - `Drovefile` and `drove/reactors.star` — the herdr layout that places the controller, the log view and the two reactors.
 - `research/` — prior-art reports that back the coordination design (event sourcing, multi-agent coordination, the LogAct paper), indexed in `research/README.md`.
 - `docs/superpowers/specs/` — design specs for tools this repo will ship. `2026-09-06-event-log-cli-design.md` is the approved design for `eventlog`, the Rust binary that will replace the shell toolkit above: log format, config, module layout, commands, and the reactor runtime with intent and veto.
@@ -34,7 +34,7 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `docs/explanation/reactor-runtime-switch.md` — why this repo's own `.context/bin/run-reactor.sh` now dispatches to `eventlog react` by default (`REACTOR_RUNTIME`, shell loop as fallback), and why the doc worker appends its own `result` and then skips the ack that result's own commit produces.
 - `docs/reference/tui.md` — `eventlog tui`: the live terminal UI, its follow/agents/state/why panes, key bindings, and filtering.
 - `docs/reference/guard.md` — `eventlog guard` and `eventlog guard install`: parsing Claude, Cursor, and Codex hook payloads and judging them against the one denylist.
-- `docs/explanation/guard-fail-modes.md` — why the guard fails open on non-JSON but closed on an unrecognized payload shape, and why the sanctioned-writer check parses command shape instead of matching a substring.
+- `docs/explanation/guard-fail-modes.md` — why the guard fails open on non-JSON but closed on an unrecognized payload shape, why the sanctioned-writer check parses command shape instead of matching a substring, and why an operator inside quoted text (a piped `jq` filter) is not compound.
 - `docs/reference/skill.md` — `eventlog skill install`: writing the embedded coordination skill to disk with a version stamp; `eventlog completions`: generating shell completion scripts.
 - `docs/reference/scaffold.md` — `eventlog init`, `doctor`, and `protect`: scaffolding `.context/`, diagnosing setup problems, and toggling OS-level append-only protection on the log.
 

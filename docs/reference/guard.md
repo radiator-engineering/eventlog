@@ -61,7 +61,9 @@ pub fn decide(action: &Action, log_path: &Path) -> Decision;
 - An `Edit` or `Write` whose path names the log.
 - A `Shell` command that names the log and is not the sanctioned writer,
   when that command is either compound (`;`, `&&`, `||`, `|`, `$(`,
-  backtick, or a newline) or carries one of these mutating shapes:
+  backtick, or a newline, found outside quoted text — a `|` inside a
+  quoted `jq` filter is not a pipe) or carries one of these mutating
+  shapes:
   - `rm`, `mv`, `cp`, `truncate`, `shred`, or `dd` naming the log.
   - A truncating redirect (`>` or `>|`, not `>>`) into the log.
   - An in-place edit (`sed -i`, `perl -i`, `ruby -i`) of the log.
@@ -73,7 +75,8 @@ Everything else — reads, and any command that never names the log — is
 `Decision::Allow`. `is_simple_sanctioned_writer` names the one exemption:
 a single command with no operator, redirect, or `&`, whose argv[0] (after
 stripping a leading path) is `eventlog` or `append-event.sh`. See
-[why that exemption checks command shape, not a substring match](../explanation/guard-fail-modes.md).
+[why that exemption checks command shape, not a substring match, and why
+an operator inside quotes is not compound](../explanation/guard-fail-modes.md).
 
 ## `eventlog guard` — the command
 
@@ -136,5 +139,5 @@ cargo test
 
 ## See also
 
-- [Why the guard fails open on non-JSON and closed on an unknown shape, and why the sanctioned-writer check parses shape instead of matching a substring](../explanation/guard-fail-modes.md)
+- [Why the guard fails open on non-JSON, closed on an unknown shape, checks shape instead of matching a substring, and ignores operators inside quotes](../explanation/guard-fail-modes.md)
 - [eventlog CLI surface](eventlog-cli-surface.md) — where `guard` sits among the other commands.
