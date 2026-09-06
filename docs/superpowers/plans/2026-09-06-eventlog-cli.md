@@ -300,10 +300,16 @@ Spec sections 3, 4, 6 "Strict append". Depends on Task 3 for `Log`/`Lock` — st
 ```rust
 pub struct AppendRequest { pub r#type: String, pub fields: Vec<(String, String)>, pub writer: String /* --as */, pub strict: bool, pub dry_run: bool }
 pub enum AppendError { Reserved(String), ByMismatch, FieldTooLarge(String), EventTooLarge, NotPermitted{writer:String, ty:String}, MissingField(String), UnknownType(String), BadPath(String), TornTail(usize), Strict(String) /* rule name */, Lock(LockError) }
-pub fn append(log: &Log, cfg: &Config, req: AppendRequest, fold: Option<&dyn Fn() -> query::State>) -> Result<Event, AppendError>;
+pub trait StrictContext {            // what the strict rules need from folded state; `log` never imports `query`
+    fn allowlist(&self) -> &Allowlist;
+    fn agent_is_open(&self, agent: &str) -> bool;
+    fn claim_owner(&self, path: &str) -> Option<String>;
+    fn has_open_escalation(&self, agent: &str) -> bool;
+}
+pub fn append(log: &Log, cfg: &Config, req: AppendRequest, ctx: Option<&dyn StrictContext>) -> Result<Event, AppendError>;
 ```
 
-Rules, in order: reserved fields; `by` equals writer or absent; `agent` default `controller` when writer is controller and type is `result`; type known; required fields present; paths valid; sizes; allowlist (`cfg.writers` after `fold().allowlist_at_tip()` when a fold is supplied); strict rules (spec section 6) using the fold; tail torn → refuse; then lock, `seq = tail.last_seq + 1`, `ts` now, `prev = genesis | hash(last_line)`, write one `write_all` of line + `\n`, `fsync` if configured, unlock. `dry_run` runs everything except lock and write and returns the would-be event.
+Rules, in order: reserved fields; `by` equals writer or absent; `agent` default `controller` when writer is controller and type is `result`; type known; required fields present; paths valid; sizes; allowlist (`ctx.allowlist()` when a context is supplied, else `cfg.writers`); strict rules (spec section 6) using `ctx`; tail torn → refuse; then lock, `seq = tail.last_seq + 1`, `ts` now, `prev = genesis | hash(last_line)`, write one `write_all` of line + `\n`, `fsync` if configured, unlock. `dry_run` runs everything except lock and write and returns the would-be event.
 
 - [ ] **Step 1:** tests: append to an empty temp log yields `seq 1, prev "genesis"`; second append has `prev == hash(first line)`; `k=v` with `seq=9` → `Reserved`; `by=x` with writer `controller` → `ByMismatch`; `--as doc-worker spawn` → `NotPermitted`; a 3000-byte field → `FieldTooLarge`; existing pre-chain fixture: first append's `prev == hash(last fixture line)`; torn tail → `TornTail`; two processes appending 50 lines each via `std::process::Command` on the built binary produce seq 1..100 with no gaps (this test lives in Task 6's integration file if the binary is needed; here use two threads with `Log::open` on the same path).
 - [ ] **Steps 2–5.**
@@ -327,7 +333,7 @@ Rules: pre-chain lines pass until the first `prev`; that line's `prev` must equa
 
 **Files:** Modify `src/cmd/append.rs`, `src/cmd/vocab.rs` (replace stubs); Create `tests/cmd_append.rs`.
 
-Behavior: `eventlog append <type> k=v... [--as n] [--dry-run] [--no-strict]`; `EVENTLOG_AS` env fallback; prints the line on stdout; errors map to exit 1 (`Lock(Busy)` → 2). `eventlog vocab [type] [--json]` prints required and optional fields from `Config`; `append --help` epilogue includes the same table (build the help string at runtime with `clap::Command::after_help`).
+Behavior: implement `log::append::StrictContext` for `query::State` in `src/cmd/append.rs` (this is the only place `log` state meets `query` state). `eventlog append <type> k=v... [--as n] [--dry-run] [--no-strict]` folds the log once and passes the state as the context; `EVENTLOG_AS` env fallback; prints the line on stdout; errors map to exit 1 (`Lock(Busy)` → 2). `eventlog vocab [type] [--json]` prints required and optional fields from `Config`; `append --help` epilogue includes the same table (build the help string at runtime with `clap::Command::after_help`).
 
 - [ ] **Step 1:** integration tests with `assert_cmd` in a `tempfile` repo containing `.context/`: `append result ref=x` → stdout starts with `{"seq":1`; `append --dry-run result ref=x` prints the line and leaves the file absent; `append result` (no ref) → exit 1, stderr contains `missing field ref`; `vocab result --json` contains `"fields":["agent","ref"]`; contention: spawn 2 child processes × 25 appends, assert 50 lines, seqs 1..50.
 - [ ] **Steps 2–5.**
