@@ -1,0 +1,27 @@
+docs/reference/eventlog-cli-surface.md
+  s_3298d5bdfe982a::t_b196c3cf7182bd 71-72
+  s_3298d5bdfe982a::t_461cfe3fb9bffb 38,43-44
+  s_3298d5bdfe982a::t_6c68c412720543 7-12
+docs/reference/guard.md
+  s_3298d5bdfe982a::t_ef574f0dda526d 1-140
+docs/explanation/guard-fail-modes.md
+  s_3298d5bdfe982a::t_78a37a17f93dcb 1-46
+docs/reference/skill.md
+  s_3298d5bdfe982a::t_e607142933440c 1-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "464083674e55eab5c32b6969a6a0596469d16260",
+  "prompts": {},
+  "sessions": {
+    "s_3298d5bdfe982a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b444c51-36fd-47ac-a15b-d65e295772c6",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
