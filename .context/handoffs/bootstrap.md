@@ -81,12 +81,25 @@ binary; spec it whole, plan it in phases.
 - Drove's release setup to copy for distribution: `~/Development/Drove/dist-workspace.toml`
   and commit `048adfb`.
 
+## First: shape this herdr session
+
+You are running in a dedicated herdr session for this repo. `drove up` cannot
+create workspaces or panes yet (its `cli.rs` only runs tasks; `apply_plan` in
+`executor.rs` is not wired in), so the `Drovefile` here is the declaration, not
+the launcher. Before anything else, run from this pane:
+
+    ~/.claude/skills/setup-log-driven-workspace/scripts/layout.sh --no-files
+
+It shapes the session around this pane (control/coordinator, eventlog pane
+below you, monitor tab, maintenance workspace with both reactors), writes
+`.context/layout.json`, and records `spawn`/`prompt` for the reactors. Then run
+`status.sh` from the same directory and confirm exit 0.
+
+The log entries seq 4-11 are from an earlier attempt that built this layout in
+the wrong herdr session; every agent in them is retired. Ignore them.
+
 ## Workspace notes
 
-- This workspace was started with `drove up --yes` from the `Drove` session, not
-  with `layout.sh`, so `.context/layout.json` does not exist. The Stop hook
-  therefore holds every Claude pane in this repo to the `result` rule, not only
-  yours. That is fine while you are the only Claude here.
 - The log is not OS-protected. `drove run protect-log --yes` opts in; ask the
   user first (the committer is cursor-agent, which the Claude guard does not cover,
   so the skill recommends yes).
