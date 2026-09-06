@@ -1,0 +1,23 @@
+docs/reference/query-commands.md
+  s_553c4a5c7c40dd::t_9826d39d9e104d 1-105
+docs/reference/eventlog-cli-surface.md
+  s_553c4a5c7c40dd::t_8732642b4ecae2 5-8
+  s_553c4a5c7c40dd::t_b0a8f5f88a694f 67
+  s_553c4a5c7c40dd::t_24a13ec7441402 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6972d019df983c966fe00e1ff750c5f5d61adcaa",
+  "prompts": {},
+  "sessions": {
+    "s_553c4a5c7c40dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1c563fd0-e9f4-4ec0-b2a8-bbc4f63033f5",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
