@@ -1,0 +1,27 @@
+docs/reference/scaffold.md
+  s_41522768215bdf::t_2a7ebe11231ba0 95
+  s_41522768215bdf::t_ff1c4d063f666c 1-94,96-125
+README.md
+  s_41522768215bdf::t_575bf4491dfa6f 37
+  s_41522768215bdf::t_9cb0e6c0a6a09d 39
+docs/reference/eventlog-cli-surface.md
+  s_41522768215bdf::t_f1c7a2dfeb48bd 40-42
+  s_41522768215bdf::t_354a06a5a855db 73
+  s_41522768215bdf::t_eb9c779efd0210 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6ba9048748c2040a2d82d7e1fce4a14cb09aa4f3",
+  "prompts": {},
+  "sessions": {
+    "s_41522768215bdf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7fae5d09-5427-4bbc-8e1e-5f5849b203ff",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
