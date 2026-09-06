@@ -1,0 +1,14 @@
+docs/superpowers/plans/2026-09-06-eventlog-cli.md
+  h_63f2916b00d585 1-596
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "295006adab7374af917108ecf433525c6302d799",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
