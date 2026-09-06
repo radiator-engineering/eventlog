@@ -2,8 +2,8 @@
 
 Status: `open`, `read`, `tail`, and `hash_line` are implemented, plus a
 directory-based `Lock`. `src/log/verify.rs` builds `verify` on top of this
-module — see [Verify](verify.md), not covered here. `src/log/append.rs` is a
-separate stub.
+module — see [Verify](verify.md), not covered here. `src/log/append.rs`
+builds `append` on top of this module too — see [Append](append.md).
 
 ## `Log` — reading the log file
 
@@ -97,3 +97,4 @@ cargo test
 - [Model contract](model-contract.md) — `Event`, parsed by `Log::read` and `Log::tail`.
 - [Why a reclaimed lock is renamed aside before removal](../explanation/lock-reclaim.md)
 - [Verify](verify.md) — `verify`, the first caller of this module.
+- [Append](append.md) — `append`, which uses `Log::tail`, `Log::hash_line`, and `Lock`.

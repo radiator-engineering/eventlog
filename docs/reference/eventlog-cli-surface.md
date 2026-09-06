@@ -1,10 +1,13 @@
 # eventlog CLI surface
 
-Status: scaffolded. Every command parses; `verify` ([reference](verify.md))
-and `schema` ([reference](schema.md)) are implemented, the rest still print
-`eventlog <name>: not implemented` to stderr and exit 1. This page documents
-the frozen command set so later tasks can fill in behavior without changing
-names or flags.
+Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
+`schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
+([reference](claims.md)), and `open` ([reference](open.md)) are implemented,
+the rest still print `eventlog <name>: not implemented` to stderr and exit
+1. `append`'s underlying library function is implemented
+([reference](append.md)), but the `eventlog append` command itself is not
+wired up yet. This page documents the frozen command set so later tasks can
+fill in behavior without changing names or flags.
 
 ## Global flags
 
@@ -22,12 +25,12 @@ Every command accepts:
 | `append` | Validate and append one event. |
 | `vocab` | Show required and optional fields per event type. |
 | `verify` | Walk the hash chain and report the first break. |
-| `view` | Print log rows, optionally following new ones. |
+| `view` | Print log rows, optionally following new ones ([reference](view.md)). |
 | `agents` | Per-agent lifecycle table. |
 | `state` | Folded state as of a sequence number. |
 | `why` | Explain how one event was acted on. |
-| `claims` | Report files a worker's claim does not cover. Hidden alias: `check-claims`. |
-| `open` | Open an event's ref in `$EDITOR` or `$PAGER`. |
+| `claims` | Report files a worker's claim does not cover ([reference](claims.md)). Hidden alias: `check-claims`. |
+| `open` | Open an event's ref in `$EDITOR` or `$PAGER` ([reference](open.md)). |
 | `tui` | Interactive terminal UI over the log. |
 | `react` | Reactor runtime. Subcommand: `test` (dry-run one reaction against a real sequence number). |
 | `guard` | Hook guard for agent tool calls. Subcommand: `install`. |
@@ -57,3 +60,7 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Why the CLI surface shipped before any command works](../explanation/frozen-cli-surface.md)
 - [Verify](verify.md) — the first implemented command.
 - [Schema](schema.md) — JSON Schema for event lines and `--json` view rows.
+- [View](view.md) — filtered, colored log display with follow mode.
+- [Claims](claims.md) — compare changed files against an agent's live claims.
+- [Open](open.md) — open an event's ref in `$EDITOR` or `$PAGER`.
+- [Append](append.md) — the `append` library function; the CLI command is still a stub.
