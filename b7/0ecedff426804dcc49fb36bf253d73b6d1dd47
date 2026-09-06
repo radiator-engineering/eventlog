@@ -1,0 +1,29 @@
+tests/react_voter.rs
+  s_08b5d21fa4af3d::t_8b32f2a993a8a7 1-309
+src/react/voter.rs
+  s_ebec7961f036a8::t_46ee81da9b1c94 1-6,8-170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b70ecedff426804dcc49fb36bf253d73b6d1dd47",
+  "prompts": {},
+  "sessions": {
+    "s_08b5d21fa4af3d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4eee47c3-b209-42ec-9867-518f7fe454df",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_ebec7961f036a8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "003bfc70-e8be-4870-b023-62996ff57e50",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
