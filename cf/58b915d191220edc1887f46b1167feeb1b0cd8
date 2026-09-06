@@ -1,0 +1,16 @@
+src/guard/deny.rs
+  h_63f2916b00d585 250-251,265-305,310-321
+tests/guard.rs
+  h_63f2916b00d585 188-203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "cf58b915d191220edc1887f46b1167feeb1b0cd8",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
