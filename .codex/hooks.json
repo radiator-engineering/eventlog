@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "/Users/jjmartin/.cargo/bin/eventlog guard --agent codex",
+        "matcher": "Edit|Write|Bash"
+      }
+    ]
+  }
+}

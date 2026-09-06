@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "/Users/jjmartin/.cargo/bin/eventlog guard --agent cursor"
+      }
+    ]
+  },
+  "version": 1
+}
