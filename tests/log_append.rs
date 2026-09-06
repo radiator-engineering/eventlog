@@ -1,6 +1,8 @@
 use eventlog::log::Log;
-use eventlog::log::append::{AppendError, AppendRequest, append};
+use eventlog::log::append::{AppendError, AppendRequest, StrictContext, append};
+use eventlog::model::allow::Allowlist;
 use eventlog::model::config::Config;
+use std::collections::{BTreeMap, HashSet};
 use std::sync::{Arc, Barrier};
 use std::thread;
 
@@ -202,4 +204,117 @@ fn two_threads_append_one_hundred_lines_without_gaps() {
     assert!(report.malformed.is_empty());
     let seqs: Vec<u64> = report.events.iter().map(|e| e.seq).collect();
     assert_eq!(seqs, (1..=100).collect::<Vec<_>>());
+}
+
+struct FakeCtx {
+    allowlist: Allowlist,
+    open_agents: HashSet<String>,
+    claims: BTreeMap<String, String>,
+    escalations: HashSet<String>,
+}
+
+impl StrictContext for FakeCtx {
+    fn allowlist(&self) -> &Allowlist {
+        &self.allowlist
+    }
+
+    fn agent_is_open(&self, agent: &str) -> bool {
+        self.open_agents.contains(agent)
+    }
+
+    fn claim_owner(&self, path: &str) -> Option<String> {
+        self.claims.get(path).cloned()
+    }
+
+    fn has_open_escalation(&self, agent: &str) -> bool {
+        self.escalations.contains(agent)
+    }
+}
+
+#[test]
+fn strict_progress_requires_open_spawn() {
+    let dir = tempfile::tempdir().unwrap();
+    let log = Log::open(dir.path().join("events.jsonl"));
+    let ctx = FakeCtx {
+        allowlist: Allowlist::builtin(),
+        open_agents: HashSet::new(),
+        claims: BTreeMap::new(),
+        escalations: HashSet::new(),
+    };
+    let err = append(
+        &log,
+        &Config::default(),
+        AppendRequest {
+            r#type: "progress".to_string(),
+            fields: vec![
+                ("agent".to_string(), "worker".to_string()),
+                ("msg".to_string(), "hi".to_string()),
+            ],
+            writer: "controller".to_string(),
+            strict: true,
+            dry_run: true,
+        },
+        Some(&ctx),
+    )
+    .unwrap_err();
+    assert!(matches!(err, AppendError::Strict(rule) if rule == "open-spawn"));
+}
+
+#[test]
+fn strict_uses_context_allowlist() {
+    let dir = tempfile::tempdir().unwrap();
+    let log = Log::open(dir.path().join("events.jsonl"));
+    let mut file_writers = BTreeMap::new();
+    file_writers.insert("result".to_string(), vec!["custom-writer".to_string()]);
+    let mut allowlist = Allowlist::builtin();
+    allowlist.merge_file(file_writers);
+    let ctx = FakeCtx {
+        allowlist,
+        open_agents: HashSet::from(["custom-writer".to_string()]),
+        claims: BTreeMap::new(),
+        escalations: HashSet::new(),
+    };
+    let event = append(
+        &log,
+        &Config::default(),
+        AppendRequest {
+            r#type: "result".to_string(),
+            fields: vec![
+                ("agent".to_string(), "custom-writer".to_string()),
+                ("ref".to_string(), "x".to_string()),
+            ],
+            writer: "custom-writer".to_string(),
+            strict: true,
+            dry_run: true,
+        },
+        Some(&ctx),
+    )
+    .unwrap();
+    assert_eq!(event.by.as_deref(), Some("custom-writer"));
+}
+
+#[test]
+fn strict_blocks_writer_with_open_escalation() {
+    let dir = tempfile::tempdir().unwrap();
+    let log = Log::open(dir.path().join("events.jsonl"));
+    let ctx = FakeCtx {
+        allowlist: Allowlist::builtin(),
+        open_agents: HashSet::from(["doc-worker".to_string()]),
+        claims: BTreeMap::new(),
+        escalations: HashSet::from(["doc-worker".to_string()]),
+    };
+    let err = append(
+        &log,
+        &Config::default(),
+        AppendRequest {
+            r#type: "note".to_string(),
+            fields: vec![("msg".to_string(), "hi".to_string())],
+            writer: "doc-worker".to_string(),
+            strict: true,
+            dry_run: true,
+        },
+        Some(&ctx),
+    )
+    .unwrap_err();
+    assert!(matches!(err, AppendError::Strict(rule) if rule == "open-escalation"));
 }

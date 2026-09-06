@@ -12,11 +12,10 @@ use indexmap::IndexMap;
 
 use crate::log::lock::{Lock, LockError};
 use crate::log::{Log, Tail};
+use crate::model::allow::Allowlist;
 use crate::model::config::Config;
 use crate::model::event::Event;
 use crate::model::paths;
-use crate::model::vocab::REFERENCE_FIELDS;
-use crate::query::State;
 
 const FIELD_CAP: usize = 2048;
 const EVENT_CAP: usize = 4096;
@@ -29,6 +28,15 @@ pub struct AppendRequest {
     pub writer: String,
     pub strict: bool,
     pub dry_run: bool,
+}
+
+/// What strict append rules need from folded state. `log` never imports `query`;
+/// `cmd/append` implements this for `query::State`.
+pub trait StrictContext {
+    fn allowlist(&self) -> &Allowlist;
+    fn agent_is_open(&self, agent: &str) -> bool;
+    fn claim_owner(&self, path: &str) -> Option<String>;
+    fn has_open_escalation(&self, agent: &str) -> bool;
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -61,7 +69,7 @@ pub fn append(
     log: &Log,
     cfg: &Config,
     req: AppendRequest,
-    fold: Option<&dyn Fn() -> State>,
+    ctx: Option<&dyn StrictContext>,
 ) -> Result<Event, AppendError> {
     let mut fields = validate_and_build_fields(&req)?;
     let agent = resolve_agent(&req, &mut fields);
@@ -69,12 +77,11 @@ pub fn append(
     validate_paths_field(&fields)?;
     validate_sizes(&fields)?;
     let event = build_event(&req, fields, agent, 0, String::new(), None);
-    check_allowlist(cfg, &req, &event, fold.as_ref())?;
+    check_allowlist(cfg, &req, &event, ctx)?;
     if req.strict
-        && let Some(fold) = fold
+        && let Some(ctx) = ctx
     {
-        let state = fold();
-        check_strict(&state, &event, &repo_root(log)).map_err(AppendError::Strict)?;
+        check_strict(ctx, &req, &event, &repo_root(log)).map_err(AppendError::Strict)?;
     }
 
     let tail = log
@@ -195,12 +202,11 @@ fn check_allowlist(
     cfg: &Config,
     req: &AppendRequest,
     event: &Event,
-    fold: Option<&&dyn Fn() -> State>,
+    ctx: Option<&dyn StrictContext>,
 ) -> Result<(), AppendError> {
-    let allowlist = if let Some(f) = fold {
-        &f().allowlist
-    } else {
-        &cfg.writers
+    let allowlist = match ctx {
+        Some(ctx) => ctx.allowlist(),
+        None => &cfg.writers,
     };
     if !allowlist.permits(&req.writer, &event.r#type) {
         return Err(AppendError::NotPermitted {
@@ -211,22 +217,23 @@ fn check_allowlist(
     Ok(())
 }
 
-fn check_strict(state: &State, event: &Event, repo_root: &Path) -> Result<(), String> {
+fn check_strict(
+    ctx: &dyn StrictContext,
+    req: &AppendRequest,
+    event: &Event,
+    repo_root: &Path,
+) -> Result<(), String> {
+    if ctx.has_open_escalation(&req.writer) {
+        return Err("open-escalation".into());
+    }
+
     if matches!(
         event.r#type.as_str(),
         "result" | "progress" | "claim" | "retire"
     ) {
         let agent = event.subject();
-        if !state.agents.contains_key(agent) {
+        if !ctx.agent_is_open(agent) {
             return Err("open-spawn".into());
-        }
-    }
-
-    for field in REFERENCE_FIELDS {
-        if let Some(ref_seq) = event.seq_ref(field)
-            && ref_seq > state.at
-        {
-            return Err(format!("missing-seq-{field}"));
         }
     }
 
@@ -234,6 +241,14 @@ fn check_strict(state: &State, event: &Event, repo_root: &Path) -> Result<(), St
         && let Some(paths_val) = event.fields.get("paths")
     {
         check_claim_paths_exist(repo_root, paths_val)?;
+        let claimer = event.subject();
+        for entry in paths::validate_paths(paths_val).map_err(|e| e.to_string())? {
+            if let Some(owner) = ctx.claim_owner(entry.as_str())
+                && owner != claimer
+            {
+                return Err("claim-conflict".into());
+            }
+        }
     }
 
     Ok(())
