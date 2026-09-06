@@ -21,14 +21,14 @@ single-writer rule holds by construction.
 | worker asks a question (`agent wait --until blocked`) | `escalate agent=fix-loops subject=<q> ref=<screen-file>` |
 | you answer the worker                              | `approval subject=<q> by=controller decision=<answer>`      |
 | report names a cross-worker dependency             | `seam agents=fix-loops,fix-ui subject=<one line> ref=<report-file>` |
-| `check-claims.sh fix-loops <base>` finds a gap     | `violation agent=fix-loops paths=<list>`                    |
+| `eventlog claims fix-loops <base>` finds a gap     | `violation agent=fix-loops paths=<list>`                    |
 | `agent wait --until done` + you read the report    | `result agent=fix-loops ref=<report-file> verdict=<v>`      |
 | a choice others must follow lands in DECISIONS.md  | `decision key=<k> value=<v> ref=DECISIONS.md`               |
 | `tab close <tab_id>`                                | `retire agent=fix-loops disposition=accepted`               |
 
 Record both `tab` and `pane` on `spawn`. A peer started with `agent start` in a
 split pane has no tab of its own; the pane ID is what `agent read` and
-`check-claims.sh` need later.
+`eventlog claims` need later.
 
 Keep the worker's full report out of the log. herdr TUIs run on the alternate
 screen, so long reports must be written to a temp Markdown file anyway (per the
@@ -57,17 +57,17 @@ audit trail for that cross-talk — still written by the controller as it routes
 ## Where a reactor lives
 
 A reactor (see `log-reactors.md`) must outlive the turns of the agent that
-owns it. A peer's tool-call shell does not: a `nohup bash watch.sh &` launched
+owns it. A peer's tool-call shell does not: a background reactor launched
 from a Cursor or Claude Code turn is gone when the turn ends, and the peer's
 next restart is a second instance racing the first. Give the reactor its own
 pane, split off the owning peer's tab and labeled for it (`committer-watch`),
-and run the script foregrounded there. Record `spawn` for the reactor with
+and run `eventlog react` foregrounded there. Record `spawn` for the reactor with
 that `pane=`, and put "the reactor is already running in pane X; do not start
 another" in the owning peer's brief.
 
 Peers differ from Task subagents in one way that matters: a peer has a shell in
-the same repo, so it *can* run `append-event.sh` or `>>` the log, and
-`protect-log.sh` does not stop appends. Single-writer holds for peers only
+the same repo, so it *can* run `eventlog append` or `>>` the log, and
+`eventlog protect` does not stop appends. Single-writer holds for peers only
 because the brief says "do not append to `.context/events.jsonl`". Put that line
 in every peer brief. Silence from a working peer is therefore expected, not a
 fault; if you want a live signal, poll with `agent read` and append `progress`

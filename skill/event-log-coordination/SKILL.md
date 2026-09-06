@@ -20,16 +20,16 @@ metadata:
 
 # Event-log coordination
 
-**Operating model: the agent runs every command in this skill. The user never
-runs a script by hand.** The user speaks in natural language ("scaffold X",
+**Operating model: the agent runs every `eventlog` command in this skill. The user
+never runs a command by hand.** The user speaks in natural language ("scaffold X",
 "spawn the workers", "who approved that?"); you translate that into the commands
-below and run them. Every script name here is something *you* execute, not
+below and run them. Every subcommand here is something *you* execute, not
 something you hand back to the user. **On first use in a session, run
-`safety-check.sh --doctor`** (it's idempotent): it links the commands onto PATH,
-registers the guard where it's missing, and reports what isn't protected. When
-it names a gap you can't heal silently — a log that should be OS-protected —
+`eventlog doctor --fix`** (it is idempotent): it registers guards where they are
+missing, removes obsolete PATH symlinks, and reports what is not protected. When
+it names a gap you cannot heal silently — a log that should be OS-protected —
 tell the user in plain words and get their yes before running
-`safety-check.sh --protect`. Then don't mention scripts again unless they ask.
+`eventlog protect`. Then do not mention commands again unless they ask.
 
 When several agents work together, the failure mode is context bleeding between
 them: one pane's transcript pasted into another, a decision that survives only
@@ -41,7 +41,7 @@ auditable, and replayable.
 
 This skill is the enforcement layer under that idea. It gives you the log, the
 one sanctioned writer, and a PreToolUse hook that makes "append-only" a rule the
-model *cannot* break, not just one it's asked to follow.
+model *cannot* break, not just one it is asked to follow.
 
 **What's actually non-obvious here.** A capable agent, unprompted, will already
 reach for append-only JSONL, `chflags uappnd`, and referencing artifacts by
@@ -80,50 +80,50 @@ bleeds across panes. Prevention and detection are complementary — see
 
 ## Setup (agent runs the doctor once)
 
-First use in a session: run the doctor from this skill's `scripts/` directory
-(the base directory shown when this skill loads). It's idempotent — it links the
-commands onto PATH, registers the append-only guard where it's missing, and
-reports what isn't protected:
+First use in a session: run the doctor. It is idempotent — it registers guards
+where they are missing, removes obsolete PATH symlinks, and reports what is not
+protected:
 
 ```bash
-<skill-base-dir>/scripts/safety-check.sh --doctor   # heal tooling + guard, report protection
-<skill-base-dir>/scripts/safety-check.sh            # report only, change nothing
+eventlog doctor --fix    # heal tooling + guard, report protection
+eventlog doctor          # report only, change nothing
 ```
 
-`setup.sh` is the pure installer the doctor calls; run it directly only if you
-want the install without the diagnosis. After the doctor, every command below is
-a bare name you run from the user's repo. Don't surface this plumbing unless they
-ask — but *do* surface any protection gap the doctor names. Then, per repo:
+After the doctor, every command below is a bare `eventlog` subcommand you run
+from the user's repo. Do not surface this plumbing unless they ask — but *do*
+surface any protection gap the doctor names. Then, per repo:
 
 ```bash
 cd /path/to/the/repo
-init-eventlog.sh   # creates .context/events.jsonl + EVENTLOG.md, gitignores the log
+eventlog init   # creates .context/events.jsonl + EVENTLOG.md, gitignores the log
 ```
 
-`init-eventlog.sh` creates the log and an `EVENTLOG.md` cheat-sheet, but not the
+`eventlog init` creates the log and an `EVENTLOG.md` cheat-sheet, but not the
 handoff/`DECISIONS.md` files your events will `ref=` — write those yourself (use
-`context-sharing` for their shape). The log points at them; it doesn't make them.
+`context-sharing` for their shape). The log points at them; it does not make them.
 
-Append only through the helper — never hand-edit the file (the guard blocks it):
+Append only through the writer — never hand-edit the file (the guard blocks it):
 
 ```bash
-append-event.sh spawn   agent=reviewer model=opus tab=w1:t3 role=review
-append-event.sh prompt  agent=reviewer ref=.context/handoffs/review-auth.md
-append-event.sh result  agent=reviewer ref=.context/handoffs/review-auth.md verdict=CHANGES
-append-event.sh decision key=auth-store value=sqlite ref=DECISIONS.md
-append-event.sh retire  agent=reviewer disposition=accepted
+eventlog append spawn   agent=reviewer model=opus tab=w1:t3 role=review
+eventlog append prompt  agent=reviewer ref=.context/handoffs/review-auth.md
+eventlog append result  agent=reviewer ref=.context/handoffs/review-auth.md verdict=CHANGES
+eventlog append decision key=auth-store value=sqlite ref=DECISIONS.md
+eventlog append retire  agent=reviewer disposition=accepted
 ```
 
-`seq` (monotonic) and `ts` (UTC) are added for you. The helper takes a portable
-lock (works on macOS — no `flock`), so parallel controllers can't collide on a
+`seq` (monotonic) and `ts` (UTC) are added for you. The writer takes a portable
+lock (works on macOS — no `flock`), so parallel controllers cannot collide on a
 sequence number or interleave a half-written line. It rejects any field over 2KB
-and any event over 4KB, so a transcript can't sneak in — that's what `ref=` is
-for. Read the log with plain tools: `tail -f`, `jq -c 'select(.type=="decision")'`.
+and any event over 4KB, so a transcript cannot sneak in — that is what `ref=` is
+for. Read the log with `eventlog view`, or plain tools: `tail -f`,
+`jq -c 'select(.type=="decision")'`.
 
 The default event vocabulary (`spawn`, `prompt`, `message`, `drain`, `result`,
 `decision`, `escalate`, `approval`, `retire`, plus the parallel-work set
 `claim`, `progress`, `seam`, `violation`) lives in `.context/EVENTLOG.md`
-after init. Add new `type`s freely; keep fields flat and small.
+after init. Add new `type`s freely; keep fields flat and small. Run
+`eventlog vocab` to list required and optional fields per type.
 
 ## Keeping parallel workers apart
 
@@ -148,7 +148,7 @@ these, and record each one:
    to the log." The last one matters more than it looks: see the honest limit
    below.
 5. **Verify at `result` time.** Before accepting, run
-   `check-claims.sh <agent> <base-ref> [head-ref]` in the worker's worktree. It
+   `eventlog claims <agent> <base-ref> [head-ref]` in the worker's worktree. It
    lists every changed file no claim covers. Record a hit as
    `violation agent=<name> paths=<list>` and decide whether to accept, then
    integrate. This is detection, not prevention, and it is cheap.
@@ -170,83 +170,120 @@ these, and record each one:
 A **reactor** tails the log and acts on matching events with no prompt: a
 committer that lands a commit on `decision key=commit-message`, a deployer that
 ships on `approval`. This is where the log drives effects, so the failure is a
-duplicate commit or a double deploy, not a stale note. Four rules, each one
+duplicate commit or a double deploy, not a stale note.
+
+`eventlog react` owns the reactor runtime: lock, baseline ack, resume, intent,
+voter, veto window, command execution, violation detection, and ack. You supply
+only the action script after `--`. Four rules for the operator, each one
 learned from a committer that recommitted the same cutoff three times:
 
 1. **Resume from the log, never from a side file.** No cursor file, no
-   `git log --grep` for a marker string. The reactor appends an `ack` event
+   `git log --grep` for a marker string. The runtime appends an `ack` event
    (`by=<name> seq_done=<seq> outcome=<what>`) for every action, and skips
    any event at or below its highest acked seq. A cold start replays the whole
    log safely.
-2. **One instance, enforced by a lock.** A `mkdir` lock holding the pid;
-   refuse to start while that pid is alive.
+2. **One instance, enforced by a lock.** The runtime holds
+   `<log>.<name>.reactor.lock/` with pid, start time, hostname, and boot id.
+   Refuse to start while that lock is live.
 3. **Run it foregrounded in a real terminal**, a dedicated herdr pane. A
    reactor started with `nohup … &` from an agent's tool-call shell dies when
    the turn ends, and the agent's next "restart" is the second instance that
    races the first.
-4. **A committer stages only the `paths=` on the decision.** `git add -A`
-   sweeps other workers' unreviewed files under the wrong message.
+4. **A committer stages only the authorized paths.** The runtime computes an
+   authorized set from the driving event's `paths=` and the writer's live
+   claims. `git add -A` sweeps other workers' unreviewed files under the wrong
+   message.
+
+**Per event, the runtime:**
+
+1. Computes the **authorized set**. Controller-written events use `paths=` as-is.
+   Reactor-written events intersect `paths=` with the writer's live claims; excess
+   paths trigger a `veto` with reason `unclaimed-paths`.
+2. Appends `intent by=<name> for=<seq> action=<label> paths=<authorized>`.
+3. Runs the **voter** against the fold at that moment. Rules: no path is the log
+   file or a lock dir; no path is claimed by a different open agent; no open
+   `escalate` names this reactor. On failure append `veto by=<name> role=voter
+   for=<seq> intent=<intent seq> reason=<rule>` and `ack seq_done=<seq>
+   outcome=vetoed`.
+4. Opens the **veto window** (`--window`, default 0). A `veto` whose `for=`
+   names the driving seq binds regardless of which intent it saw.
+5. Runs your command with the event as JSON on stdin and env vars:
+   `EVENTLOG_LOG`, `EVENTLOG_SEQ`, `EVENTLOG_TYPE`, `EVENTLOG_AGENT`,
+   `EVENTLOG_BY`, `EVENTLOG_PATHS`, `EVENTLOG_REF`, `EVENTLOG_RESUME`,
+   `EVENTLOG_OUTCOME_FILE`. Write `outcome=<o>` and other fields as `k=v` lines
+   to the outcome file; the runtime reads them for the ack.
+6. With `--git`, snapshots `HEAD` and `git status --porcelain` before and after.
+   Files the action touched outside the authorized set are appended as
+   `violation by=<name> for=<seq> paths=<outside>`.
+7. Appends `ack seq_done=<seq> outcome=<o> ...` from the outcome file.
+
+Launch a committer:
+
+```bash
+eventlog react --as committer --on decision --filter key=commit-message --git -- \
+  bash path/to/commit-action
+```
+
+Dry-run one event without writing:
+
+```bash
+eventlog react test 42 --as committer --git -- bash path/to/commit-action
+```
 
 A reactor is a recorded exception to single-writer: append
 `decision key=log-writers value=controller-plus-reactors` once, and the reactor
 tags every line `by=<name>`. `references/log-reactors.md` has the reasoning and
-a pre-trust checklist; `references/reactor-example.sh` is a working committer
-that passes it. Copy it, change `ACT`.
+a pre-trust checklist; `references/reactor-example.md` is a 15-line committer
+action script. Copy it and change the git commands.
 
 ## Enforcement — this is the point
 
 A convention the model is asked to honor is not enforcement. Two complementary
-mechanisms; **install the hook — it's the piece an agent won't build on its own.**
+mechanisms; **install the hook — it is the piece an agent will not build on its own.**
 
-**Prevention — the PreToolUse hook (install this).** `scripts/eventlog-guard.sh`
-inspects every `Edit`/`Write`/`Bash` *before it runs* and **blocks** (exit 2)
-anything that would rewrite or truncate the log — a `Write` over it, an `Edit`
-into it, a truncating `>`/`>|`, `sed -i`, `rm`/`mv`, a non-append `tee`, even an
-inline `python -c "open(log,'w')"`. Appends via the helper and all reads
-(including read-mode opens) pass through. `setup.sh` already installed it; to
-check or (re)install standalone:
+**Prevention — the PreToolUse hook (install this).** `eventlog guard` reads a
+hook payload on stdin and **blocks** (exit 2) anything that would rewrite or
+truncate the log — a `Write` over it, an `Edit` into it, a truncating `>`/`>|`,
+`sed -i`, `rm`/`mv`, a non-append `tee`, even an inline
+`python -c "open(log,'w')"`. Appends via `eventlog append` and all reads
+(including read-mode opens) pass through. `eventlog doctor --fix` registers the
+guard; to check or (re)install standalone:
 
 ```bash
-install-guard.sh --check  # is it registered? (exit 0/1)  — setup.sh runs the install
+eventlog guard install --agent claude   # idempotent; doctor --fix does this
 ```
 
 It adds the guard as an **additional** `PreToolUse` entry (matcher
 `Edit|Write|Bash`) without touching your other hooks, refuses to write invalid
 JSON, and is idempotent. **The hook only loads in a new session** — restart or
-run `/hooks` after installing. If you must wire it by hand, add this entry with
-the real absolute path to `eventlog-guard.sh` (no placeholder survives):
-
-```json
-{ "matcher": "Edit|Write|Bash",
-  "hooks": [ { "type": "command", "command": "<$SKILL>/scripts/eventlog-guard.sh" } ] }
-```
+run `/hooks` after installing.
 
 Override the protected basename with `EVENTLOG_GUARD_BASENAME` (ERE) if your log
-isn't `events.jsonl`. The guard fails **open** on an unparseable payload, so it
+is not `events.jsonl`. The guard fails **open** on an unparseable payload, so it
 can never brick your tools — it only ever *adds* a deny for a clearly-mutating op.
 
 Honest scope: airtight for `Edit`/`Write` (they can only overwrite/patch — any
-hit is denied). For `Bash` it's a strong but **best-effort denylist**: it covers
+hit is denied). For `Bash` it is a strong but **best-effort denylist**: it covers
 the shapes an agent actually reaches for, but a determined rewrite through an
 exotic tool can still slip past. That gap is exactly what detection closes.
 
 **Agent-independent immutability (this is also the cross-agent path).** The hook
 governs the *controller's own tool calls* and only fires inside Claude Code. For
 anything out-of-band — a stray process, a bug, a tool the denylist misses, or
-**an agent that isn't Claude Code (Cursor, Codex, aider)** — make the file itself
+**an agent that is not Claude Code (Cursor, Codex, aider)** — make the file itself
 immutable at the OS level:
 
 ```bash
-protect-log.sh              # chflags uappnd (macOS) / chattr +a (Linux); >> still works
-protect-log.sh --unprotect  # lift it before an intentional rm/checkout
+eventlog protect              # chflags uappnd (macOS) / chattr +a (Linux); >> still works
+eventlog protect --off        # lift it before an intentional rm/checkout
 ```
 
-`>>` appends still succeed, so the helper keeps working; truncate/overwrite/rm
+`>>` appends still succeed, so the writer keeps working; truncate/overwrite/rm
 are refused by the kernel regardless of which agent tried. This fights routine
 `rm -rf`/checkout, so scope it to logs that must be tamper-proof. If you also
 want to *prove* no past line changed, hash-chain the entries (each line carries
-`prev` = sha256 of the previous line); a `verify` pass then flags any edit. The
-hook prevents (Claude Code); `protect-log.sh`/hash-chaining make tampering
+`prev` = sha256 of the previous line); `eventlog verify` flags any edit. The
+hook prevents (Claude Code); `eventlog protect`/hash-chaining make tampering
 impossible or evident (any agent).
 
 ## Portability (Cursor, Codex, other agents)
@@ -254,38 +291,43 @@ impossible or evident (any agent).
 The pattern, the log, and the commands are agent-agnostic — anything that runs a
 shell uses them identically. Only the *auto-blocking hook* is Claude Code-specific
 (it reads Claude Code's PreToolUse payload). Under another agent: run the log
-tooling as usual and enforce with `protect-log.sh` instead of the hook
-(`protect-log.sh` to enable, `--unprotect` before an intentional rm/checkout,
-`--status` to check). That's the whole difference — same log, same helpers,
+tooling as usual and enforce with `eventlog protect` instead of the hook
+(`eventlog protect` to enable, `--off` before an intentional rm/checkout,
+`--status` to check). That is the whole difference — same log, same commands,
 OS-level enforcement in place of the hook.
 
 That OS protection is **per-log and opt-in** — nothing is protected until
-someone runs `protect-log.sh` on a specific file. So the user should know the
+someone runs `eventlog protect` on a specific file. So the user should know the
 real state and opt in deliberately, not assume coverage. Run the posture check:
 
 ```bash
-safety-check.sh              # report: tooling, Claude guard, THIS log's OS protection
-safety-check.sh --doctor     # check AND heal each gap (interactive on a terminal)
-safety-check.sh --protect    # opt in now: OS-protect .context/events.jsonl
+eventlog doctor              # report: guard per agent, THIS log's OS protection
+eventlog doctor --fix        # check AND heal each gap (interactive on a terminal)
+eventlog protect             # opt in now: OS-protect .context/events.jsonl
 ```
 
-The doctor heals tooling and guard registration on its own, but protecting a log
-is a deliberate opt-in: it only protects when you pass `--protect`/`--yes` or
-answer its terminal prompt — never silently. `init-eventlog.sh` runs the report
-right after creating a log, so the moment a log exists you (and the user) see
-whether it's covered. Surface that to the user for any log that must be
-tamper-proof, and protect it only when they say so.
+The doctor heals guard registration on its own, but protecting a log is a
+deliberate opt-in: it only protects when you pass `--protect`/`--yes` or answer
+its terminal prompt — never silently. `eventlog init` runs the report right
+after creating a log, so the moment a log exists you (and the user) see whether
+it is covered. Surface that to the user for any log that must be tamper-proof,
+and protect it only when they say so.
 
 ### The honest limit
 
-Claude Code doesn't hand you the writer process the original pattern assumes —
-you steer a model that *chooses* to append. So the guarantee is: workers can't
+Claude Code does not hand you the writer process the original pattern assumes —
+you steer a model that *chooses* to append. So the guarantee is: workers cannot
 reach the log (isolation), and the controller's own writes are held to
 append-only by the hook. Without the hook you have the architecture but not the
 guarantee. With it, the only way for the controller to change history is to be
 denied trying — and `chflags`/hash-chaining cover the rest.
 
-"Workers can't reach the log" is true only for Task subagents, which run
+**Not authenticated.** No field in the log proves who wrote it. `--as` is a
+declaration. The allowlist catches mistakes; OS protection and the guard resist
+rewriting; nothing in v1 resists a process that lies about its name. That is the
+same trust model as before, stated plainly.
+
+"Workers cannot reach the log" is true only for Task subagents, which run
 isolated. A herdr peer agent has a shell, and the OS protection still allows
 `>>` appends, so nothing physically stops a peer from appending. Single-writer
 holds for peers only because the brief forbids it. Say so in every brief ("do
@@ -308,42 +350,54 @@ is still a breach.
 
 ## Before you rely on it
 
-1. Run `safety-check.sh --doctor` — it heals tooling + guard registration, then
-   reports whether this log is OS-protected (restart the session / run `/hooks`
-   to make the guard live). For a log that must be tamper-proof under
-   Cursor/Codex/other agents, opt in with `safety-check.sh --protect`.
+1. Run `eventlog doctor --fix` — it heals guard registration, then reports
+   whether this log is OS-protected (restart the session / run `/hooks` to make
+   the guard live). For a log that must be tamper-proof under Cursor/Codex/other
+   agents, opt in with `eventlog protect`.
 2. Are events small and pointing at artifacts by `ref=`, not carrying bodies?
 3. Is the controller the only thing appending — workers report, controller
    records?
 4. Does each worker's lifecycle close the loop: `spawn` → … → `result` →
    `retire`?
 5. For parallel workers: does every worker have a `claim`, and did
-   `check-claims.sh` run before each `result` was accepted?
+   `eventlog claims` run before each `result` was accepted?
 6. For any reactor: does it resume from its own `ack` events, hold a lock,
    and run in a terminal that outlives the owning agent's turn? (checklist in
    `references/log-reactors.md`)
 
-## Scripts (in this skill's `scripts/` — the agent runs these, not the user)
+## Commands (the agent runs these, not the user)
 
-- `setup.sh` — **run first, once per session.** Idempotent: links commands onto
-  PATH + registers the guard. `--check` reports state.
-- `init-eventlog.sh` — scaffold `.context/events.jsonl` + `EVENTLOG.md`, gitignore the log.
-- `append-event.sh` — the single sanctioned writer (seq, ts, lock, size caps).
-- `eventlog-guard.sh` — the PreToolUse hook (append-only enforcement, Claude Code).
-- `install-guard.sh` — register/`--check` the guard in `settings.json` (called by setup.sh).
-- `link-scripts.sh` — symlink commands onto PATH (called by setup.sh).
-- `protect-log.sh` — OS-level append-only (`chflags`/`chattr`); the enforcement path
-  that holds under any agent (Cursor, Codex, …). `--unprotect` / `--status`.
-- `safety-check.sh` — **the doctor: run first each session.** Reports what's
-  protected; `--doctor` heals tooling + guard and prompts/opts-in for log
-  protection; `--protect` opts in a log directly. Report-only without a flag.
-- `check-claims.sh` — read-only: lists the files a worker changed that no
-  `claim` event covers. Run before accepting a `result`. Exit 1 on a gap.
-- `eventlog-view.sh` — read-only human view: one colored, aligned line per
-  event. `-f` follows the log (put it in a herdr pane instead of `tail | jq`),
-  `--type a,b` and `--agent x` filter, `--last N` limits, `--compact` drops the
-  timestamp. Colors are SGR strings per key; override with
-  `EVENTLOG_COLOR_<TYPE>` or `.context/eventlog-view.conf` (`result=1;36`).
+Install the skill with `eventlog skill install` (writes this directory, stamped
+with the binary version). Then run subcommands from any repo:
+
+- `eventlog append <type> k=v ... [--as n] [--dry-run]` — the single sanctioned
+  writer (seq, ts, lock, size caps, strict validation).
+- `eventlog vocab [<type>] [--json]` — required and optional fields per type.
+- `eventlog verify` — walk the hash chain; exit 1 on break.
+- `eventlog view [-f] [--type a,b] [--agent x] [--by x] [--last N] [--json]` —
+  colored aligned lines; `-f` follows with file watching.
+- `eventlog agents [--at N] [--json]` — per-agent lifecycle table.
+- `eventlog state [--at N] [--json]` — active agents, claims, decisions, intents.
+- `eventlog why <seq> [--json]` — event chain and reactor match.
+- `eventlog claims <agent> <base> [head]` — changed files no claim covers; exit 1
+  on a gap. Hidden alias: `check-claims`.
+- `eventlog open <seq> [--pager]` — open the event's `ref` in `$EDITOR`.
+- `eventlog tui` — ratatui views over the log (follow, agents, state).
+- `eventlog react --as n --on t1,t2 [--filter k=v] [--window 0s] [--git] -- cmd...`
+  — reactor runtime (lock, intent, voter, veto, action, violation, ack).
+- `eventlog react test <seq> --as n [--git] -- cmd...` — dry-run one event.
+- `eventlog guard [--agent claude|cursor|codex]` — hook payload on stdin; exit 2
+  on deny.
+- `eventlog guard install [--agent claude|cursor|codex|all]` — register the hook.
+- `eventlog init` — scaffold log, `EVENTLOG.md`, default config, gitignore lines.
+- `eventlog doctor [--fix] [--protect]` — posture check; `--fix` heals guards and
+  removes obsolete PATH symlinks.
+- `eventlog protect [--off] [--status]` — OS-level append-only.
+- `eventlog schema [--events|--output]` — JSON Schema from the model types.
+- `eventlog skill install [--dir path]` — write the embedded skill directory.
+- `eventlog completions <shell>` — shell completions.
+
+Global flags on every command: `--log <name|path>`, `--json`.
 
 ## Reference files
 
@@ -352,5 +406,5 @@ is still a breach.
 - `references/log-reactors.md` — processes that act on events (committer,
   deployer): resume from `ack` events, single-instance lock, where to run
   them, what a committer may stage. Pre-trust checklist.
-- `references/reactor-example.sh` — a working committer reactor that follows
-  those rules. Copy and change `ACT`.
+- `references/reactor-example.md` — a 15-line committer action script for
+  `eventlog react`. Copy it and change the git commands.

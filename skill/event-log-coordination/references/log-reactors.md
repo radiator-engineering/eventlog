@@ -7,8 +7,9 @@ that pings a human on `escalate`. Reactors are the point where the log stops
 being a record and starts driving effects, so a bug here is not a stale note,
 it is a duplicate commit or a double deploy.
 
-`reactor-example.sh` in this directory is the reference shape (a committer).
-Copy it and change `ACT`. Everything below is the reasoning behind its three
+`references/reactor-example.md` in this directory is the reference action
+script (a committer). Copy it and change the git commands. `eventlog react`
+owns the loop. Everything below is the reasoning behind its four operator
 rules, learned from a session where a committer reactor recommitted the same
 cutoff three times.
 
@@ -37,14 +38,14 @@ decision seq=11 key=commit-message value="Scaffold"
 ack      seq=12 by=committer seq_done=11 outcome=committed ref=9a28f99
 ```
 
-On start, and again before each action, the reactor reads the highest
+On start, and again before each action, the runtime reads the highest
 `seq_done` among its own `ack` events and skips any decision at or below it.
 The log is append-only and already the single source of truth, so this has no
 state to drift. A cold start replays the whole log and every already-acked
-decision is skipped. The example does this in `acked_through`.
+decision is skipped.
 
 Keep a second, effect-level guard anyway: for a committer, "nothing staged"
-means skip. It covers the one case the log cannot, a log that was itself lost
+means skip. It covers the one case the log cannot — a log that was itself lost
 while the effect persisted.
 
 ## Rule 2: one instance, enforced with a lock
@@ -54,10 +55,10 @@ the controller, and the agent that owns the reactor have all started one "to
 be safe" in the same session. Two instances acting on the same event race even
 with Rule 1, because both can read the acks before either writes one.
 
-Take a lock at startup. The example uses a `mkdir` lock (atomic on macOS and
-Linux, no `flock` needed) holding the pid, refuses to start if the pid is
-alive, and reclaims the lock if the pid is gone. Remove it on exit with a
-`trap`.
+`eventlog react` takes a lock at startup:
+`<log>.<name>.reactor.lock/` holds pid, process start time, hostname, and boot
+id. The lock is live only when pid and start time match on this host. Stale
+locks are reclaimed by atomic rename.
 
 ## Rule 3: run it in a real terminal, not an agent's tool-call shell
 
@@ -73,7 +74,7 @@ owning agent in its brief that the reactor is already running and it must not
 start another. Record the placement once:
 
 ```
-progress agent=committer msg=reactor-placed detail="foreground in pane w1:p7" ref=.context/committer-watch.sh
+progress agent=committer msg=reactor-placed detail="foreground in pane w1:p7" ref=references/reactor-example.md
 ```
 
 ## Rule 4: a committer stages what the decision names
@@ -83,16 +84,37 @@ worker finished but nobody has reviewed. In the session above, a replayed
 scaffold decision swept the AI module's files into a commit whose message
 describes something else, and the "never amend" rule means it stays that way.
 
-Put `paths=` on the decision (the same globs as the worker's `claim`), and have
-the reactor stage only those. Without `paths=` the example falls back to
-everything dirty and says `paths=ALL-DIRTY` in the ack, so the sweep is at
-least visible in the log.
+The runtime computes an **authorized set** from the driving event's `paths=` and
+the writer's live claims. Put `paths=` on the decision (the same globs as the
+worker's `claim`), and stage only those via `EVENTLOG_PATHS`. Without `paths=`
+the runtime falls back to everything dirty and records `paths=ALL-DIRTY` in the
+ack, so the sweep is at least visible in the log.
+
+## What `eventlog react` does per event
+
+The runtime handles steps that every reactor duplicated in shell:
+
+1. **Authorized set** — intersect `paths=` with live claims when the driving
+   event carries `by=`.
+2. **Intent** — append `intent by=<name> for=<seq> action=<label> paths=<authorized>`.
+3. **Voter** — block if a path is the log, a lock dir, claimed by another open
+   agent, or named in an open `escalate` for this reactor. On failure: `veto`
+   and `ack outcome=vetoed`.
+4. **Veto window** — `--window` (default 0). A `veto for=<seq>` binds even
+   after restart between intent and action.
+5. **Action** — run your command with JSON on stdin and `EVENTLOG_*` env vars.
+   Write `outcome=<o>` and other fields to `EVENTLOG_OUTCOME_FILE`.
+6. **Violation detection** — with `--git`, compare before/after porcelain;
+   append `violation` for paths outside the authorized set.
+7. **Ack** — append `ack seq_done=<seq> outcome=<o> ...` from the outcome file.
+
+Dry-run one seq without writing: `eventlog react test <seq> --as <name> -- cmd...`
 
 ## Reactors and the single-writer rule
 
-A reactor writes to the log (its `ack` events). That is a deliberate exception
-to single-writer. Record it once as a decision, and have the reactor tag every
-line with `by=<name>`:
+A reactor writes to the log (its `ack`, `intent`, and `veto` events). That is a
+deliberate exception to single-writer. Record it once as a decision, and have
+the reactor tag every line with `by=<name>`:
 
 ```
 decision key=log-writers value=controller-plus-reactors ref=DECISIONS.md
@@ -112,4 +134,5 @@ that is not a recorded reactor is still a breach.
 5. For a committer: `git show --stat HEAD` after a cutoff contains only the
    files the decision named.
 
-The example script passes 1, 2, 3 and 5 by construction; 4 is where it runs.
+The example action script passes 5 by construction when paired with
+`eventlog react`; 1–3 are enforced by the runtime; 4 is where it runs.
