@@ -1,31 +1,36 @@
 load("drove/reactors.star", "reactor")
 
+# Everything here runs the `eventlog` binary this repo ships
+# (`cargo install --path .`), not the retired shell toolkit.
+
 protect_log = task(
     "protect-log",
-    check = ["protect-log.sh", "--status"],
-    run = ["protect-log.sh"],
+    check = ["eventlog", "protect", "--status"],
+    run = ["eventlog", "protect"],
     auto = False,
 )
 
-control = workspace("control", tabs = [
-    tab("coordinator", split = "down", ratios = [0.5], panes = [
+control = workspace("control", panes = [
+    herdr.tab("coordinator", split = herdr.DOWN, ratios = [0.5], panes = [
         pane("controller", agent = agent(
             kind = "claude",
             prompt = "You are the controller for this repo. Read .context/handoffs/bootstrap.md and follow it.",
         )),
-        pane("eventlog", serve = ["eventlog-view.sh", "-f"]),
+        pane("eventlog", serve = ["eventlog", "view", "-f"]),
     ]),
-    tab("monitor: system + agents", panes = [
+    herdr.tab("monitor: system + agents", split = herdr.RIGHT, ratios = [0.5], panes = [
         pane("agentmon", serve = any_of(["agentmon", "--since", "launch"], ["htop"])),
+        pane("state", serve = ["eventlog", "tui"]),
     ]),
 ])
 
-maintenance = workspace("maintenance", tabs = [
-    tab("lazygit", panes = [pane("gitlog", serve = any_of(["lazygit"], ["bash"]))]),
+maintenance = workspace("maintenance", panes = [
+    herdr.tab("lazygit", panes = [pane("gitlog", serve = any_of(["lazygit"], ["bash"]))]),
     reactor("commit", agent = "cursor-committer", model = "composer-2.5-fast",
-            script = "cursor-commit-reactor.sh"),
+            on = "result", action = "commit-action.sh", git = True),
     reactor("doc-sync", agent = "doc-worker", model = "sonnet",
-            script = "doc-sync-reactor.sh", after = ["commit-reactor"]),
+            on = "ack", filters = ["by=cursor-committer", "outcome=committed"],
+            action = "doc-action.sh", after = ["commit-reactor"]),
 ])
 
 profile("default", workspaces = [control, maintenance], tasks = [protect_log])
