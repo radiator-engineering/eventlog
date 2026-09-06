@@ -211,11 +211,22 @@ pub struct SkillArgs {
 #[derive(Subcommand, Debug)]
 pub enum SkillInner {
     /// Write the embedded skill to disk.
-    Install,
+    Install {
+        /// Destination directory to install into (default: ~/.claude/skills).
+        #[arg(long)]
+        dir: Option<std::path::PathBuf>,
+        /// Overwrite an existing installation even if its stamp is newer.
+        #[arg(long)]
+        force: bool,
+    },
 }
 
 #[derive(ClapArgs, Debug)]
-pub struct CompletionsArgs {}
+pub struct CompletionsArgs {
+    /// Shell to generate completions for.
+    #[arg(value_enum)]
+    pub shell: clap_complete::Shell,
+}
 
 pub fn run() -> i32 {
     let args = Args::parse();
