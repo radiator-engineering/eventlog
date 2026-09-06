@@ -1,0 +1,60 @@
+tests/cmd_view.rs
+  s_f2c436d137ca16::t_c19cad11b9503a 1-54,60-95,98-134
+  s_f967523fddc2ab::t_3e1cef076ea89a 55-59,96-97
+src/cli.rs
+  s_387fcfe478d31c::t_006eefd6188806 74,76,78,80,82,86,98-105,108-114
+  s_b63810977910d4::t_02e38a5c876fa0 68-73,75,77,79,81,83-85
+src/cmd/view.rs
+  s_f967523fddc2ab::t_73683e258e9607 2,7
+  s_9d6772a5fa1484::t_e589d6c1d6eaaa 1,3-6,8-9,11-27,29-47,49-52,54-242,250-369
+  s_f2c436d137ca16::t_32a6be801cdf2d 10,28,48,53
+  s_f967523fddc2ab::t_3e1cef076ea89a 243-249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "dbc166a0c8a0b7db4c04ddb4ca56faea50226a21",
+  "prompts": {},
+  "sessions": {
+    "s_387fcfe478d31c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f28758a1-84cd-4234-9e50-9f32987f6483",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_9d6772a5fa1484": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "de8cfdc9-ec2c-4185-8ede-99cac9853291",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_b63810977910d4": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "5784bd39-9772-4d42-adb3-c6290806d768",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_f2c436d137ca16": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ded78dd5-98d8-4e8a-aa4d-719315d943fa",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
