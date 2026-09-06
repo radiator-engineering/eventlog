@@ -3,11 +3,11 @@
 Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 `schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
 ([reference](claims.md)), `open` ([reference](open.md)), `agents`, `state`,
-`why` ([reference](query-commands.md)), and `append`, `vocab`
-([reference](append.md)) are implemented, the rest still print `eventlog
-<name>: not implemented` to stderr and exit 1. This page documents the
-frozen command set so later tasks can fill in behavior without changing
-names or flags.
+`why` ([reference](query-commands.md)), `append`, `vocab`
+([reference](append.md)), and `tui` ([reference](tui.md)) are implemented,
+the rest still print `eventlog <name>: not implemented` to stderr and exit
+1. This page documents the frozen command set so later tasks can fill in
+behavior without changing names or flags.
 
 ## Global flags
 
@@ -31,7 +31,7 @@ Every command accepts:
 | `why` | Explain how one event was acted on ([reference](query-commands.md)). |
 | `claims` | Report files a worker's claim does not cover ([reference](claims.md)). Hidden alias: `check-claims`. |
 | `open` | Open an event's ref in `$EDITOR` or `$PAGER` ([reference](open.md)). |
-| `tui` | Interactive terminal UI over the log. |
+| `tui` | Interactive terminal UI over the log ([reference](tui.md)). |
 | `react` | Reactor runtime. Subcommand: `test` (dry-run one reaction against a real sequence number). |
 | `guard` | Hook guard for agent tool calls. Subcommand: `install`. |
 | `init` | Create a new coordination log and scaffold. |
@@ -65,3 +65,4 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Open](open.md) — open an event's ref in `$EDITOR` or `$PAGER`.
 - [Query commands](query-commands.md) — `agents`, `state`, and `why`.
 - [Append](append.md) — the `append` library function and the `append`/`vocab` commands.
+- [TUI](tui.md) — the live terminal UI over the folded log.
