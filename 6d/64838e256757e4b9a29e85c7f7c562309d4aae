@@ -1,0 +1,33 @@
+tests/log_append.rs
+  s_f967523fddc2ab::t_b4de71ea12e998 153-154,166
+  s_f967523fddc2ab::t_8508291b5e109c 159-165
+  s_f967523fddc2ab::t_497c3e33fb5dc2 1,3-26,28-44,46-48,50-152,155-158,167-205
+  s_4147bcf1865b43::t_dd4b3211b6a117 2,27,45,49
+src/log/append.rs
+  s_f967523fddc2ab::t_3e1cef076ea89a 73-305,327,330
+  s_f967523fddc2ab::t_d7b25dfdd4cbd7 1,3-72,306-326,328-329,331-359
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6d64838e256757e4b9a29e85c7f7c562309d4aae",
+  "prompts": {},
+  "sessions": {
+    "s_4147bcf1865b43": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "eb3cb4b0-36ee-41f7-94fc-dd7fb7f6dbea",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
