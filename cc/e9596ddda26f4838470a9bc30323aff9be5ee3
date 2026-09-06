@@ -1,0 +1,26 @@
+docs/reference/react-voter.md
+  s_450c554ae12c3d::t_178af96a12495a 14,21-23
+  s_450c554ae12c3d::t_de2332b5d52a9a 56
+  s_450c554ae12c3d::t_f6a7f346825da4 87,92-96
+  s_450c554ae12c3d::t_13a69411e74ed2 64-70
+docs/reference/query-module.md
+  s_450c554ae12c3d::t_3b56423ae034b9 40
+  s_450c554ae12c3d::t_77de2e4b34c2fb 142-146
+  s_450c554ae12c3d::t_1264e5ab835c83 83-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "cce9596ddda26f4838470a9bc30323aff9be5ee3",
+  "prompts": {},
+  "sessions": {
+    "s_450c554ae12c3d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "22db2ef0-4861-42c3-a78c-b8fe15ddfb0d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
