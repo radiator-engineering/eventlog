@@ -1,0 +1,19 @@
+.context/DECISIONS.md
+  s_4b1b3ed321d246::t_da15d67ab2bb0f 130-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "cec433f4bcf0ff53c9c93f6941d397a5f5546b19",
+  "prompts": {},
+  "sessions": {
+    "s_4b1b3ed321d246": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "c951446b-7533-4310-a3d5-a3bf0fbccc67",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
