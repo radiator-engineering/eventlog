@@ -1,0 +1,14 @@
+docs/superpowers/specs/2026-09-06-event-log-cli-design.md
+  h_63f2916b00d585 1-234
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b195e303b6dcfa4752c733f1ae4fae7a2f3bbbbb",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
