@@ -12,5 +12,7 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `docs/superpowers/plans/` — implementation plans built from those specs. `2026-09-06-eventlog-cli.md` breaks the `eventlog` build into 21 tasks across four phases, each scoped as a herdr worker brief with claimed paths and the controller's spawn/claim/result/retire protocol.
 - `docs/reference/eventlog-cli-surface.md` — the frozen `eventlog` command list and global flags.
 - `docs/explanation/frozen-cli-surface.md` — why the CLI surface was locked down before any command works.
+- `docs/reference/model-contract.md` — the frozen `src/model` contract: `Event`, `Config`, `Vocabulary`, `Allowlist`, and path rules.
+- `docs/explanation/model-contract-precedence.md` — why the model layer is frozen, and how the write allowlist combines defaults, config file, and log decisions.
 
-The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass), but no command works yet: each one prints `not implemented` and exits 1.
+The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks, but no command works yet: each one prints `not implemented` and exits 1.
