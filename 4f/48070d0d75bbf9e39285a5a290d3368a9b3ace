@@ -1,0 +1,19 @@
+.context/handoffs/bootstrap.md
+  s_f37cc1e1350569::t_1534d352504aec 84-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "4f48070d0d75bbf9e39285a5a290d3368a9b3ace",
+  "prompts": {},
+  "sessions": {
+    "s_f37cc1e1350569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a7849e9-7c44-47c6-9234-07e888a6fea6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
