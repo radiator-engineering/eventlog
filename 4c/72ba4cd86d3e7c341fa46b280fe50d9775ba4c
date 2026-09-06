@@ -1,0 +1,29 @@
+src/cli.rs
+  s_26ba64640a12d8::t_0d09e1cf3eed60 214-221,225-229
+tests/skill.rs
+  s_cbb9eb48f20987::t_0cdb7b1eec16f2 1-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "4c72ba4cd86d3e7c341fa46b280fe50d9775ba4c",
+  "prompts": {},
+  "sessions": {
+    "s_26ba64640a12d8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "86cd6951-05d0-4ab2-a260-50dff5c31ee2",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_cbb9eb48f20987": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce3d391e-1f33-46f3-a88f-32ae836f78cb",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
