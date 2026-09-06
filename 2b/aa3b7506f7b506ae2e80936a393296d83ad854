@@ -1,0 +1,32 @@
+docs/explanation/hash-chain-verification.md
+  s_194cb123b18585::t_89a3f7a9576707 1-36
+docs/reference/verify.md
+  s_194cb123b18585::t_b66ad824e0165a 1-2,6-71
+  s_194cb123b18585::t_0f57bef903b528 3-5
+docs/reference/log-module.md
+  s_9d6772a5fa1484::t_7e79eeada79385 4-6,99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "2baa3b7506f7b506ae2e80936a393296d83ad854",
+  "prompts": {},
+  "sessions": {
+    "s_194cb123b18585": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b344b329-eb3d-467b-90cf-58bb237ecf65",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_9d6772a5fa1484": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "de8cfdc9-ec2c-4185-8ede-99cac9853291",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
