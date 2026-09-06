@@ -1,0 +1,46 @@
+README.md
+  s_dfe2ed57658aaf::t_fdc27dad2f2993 24-25,28
+  s_0c2b589883dbe6::t_3df4870bacccb3 23,26
+docs/reference/append.md
+  s_0c2b589883dbe6::t_c659a9634a4627 1-100
+docs/reference/claims.md
+  s_dfe2ed57658aaf::t_7eb3d0a3fa38c9 1-74
+docs/reference/view.md
+  s_0c2b589883dbe6::t_17e2bca6eed53d 1-79
+docs/reference/open.md
+  s_dfe2ed57658aaf::t_f382082feaaeb2 1-35
+docs/reference/eventlog-cli-surface.md
+  s_0c2b589883dbe6::t_87f06b3908cbe7 28
+  s_0c2b589883dbe6::t_3f018b6ab67c51 3,8-10
+  s_0c2b589883dbe6::t_a818b4ebe0ec20 63,66
+  s_dfe2ed57658aaf::t_d9de2e3ecda6a6 32-33
+  s_dfe2ed57658aaf::t_7aaab4216026cc 4-7
+  s_dfe2ed57658aaf::t_3aa84462686baa 64-65
+docs/reference/log-module.md
+  s_0c2b589883dbe6::t_92a16f72bab37f 100
+  s_0c2b589883dbe6::t_12e85b5f67489c 5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "fa6d7f523c087d2027b812d960d190e6a077aedd",
+  "prompts": {},
+  "sessions": {
+    "s_0c2b589883dbe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2691fb6f-f448-4b6b-9d0c-6e28ca74b4fb",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_dfe2ed57658aaf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd7090b1-6050-477a-8916-48996e231825",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
