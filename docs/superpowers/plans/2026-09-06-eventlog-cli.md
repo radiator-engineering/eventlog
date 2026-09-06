@@ -39,7 +39,7 @@
 
 **Parallel groups.** Tasks in the same group have disjoint `Files` and may run at once, one pane each. A group starts only after every task it depends on has a controller `result` and `retire`. `cargo` serializes on the target-dir lock; that is delay, not conflict.
 
-**Shared files are frozen after Task 1.** `Cargo.toml`, `src/lib.rs`, `src/main.rs`, `src/cli.rs` are claimed by Task 1 only. A later task that needs a new dependency or a new `mod` line appends `escalate by=<slug> msg="needs <dep> in Cargo.toml"`; the controller makes the one-line change and records its own `result`.
+**Shared files are frozen after Task 1.** `Cargo.toml`, `src/lib.rs`, `src/main.rs`, `src/cli.rs` are claimed by Task 1 only, with one exception: a command task may add fields to its own `<Cmd>Args` struct in `src/cli.rs` (targeted edit, never a whole-file rewrite). A later task that needs a new dependency or a new `mod` line appends `escalate by=<slug> msg="needs <dep> in Cargo.toml"`; the controller makes the one-line change and records its own `result`.
 
 **Contracts are decisions.** Before group 1B starts, the controller appends `decision key=model-contract value=src/model/mod.rs@<sha> ref=.context/DECISIONS.md`. Every later brief says "build against the model contract at that sha; do not change public signatures; escalate if you must".
 
