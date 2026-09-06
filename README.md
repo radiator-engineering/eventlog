@@ -16,5 +16,9 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `docs/explanation/model-contract-precedence.md` — why the model layer is frozen, and how the write allowlist combines defaults, config file, and log decisions.
 - `docs/reference/log-module.md` — `src/log`: `Log::open/read/tail/hash_line` and the mkdir-based `Lock`.
 - `docs/explanation/lock-reclaim.md` — why a dead holder's lock is renamed aside before removal, not deleted directly.
+- `docs/reference/verify.md` — `verify` and `eventlog verify`: walking the hash chain and reporting the first break.
+- `docs/explanation/hash-chain-verification.md` — why the chain can start partway through a log, but never stop once started.
+- `docs/reference/schema.md` — `eventlog schema`: JSON Schema for event lines (`--events`) and `--json` view rows (`--output`).
+- `docs/reference/query-module.md` — `src/query`: `State`, `fold`, and `fold_at`, projecting agents, live claims, decisions, reactors, and the allowlist as of a `seq`.
 
-The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks. `src/log` can now read a log file (whole-file parse, cheap tail check) and serialize writer access with a directory lock, but no command works yet: each one prints `not implemented` and exits 1.
+The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks. `src/log` can now read a log file (whole-file parse, cheap tail check) and serialize writer access with a directory lock. `eventlog verify` walks the hash chain and reports the first break, `eventlog schema` prints the JSON Schema for event lines and `--json` view rows, and `src/query` folds a read log into one `State` as of any `seq`; every other command still prints `not implemented` and exits 1.

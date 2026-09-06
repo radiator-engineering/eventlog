@@ -1,9 +1,10 @@
 # eventlog CLI surface
 
-Status: scaffolded, not implemented. Every command parses and prints
-`eventlog <name>: not implemented` to stderr, then exits 1. This page
-documents the frozen command set so later tasks can fill in behavior
-without changing names or flags.
+Status: scaffolded. Every command parses; `verify` ([reference](verify.md))
+and `schema` ([reference](schema.md)) are implemented, the rest still print
+`eventlog <name>: not implemented` to stderr and exit 1. This page documents
+the frozen command set so later tasks can fill in behavior without changing
+names or flags.
 
 ## Global flags
 
@@ -33,7 +34,7 @@ Every command accepts:
 | `init` | Create a new coordination log and scaffold. |
 | `doctor` | Diagnose common setup problems. |
 | `protect` | Toggle or report OS-level append-only protection. |
-| `schema` | Print the JSON Schema for log types. |
+| `schema` | Print the JSON Schema for log types ([reference](schema.md)). |
 | `skill` | Manage the embedded coordination skill. Subcommand: `install`. |
 | `completions` | Generate shell completions. |
 
@@ -49,8 +50,10 @@ cargo test        # tests/cli_surface.rs asserts every command above is recogniz
 ```
 
 Source: `src/cli.rs` defines the command enum and dispatch table; each
-`src/cmd/<name>.rs` holds the not-yet-implemented stub for that command.
+`src/cmd/<name>.rs` holds that command (a stub, except `verify.rs`).
 
 ## See also
 
 - [Why the CLI surface shipped before any command works](../explanation/frozen-cli-surface.md)
+- [Verify](verify.md) — the first implemented command.
+- [Schema](schema.md) — JSON Schema for event lines and `--json` view rows.
