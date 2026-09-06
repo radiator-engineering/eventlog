@@ -325,7 +325,7 @@ Rules: pre-chain lines pass until the first `prev`; that line's `prev` must equa
 
 ### Task 6: `append` and `vocab` commands
 
-**Files:** Create `src/cmd/append.rs` (replace stub), `tests/cmd_append.rs`.
+**Files:** Modify `src/cmd/append.rs`, `src/cmd/vocab.rs` (replace stubs); Create `tests/cmd_append.rs`.
 
 Behavior: `eventlog append <type> k=v... [--as n] [--dry-run] [--no-strict]`; `EVENTLOG_AS` env fallback; prints the line on stdout; errors map to exit 1 (`Lock(Busy)` → 2). `eventlog vocab [type] [--json]` prints required and optional fields from `Config`; `append --help` epilogue includes the same table (build the help string at runtime with `clap::Command::after_help`).
 
