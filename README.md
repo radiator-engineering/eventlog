@@ -14,5 +14,7 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `docs/explanation/frozen-cli-surface.md` — why the CLI surface was locked down before any command works.
 - `docs/reference/model-contract.md` — the frozen `src/model` contract: `Event`, `Config`, `Vocabulary`, `Allowlist`, and path rules.
 - `docs/explanation/model-contract-precedence.md` — why the model layer is frozen, and how the write allowlist combines defaults, config file, and log decisions.
+- `docs/reference/log-module.md` — `src/log`: `Log::open/read/tail/hash_line` and the mkdir-based `Lock`.
+- `docs/explanation/lock-reclaim.md` — why a dead holder's lock is renamed aside before removal, not deleted directly.
 
-The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks, but no command works yet: each one prints `not implemented` and exits 1.
+The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks. `src/log` can now read a log file (whole-file parse, cheap tail check) and serialize writer access with a directory lock, but no command works yet: each one prints `not implemented` and exits 1.

@@ -155,3 +155,4 @@ cargo test
 
 - [Command list](eventlog-cli-surface.md) — no command uses this contract yet.
 - [Why the model layer is frozen as a contract](../explanation/model-contract-precedence.md)
+- [Log module](log-module.md) — `Log::read` and `Log::tail` parse lines with `Event::parse_line`.
