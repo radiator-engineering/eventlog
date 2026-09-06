@@ -1,0 +1,41 @@
+tests/react_action.rs
+  s_b1d4cddbf700fe::t_aacff56036575d 1,3,5-76,92-94,96-99,101-108,110-113,115-124
+  s_f967523fddc2ab::t_dfe6a071f968fb 2
+  s_b1d4cddbf700fe::t_f97875ee3777d1 77-91,95,100,109,114
+  s_b1d4cddbf700fe::t_bc4e13ac5d1fd7 4
+src/react/action.rs
+  s_b1d4cddbf700fe::t_84a691c92bc629 1,3-47,49-67,69-229,231-242,244
+  s_08b5d21fa4af3d::t_8b32f2a993a8a7 48,68,230,243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "8ba446e7d3fe855e2635f574ec3dd51743bab905",
+  "prompts": {},
+  "sessions": {
+    "s_08b5d21fa4af3d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4eee47c3-b209-42ec-9867-518f7fe454df",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_b1d4cddbf700fe": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "370d8d14-0af1-4aa8-afcd-876b69876f64",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
