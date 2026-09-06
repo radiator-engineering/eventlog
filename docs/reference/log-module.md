@@ -1,10 +1,9 @@
 # Log module: `src/log`
 
 Status: `open`, `read`, `tail`, and `hash_line` are implemented, plus a
-directory-based `Lock`. No `eventlog` command calls them yet ([command
-list](eventlog-cli-surface.md)) — the next task, `append`, is the first
-caller. `src/log/append.rs` and `src/log/verify.rs` are separate stubs, not
-covered here.
+directory-based `Lock`. `src/log/verify.rs` builds `verify` on top of this
+module — see [Verify](verify.md), not covered here. `src/log/append.rs` is a
+separate stub.
 
 ## `Log` — reading the log file
 
@@ -97,3 +96,4 @@ cargo test
 
 - [Model contract](model-contract.md) — `Event`, parsed by `Log::read` and `Log::tail`.
 - [Why a reclaimed lock is renamed aside before removal](../explanation/lock-reclaim.md)
+- [Verify](verify.md) — `verify`, the first caller of this module.
