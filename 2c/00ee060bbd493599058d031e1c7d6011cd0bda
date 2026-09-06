@@ -1,0 +1,19 @@
+tests/cmd_react.rs
+  s_5bfa570b7814f9::t_0772a388ea2313 1-294
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "2c00ee060bbd493599058d031e1c7d6011cd0bda",
+  "prompts": {},
+  "sessions": {
+    "s_5bfa570b7814f9": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "61755cc4-f18e-4319-9374-061c1212b62a",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
