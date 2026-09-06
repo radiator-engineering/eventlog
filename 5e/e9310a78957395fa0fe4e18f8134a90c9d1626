@@ -1,0 +1,32 @@
+tests/fixtures/chain_ok.jsonl
+  s_4147bcf1865b43::t_5bc583c57e65c0 1-4
+src/cmd/verify.rs
+  s_4147bcf1865b43::t_357e3e2bfe0421 5,11-14
+  s_4147bcf1865b43::t_e88a61d7bce140 1-4,6-10,15-39
+src/log/verify.rs
+  s_4147bcf1865b43::t_ab9133792b2608 1,3-85
+tests/log_verify.rs
+  s_4147bcf1865b43::t_a2e4affd7d3745 47-48,52-59
+  s_4147bcf1865b43::t_660b91331b5579 1,3-46,49-51,60-74
+  s_4147bcf1865b43::t_dd4b3211b6a117 2
+tests/fixtures/chain_break.jsonl
+  s_4147bcf1865b43::t_76f59725b401cb 1-4
+tests/fixtures/chain_unchained_after.jsonl
+  s_4147bcf1865b43::t_c9651686b3b1e1 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "5ee9310a78957395fa0fe4e18f8134a90c9d1626",
+  "prompts": {},
+  "sessions": {
+    "s_4147bcf1865b43": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "eb3cb4b0-36ee-41f7-94fc-dd7fb7f6dbea",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
