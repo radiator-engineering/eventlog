@@ -1,0 +1,4 @@
+{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"note","prev":"genesis","msg":"a"}
+{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"note","prev":"886c13b4e584a2c8666fc681863368947d3bf574508bde588d6c8356c5edbb73","msg":"b"}
+{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"note","prev":"b044e9a06f1d7a09d34e721e8598324d79f0bd3cc307b4920e7f75dd513fbea0","msg":"c"}
+{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"note","prev":"deadbeef00000000000000000000000000000000000000000000000000000000","msg":"d"}
