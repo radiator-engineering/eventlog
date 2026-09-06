@@ -1,0 +1,19 @@
+research/survey-event-sourcing.md
+  s_b67a9250e82db8::t_f42e43af9837a3 1-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "beb583fd38a9d775b4f5e80476ff337f944b6ebe",
+  "prompts": {},
+  "sessions": {
+    "s_b67a9250e82db8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "cab74de5-d85c-4232-b5da-0b63e8789254",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
