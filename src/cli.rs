@@ -86,13 +86,24 @@ pub struct ViewArgs {
 }
 
 #[derive(ClapArgs, Debug)]
-pub struct AgentsArgs {}
+pub struct AgentsArgs {
+    /// Fold state as of this sequence number (default: tip).
+    #[arg(long)]
+    pub at: Option<u64>,
+}
 
 #[derive(ClapArgs, Debug)]
-pub struct StateArgs {}
+pub struct StateArgs {
+    /// Fold state as of this sequence number (default: tip).
+    #[arg(long)]
+    pub at: Option<u64>,
+}
 
 #[derive(ClapArgs, Debug)]
-pub struct WhyArgs {}
+pub struct WhyArgs {
+    /// Sequence number to explain.
+    pub seq: u64,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct ClaimsArgs {
