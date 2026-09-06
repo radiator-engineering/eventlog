@@ -5,7 +5,8 @@ Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 ([reference](claims.md)), `open` ([reference](open.md)), `agents`, `state`,
 `why` ([reference](query-commands.md)), `append`, `vocab`
 ([reference](append.md)), `tui` ([reference](tui.md)), `guard`
-([reference](guard.md)), `skill`, and `completions`
+([reference](guard.md)), `init`, `doctor`, `protect`
+([reference](scaffold.md)), `skill`, and `completions`
 ([reference](skill.md)) are implemented, the rest still print `eventlog
 <name>: not implemented` to stderr and exit 1. This page documents the
 frozen command set so later tasks can fill in behavior without changing
@@ -36,9 +37,9 @@ Every command accepts:
 | `tui` | Interactive terminal UI over the log ([reference](tui.md)). |
 | `react` | Reactor runtime. Subcommand: `test` (dry-run one reaction against a real sequence number). |
 | `guard` | Hook guard for agent tool calls ([reference](guard.md)). Subcommand: `install`. |
-| `init` | Create a new coordination log and scaffold. |
-| `doctor` | Diagnose common setup problems. |
-| `protect` | Toggle or report OS-level append-only protection. |
+| `init` | Create a new coordination log and scaffold ([reference](scaffold.md)). |
+| `doctor` | Diagnose common setup problems ([reference](scaffold.md)). |
+| `protect` | Toggle or report OS-level append-only protection ([reference](scaffold.md)). |
 | `schema` | Print the JSON Schema for log types ([reference](schema.md)). |
 | `skill` | Manage the embedded coordination skill ([reference](skill.md)). Subcommand: `install`. |
 | `completions` | Generate shell completions ([reference](skill.md)). |
@@ -69,4 +70,5 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Append](append.md) — the `append` library function and the `append`/`vocab` commands.
 - [TUI](tui.md) — the live terminal UI over the folded log.
 - [Guard](guard.md) — parsing agent hook payloads and the shared denylist.
+- [Scaffold and setup](scaffold.md) — `init`, `doctor`, and `protect`.
 - [Skill and completions](skill.md) — installing the embedded skill and generating shell completions.
