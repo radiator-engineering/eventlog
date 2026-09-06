@@ -1,0 +1,27 @@
+docs/explanation/guard-fail-modes.md
+  s_29d6f70ecfd336::t_8fd8a743b5d5a7 47-66
+  s_29d6f70ecfd336::t_516181734e580e 1
+docs/reference/guard.md
+  s_29d6f70ecfd336::t_48835ec46f5500 142
+  s_29d6f70ecfd336::t_efb701b953cb51 64-66
+  s_29d6f70ecfd336::t_ca8f1c97a30bd4 78-79
+README.md
+  s_29d6f70ecfd336::t_e42aaed5315a08 8
+  s_29d6f70ecfd336::t_0cce73fb4c2399 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "2e69c0f3339fe4bc135ba54738408b12de65c855",
+  "prompts": {},
+  "sessions": {
+    "s_29d6f70ecfd336": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6ac80f3d-ecf1-41ee-b8d7-55be6e7d6860",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
