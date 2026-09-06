@@ -2,13 +2,12 @@
 
 Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 `schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
-([reference](claims.md)), `open` ([reference](open.md)), and `agents`,
-`state`, `why` ([reference](query-commands.md)) are implemented, the rest
-still print `eventlog <name>: not implemented` to stderr and exit 1.
-`append`'s underlying library function is implemented
-([reference](append.md)), but the `eventlog append` command itself is not
-wired up yet. This page documents the frozen command set so later tasks can
-fill in behavior without changing names or flags.
+([reference](claims.md)), `open` ([reference](open.md)), `agents`, `state`,
+`why` ([reference](query-commands.md)), and `append`, `vocab`
+([reference](append.md)) are implemented, the rest still print `eventlog
+<name>: not implemented` to stderr and exit 1. This page documents the
+frozen command set so later tasks can fill in behavior without changing
+names or flags.
 
 ## Global flags
 
@@ -23,8 +22,8 @@ Every command accepts:
 
 | Command | Purpose |
 |---|---|
-| `append` | Validate and append one event. |
-| `vocab` | Show required and optional fields per event type. |
+| `append` | Validate and append one event ([reference](append.md)). |
+| `vocab` | Show required and optional fields per event type ([reference](append.md)). |
 | `verify` | Walk the hash chain and report the first break. |
 | `view` | Print log rows, optionally following new ones ([reference](view.md)). |
 | `agents` | Per-agent lifecycle table ([reference](query-commands.md)). |
@@ -65,4 +64,4 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Claims](claims.md) — compare changed files against an agent's live claims.
 - [Open](open.md) — open an event's ref in `$EDITOR` or `$PAGER`.
 - [Query commands](query-commands.md) — `agents`, `state`, and `why`.
-- [Append](append.md) — the `append` library function; the CLI command is still a stub.
+- [Append](append.md) — the `append` library function and the `append`/`vocab` commands.

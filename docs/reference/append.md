@@ -1,8 +1,8 @@
-# Append: `src/log/append.rs`
+# Append: `src/log/append.rs`, `eventlog append`, `eventlog vocab`
 
-Status: implemented at the library level. `append` validates one event and
-writes it to the log. The `eventlog append` command (`src/cmd/append.rs`)
-that will expose it on the CLI is still a stub.
+Status: implemented. `append` validates one event and writes it to the log.
+`eventlog append` (`src/cmd/append.rs`) and `eventlog vocab`
+(`src/cmd/vocab.rs`) expose it and the vocabulary on the CLI.
 
 ```rust
 pub struct AppendRequest {
@@ -21,8 +21,8 @@ pub fn append(
 ) -> Result<Event, AppendError>;
 ```
 
-`writer` is the caller's identity (`"controller"` or an agent name — the
-future `--as` flag). `ctx` is folded coordination state, needed only for the
+`writer` is the caller's identity (`"controller"` or an agent name, set by
+the `--as` flag on `eventlog append`). `ctx` is folded coordination state, needed only for the
 allowlist and for `strict` checks; pass `None` to skip both and fall back to
 `cfg.writers` for the allowlist.
 
@@ -38,9 +38,9 @@ pub trait StrictContext {
 ```
 
 `append` reads folded state only through this trait, so `src/log` does not
-depend on `src/query`. `src/cmd/append.rs` will implement `StrictContext` for
-`query::State` (see [Query module](query-module.md)) when the CLI command is
-built.
+depend on `src/query`. `src/cmd/append.rs` implements it as `FoldContext`, a
+thin wrapper over a folded `query::State` (see [Query
+module](query-module.md)).
 
 ## Validation order
 
@@ -85,6 +85,45 @@ out-of-order `seq` values.
 returns the event `append` would have written — with its final `seq`, `ts`,
 and `prev` — without acquiring the lock or writing anything.
 
+## `eventlog append`
+
+```sh
+eventlog append <type> [field=value ...] [--as <writer>] [--dry-run] [--no-strict]
+```
+
+| Flag | Meaning |
+|---|---|
+| `--as <writer>` | Writer identity for `req.writer`. Defaults to `$EVENTLOG_AS`, or `"controller"` if that is unset. |
+| `--dry-run` | Validate and print the event without writing it. |
+| `--no-strict` | Skip the strict fold checks (for repair work). Sets `req.strict = false`. |
+
+The command loads config, reads and folds the whole log into a `query::State`
+via `FoldContext`, and calls `append` with that state as the `StrictContext`.
+On success it prints the written (or, with `--dry-run`, the would-be-written)
+event as one JSON line and exits `0`. On failure it prints the `AppendError`
+to stderr and exits `2` for lock contention (`AppendError::Lock(LockError::
+Busy { .. })`) or `1` for every other error.
+
+`--help` on `append` prints a static vocabulary epilogue (required and
+optional fields per type) built into the binary, not read from config — see
+`eventlog vocab` below for the config-aware version.
+
+## `eventlog vocab`
+
+```sh
+eventlog vocab [<type>] [--json]
+```
+
+Prints required and optional fields per event type from `cfg.vocabulary`,
+which reflects the loaded config rather than the static list `append --help`
+shows. With `<type>`, prints only that type; without it, prints every type in
+`cfg.vocabulary`. `--json` prints `{"v":1,"type":...,"fields":[...],
+"optional":[...]}` — one object for a single type, an array of them for all
+types. Text output is `<type>: required=[...] optional=[...]` (optional
+segment omitted when the type has no optional fields). Naming an unknown type
+prints `eventlog vocab: unknown type: <type>` to stderr (JSON mode returns an
+error instead of printing).
+
 ## Tests
 
 `tests/log_append.rs` covers: genesis `prev` on an empty log; the second
@@ -99,9 +138,16 @@ with:
 cargo test
 ```
 
+`tests/cmd_append.rs` covers the CLI layer: a `result` append prints a
+`{"seq":1...}` line and creates the log file; `--dry-run` prints the same
+shape without creating the file; a missing required field exits `1` with
+`missing field` and the field name on stderr; `vocab result --json` lists
+`"fields":["agent","ref"]`; and two processes appending 25 events each end
+with 50 lines and `seq` `1..=50` with no gaps or duplicates.
+
 ## See also
 
 - [Log module](log-module.md) — `Log`, `Tail`, and `Lock`, which `append` builds on.
 - [Model contract](model-contract.md) — `Event`, `Config`, and `Allowlist`.
-- [Query module](query-module.md) — `query::State`, the intended `StrictContext` implementation.
+- [Query module](query-module.md) — `query::State`, the `StrictContext` implementation `eventlog append` uses.
 - [`eventlog` command list](eventlog-cli-surface.md)
