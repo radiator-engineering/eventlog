@@ -5,3 +5,6 @@
 .context/layout.json
 .DS_Store
 target/
+
+# cargo-mutants output
+mutants.out*/
