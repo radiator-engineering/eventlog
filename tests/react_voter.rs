@@ -307,3 +307,26 @@ fn the_first_binding_veto_wins() {
         Some("first")
     );
 }
+
+#[test]
+fn a_workers_own_result_on_its_claimed_paths_is_not_claimed_by_other() {
+    let state = state_of(WORLD);
+    let driving = event(
+        r#"{"seq":9,"ts":"2026-09-06T10:01:00Z","type":"result","by":"build-x","agent":"build-x","paths":"src/x.rs"}"#,
+    );
+    let auth = voter::authorize(&driving, &state);
+    assert_eq!(auth.subject, "build-x");
+    assert_eq!(
+        voter::check("commit", &auth, &state, &Config::default()),
+        Ok(())
+    );
+    // The controller recording that worker's result is the same case.
+    let driving = event(
+        r#"{"seq":9,"ts":"2026-09-06T10:01:00Z","type":"result","agent":"build-x","paths":"src/x.rs"}"#,
+    );
+    let auth = voter::authorize(&driving, &state);
+    assert_eq!(
+        voter::check("commit", &auth, &state, &Config::default()),
+        Ok(())
+    );
+}

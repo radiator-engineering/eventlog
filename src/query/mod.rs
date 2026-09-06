@@ -118,15 +118,38 @@ pub fn fold_at(events: &[Event], cfg: &Config, at: u64) -> State {
             "retire" => on_retire(&mut state, event),
             "decision" => on_decision(&mut state, event),
             "approval" => {
-                if let Some(subject) = event.fields.get("subject")
-                    && let Some(index) = open_escalations.remove(subject)
+                // `for=<seq>` closes exactly that escalation; otherwise the
+                // approval closes the newest open escalation with its subject.
+                let by_seq = event
+                    .fields
+                    .get("for")
+                    .and_then(|f| f.parse::<u64>().ok())
+                    .and_then(|target| {
+                        open_escalations
+                            .iter()
+                            .find(|(_, index)| state.escalations[**index].seq == target)
+                            .map(|(key, _)| key.clone())
+                    });
+                let key = by_seq.or_else(|| {
+                    event.fields.get("subject").and_then(|subject| {
+                        open_escalations
+                            .keys()
+                            .rfind(|k| k.rsplit_once('#').map(|(s, _)| s) == Some(subject.as_str()))
+                            .cloned()
+                    })
+                });
+                if let Some(key) = key
+                    && let Some(index) = open_escalations.remove(&key)
                 {
                     closed_escalations.push(index);
                 }
             }
             "escalate" => {
                 state.escalations.push(event.clone());
-                open_escalations.insert(escalation_subject(event), state.escalations.len() - 1);
+                // Key by subject and seq so two escalations with one subject
+                // (or none) stay separately open.
+                let key = format!("{}#{}", escalation_subject(event), event.seq);
+                open_escalations.insert(key, state.escalations.len() - 1);
             }
             "intent" => {
                 state.intents.push(event.clone());
@@ -263,12 +286,17 @@ fn reactor<'a>(state: &'a mut State, name: &str) -> &'a mut ReactorState {
 
 /// The escalation's `subject`, falling back to the agent it is about, so an
 /// `approval subject=<agent>` closes it.
+/// The subject an approval must name: the explicit `subject`, else the
+/// writer that raised it (a worker escalation carries `by=` and no `agent`),
+/// else the event's subject.
 fn escalation_subject(event: &Event) -> String {
-    event
-        .fields
-        .get("subject")
-        .cloned()
-        .unwrap_or_else(|| event.subject().to_string())
+    if let Some(subject) = event.fields.get("subject") {
+        return subject.clone();
+    }
+    match (&event.by, &event.agent) {
+        (Some(by), None) => by.clone(),
+        _ => event.subject().to_string(),
+    }
 }
 
 /// A `result`, `retire` or `progress` naming an agent that has no `spawn`

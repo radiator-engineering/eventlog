@@ -140,3 +140,13 @@ reactor's own result; the committer cuts its scope to the doc-worker claim at
 seq 337) and skips when the driving ack landed a doc-worker result (loop
 guard, replacing the old `origin=` field). `layout.sh` is unchanged: it still
 runs `run-reactor.sh`, which now dispatches.
+
+## react-contract amendment: Authorized.subject (2026-09-06)
+The first live doc pass was vetoed `claimed-by-other` because the voter
+compared claim owners only against the reactor's own name. `Authorized`
+gains `subject` (the driving event's `agent`, else its writer) and the rule
+exempts a claim held by that subject: a worker's result on its claimed files,
+or the controller's `result agent=<worker>`, is not "other". A controller
+result with no `agent` naming a path an open agent claims is still vetoed.
+The fold now keys escalations by subject and seq, defaults a worker
+escalation's subject to its `by=`, and `approval for=<seq>` closes exactly one.

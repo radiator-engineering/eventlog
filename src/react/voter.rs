@@ -18,6 +18,9 @@ use crate::query::State;
 pub struct Authorized {
     pub paths: Vec<RelPath>,
     pub excess: Vec<RelPath>,
+    /// Whose work the driving event is about: its `agent`, else its writer.
+    /// A claim this subject holds never vetoes the action.
+    pub subject: String,
 }
 
 /// Why the voter stopped the action. The `reason=` word of the `veto` line.
@@ -84,15 +87,24 @@ pub fn authorize(driving: &Event, state: &State) -> Authorized {
         .flatten()
         .collect();
 
+    let subject = driving
+        .agent
+        .clone()
+        .unwrap_or_else(|| driving.writer().to_string());
+
     if driving.by.is_none() {
         return Authorized {
             paths: named,
             excess: Vec::new(),
+            subject,
         };
     }
 
     let claims = state.claims_for(driving.writer());
-    let mut auth = Authorized::default();
+    let mut auth = Authorized {
+        subject,
+        ..Authorized::default()
+    };
     for path in named {
         if claims.iter().any(|glob| covers(glob, path.as_str())) {
             auth.paths.push(path);
@@ -117,8 +129,12 @@ pub fn check(reactor: &str, auth: &Authorized, state: &State, cfg: &Config) -> R
         }
     }
     for path in &auth.paths {
+        // A claim held by the driving event's own subject is what authorized
+        // the path in the first place: a worker's result on its claimed
+        // files, or the controller's `result agent=<worker>`, is not "other".
         if let Some(owner) = state.claim_owner(path.as_str())
             && owner != reactor
+            && owner != auth.subject
         {
             return Err(Veto::ClaimedByOther {
                 path: path.clone(),

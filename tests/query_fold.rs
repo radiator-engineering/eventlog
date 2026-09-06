@@ -276,3 +276,30 @@ fn the_drove_sample_folds_the_same_way_at_every_seq() {
         }
     }
 }
+
+#[test]
+fn approval_for_seq_closes_only_that_escalation_and_by_is_the_default_subject() {
+    let lines = [
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"escalate","by":"build-a","msg":"blocked on b"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"escalate","by":"build-b","msg":"blocked on a"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"escalate","by":"build-b","msg":"still blocked"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"approval","for":"2","decision":"resolved"}"#,
+        r#"{"seq":5,"ts":"2026-09-06T00:00:04Z","type":"approval","subject":"build-a","decision":"resolved"}"#,
+    ];
+    let events = synth(&lines);
+    let cfg = Config::default();
+    // Three worker escalations with no explicit subject stay separately open.
+    let open_at_3: Vec<u64> = query::fold_at(&events, &cfg, 3)
+        .escalations
+        .iter()
+        .map(|e| e.seq)
+        .collect();
+    assert_eq!(open_at_3, vec![1, 2, 3]);
+    // `for=2` closes seq 2 only; `subject=build-a` closes seq 1; seq 3 remains.
+    let open: Vec<u64> = query::fold(&events, &cfg)
+        .escalations
+        .iter()
+        .map(|e| e.seq)
+        .collect();
+    assert_eq!(open, vec![3]);
+}

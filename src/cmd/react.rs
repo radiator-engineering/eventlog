@@ -200,10 +200,14 @@ impl Steps for RealSteps {
         Ok(auth.paths.iter().map(|p| p.as_str().to_string()).collect())
     }
 
-    fn check(&mut self, state: &State, _driving: &Event, authorized: &[String]) -> Option<String> {
+    fn check(&mut self, state: &State, driving: &Event, authorized: &[String]) -> Option<String> {
         let auth = Authorized {
             paths: rel_paths(authorized),
             excess: Vec::new(),
+            subject: driving
+                .agent
+                .clone()
+                .unwrap_or_else(|| driving.writer().to_string()),
         };
         voter::check(&self.name, &auth, state, &self.cfg)
             .err()
