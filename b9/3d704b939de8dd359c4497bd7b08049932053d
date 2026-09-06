@@ -1,0 +1,19 @@
+docs/reference/react-voter.md
+  s_ca865a5a1df6b4::t_7d72c868b39538 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b93d704b939de8dd359c4497bd7b08049932053d",
+  "prompts": {},
+  "sessions": {
+    "s_ca865a5a1df6b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "90924e2c-1751-4e67-8fb9-f9c71abd7021",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
