@@ -1,30 +1,39 @@
-# Why the reactor scripts hand their loop to `eventlog react`, and how the doc worker avoids looping on itself
+# Why the reactor panes hand their loop to `eventlog react`, and how the doc worker avoids looping on itself
 
 This repo runs its own coordination log, so its two reactors —
 [the commit reactor and the doc worker](../../AGENTS.md) — must run on
-something. Before this change, `.context/bin/run-reactor.sh` ran a plain
-bash polling loop for each one. Now it runs [`eventlog
-react`](../reference/react-command.md), the Rust reactor runtime, by
-default, and keeps the bash loop only as a fallback.
+something. The herdr layout (`Drovefile`, via the `reactor()` function in
+`drove/reactors.star`) starts each one as a pane that runs [`eventlog
+react`](../reference/react-command.md), the Rust reactor runtime, directly:
 
-## `REACTOR_RUNTIME` picks the loop
+```
+eventlog react --as cursor-committer --on result --git \
+  --timeout 300s -- bash .context/bin/commit-action.sh
 
-`run-reactor.sh` reads `REACTOR_RUNTIME` from `.context/workspace.env`:
+eventlog react --as doc-worker --on ack --filter by=cursor-committer \
+  --filter outcome=committed --timeout 300s -- bash .context/bin/doc-action.sh
+```
 
-- `eventlog` (the default) — `run-reactor.sh` `exec`s `eventlog react` with
-  the flags each reactor needs: `--as cursor-committer --on result --git`
-  for the committer, `--as doc-worker --on ack --filter by=cursor-committer
-  --filter outcome=committed` for the doc worker. The Rust runtime then owns
-  the lock, resume point, intent, veto window, and acknowledgment for that
-  reactor; see [Reactor loop](../reference/react-loop.md) and [why its lock
-  checks more than a pid](reactor-lock-liveness.md).
-- `shell` — `run-reactor.sh` falls through to its original bash loop, which
-  restarts the reactor script on a crash and escalates after 5 crashes in
-  120 seconds.
+The Rust runtime owns the lock, resume point, intent, veto window, and
+acknowledgment for each reactor; see [Reactor loop](../reference/react-loop.md)
+and [why its lock checks more than a pid](reactor-lock-liveness.md).
 
-Switching is a one-line config change, not a code change: set
-`REACTOR_RUNTIME=shell` in `workspace.env` to fall back if the Rust runtime
-ever needs to be ruled out as a cause.
+## `run-reactor.sh` is a standalone fallback, not part of the layout
+
+Earlier, the herdr layout ran each reactor through `.context/bin/run-reactor.sh`,
+a supervisor that read `REACTOR_RUNTIME` from `.context/workspace.env` and
+either `exec`'d `eventlog react` (`REACTOR_RUNTIME=eventlog`, the default) or
+fell back to a bash polling loop (`REACTOR_RUNTIME=shell`) with its own
+crash-restart and escalate-after-5-crashes logic.
+
+The Drovefile no longer calls `run-reactor.sh`: `reactor()` builds the
+`eventlog react` command straight into the pane's `serve`. `run-reactor.sh`
+still works if run by hand (`bash .context/bin/run-reactor.sh
+cursor-commit-reactor.sh`) and still honors `REACTOR_RUNTIME=shell`, but that
+switch no longer affects what the layout starts. To rule out the Rust
+runtime as a cause, run a reactor through `run-reactor.sh` with
+`REACTOR_RUNTIME=shell` outside the layout, or edit the reactor's `action`
+command directly.
 
 ## Why the doc worker appends its own `result`
 
