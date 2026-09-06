@@ -9,5 +9,6 @@ Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordina
 - `Drovefile` and `drove/reactors.star` — the herdr layout that places the controller, the log view and the two reactors.
 - `research/` — prior-art reports that back the coordination design (event sourcing, multi-agent coordination, the LogAct paper), indexed in `research/README.md`.
 - `docs/superpowers/specs/` — design specs for tools this repo will ship. `2026-09-06-event-log-cli-design.md` is the approved design for `eventlog`, the Rust binary that will replace the shell toolkit above: log format, config, module layout, commands, and the reactor runtime with intent and veto.
+- `docs/superpowers/plans/` — implementation plans built from those specs. `2026-09-06-eventlog-cli.md` breaks the `eventlog` build into 21 tasks across four phases, each scoped as a herdr worker brief with claimed paths and the controller's spawn/claim/result/retire protocol.
 
 The Rust CLI and TUI are not in the tree yet.
