@@ -120,7 +120,15 @@ pub struct DoctorArgs {}
 pub struct ProtectArgs {}
 
 #[derive(ClapArgs, Debug)]
-pub struct SchemaArgs {}
+pub struct SchemaArgs {
+    /// JSON Schema for a raw event line (default).
+    #[arg(long, conflicts_with = "output")]
+    pub events: bool,
+
+    /// JSON Schema for a `--json` view row (event fields plus `v`).
+    #[arg(long, conflicts_with = "events")]
+    pub output: bool,
+}
 
 #[derive(ClapArgs, Debug)]
 pub struct SkillArgs {
