@@ -1,0 +1,39 @@
+src/guard/deny.rs
+  s_cc2dab030baf91::t_4628002e858b76 1-9,11-311
+tests/guard.rs
+  s_cbb9eb48f20987::t_054cb4ed0c0c43 1-187
+src/cli.rs
+  s_26ba64640a12d8::t_9dba5abbab6b56 167-170,177-182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "adba33ef14bafb016fd37b609776438599f98dfe",
+  "prompts": {},
+  "sessions": {
+    "s_26ba64640a12d8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "86cd6951-05d0-4ab2-a260-50dff5c31ee2",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_cbb9eb48f20987": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce3d391e-1f33-46f3-a88f-32ae836f78cb",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_cc2dab030baf91": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "c8bf4562-755e-4396-9bee-5ccf5975054e",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
