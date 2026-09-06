@@ -67,6 +67,12 @@ impl Allowlist {
             *self = Self::builtin();
             return;
         }
+        if !value.contains(':') {
+            // A label with no `name:types` clause (for example
+            // `controller-plus-reactors-plus-briefed-workers`) changes nothing;
+            // the grant lives in the briefs, not in the allowlist.
+            return;
+        }
         let mut map: BTreeMap<String, Vec<String>> = BTreeMap::new();
         for clause in value.split(';') {
             let clause = clause.trim();
@@ -100,8 +106,13 @@ impl Allowlist {
         *self = Allowlist(map);
     }
 
-    /// May `writer` append a line of type `ty`? An unlisted type is denied.
+    /// May `writer` append a line of type `ty`? The controller (the default
+    /// writer, the one that omits `by=`) may append every type; for any other
+    /// writer an unlisted type is denied.
     pub fn permits(&self, writer: &str, ty: &str) -> bool {
+        if writer == "controller" {
+            return true;
+        }
         match self.0.get(ty) {
             Some(writers) => writers.iter().any(|w| w == writer || w == ANY),
             None => false,

@@ -73,7 +73,7 @@ pub fn append(
 ) -> Result<Event, AppendError> {
     let mut fields = validate_and_build_fields(&req)?;
     let agent = resolve_agent(&req, &mut fields);
-    validate_type_and_fields(cfg, &req.r#type, &fields)?;
+    validate_type_and_fields(cfg, &req.r#type, &fields, agent.is_some())?;
     validate_paths_field(&fields)?;
     validate_sizes(&fields)?;
     let event = build_event(&req, fields, agent, 0, String::new(), None);
@@ -120,11 +120,12 @@ fn validate_and_build_fields(req: &AppendRequest) -> Result<IndexMap<String, Str
 }
 
 fn resolve_agent(req: &AppendRequest, fields: &mut IndexMap<String, String>) -> Option<String> {
-    if let Some(agent) = fields.get("agent") {
-        return Some(agent.clone());
+    // `agent` is a top-level event field; it must not also stay in `fields`,
+    // or `to_line` would emit the key twice.
+    if let Some(agent) = fields.shift_remove("agent") {
+        return Some(agent);
     }
     if req.writer == "controller" && req.r#type == "result" {
-        fields.insert("agent".to_string(), "controller".to_string());
         return Some("controller".to_string());
     }
     None
@@ -134,12 +135,16 @@ fn validate_type_and_fields(
     cfg: &Config,
     ty: &str,
     fields: &IndexMap<String, String>,
+    has_agent: bool,
 ) -> Result<(), AppendError> {
     let spec = cfg
         .vocabulary
         .get(ty)
         .ok_or_else(|| AppendError::UnknownType(ty.to_string()))?;
     for required in &spec.fields {
+        if required == "agent" && has_agent {
+            continue;
+        }
         if !fields.contains_key(required) {
             return Err(AppendError::MissingField(required.clone()));
         }

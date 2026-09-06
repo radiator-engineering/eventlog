@@ -139,6 +139,9 @@ impl Event {
             }
         }
         for (k, v) in &self.fields {
+            if matches!(k.as_str(), "seq" | "ts" | "type" | "prev" | "by" | "agent") {
+                continue;
+            }
             push_str_field(&mut out, k, v);
         }
         out.push('}');

@@ -123,3 +123,19 @@ fn vocabulary_builtin_covers_the_documented_types() {
         &["seq_done", "for", "for_ack", "intent"]
     );
 }
+
+#[test]
+fn controller_may_write_every_type_including_result() {
+    let a = Allowlist::builtin();
+    assert!(a.permits("controller", "result"));
+    assert!(a.permits("controller", "note"));
+    assert!(a.permits("controller", "custom-type"));
+}
+
+#[test]
+fn decision_value_without_clauses_changes_nothing() {
+    let mut a = Allowlist::builtin();
+    a.apply_decision("controller-plus-reactors-plus-briefed-workers");
+    assert_eq!(a, Allowlist::builtin());
+    assert!(a.permits("doc-worker", "ack"));
+}
