@@ -1,0 +1,29 @@
+src/react/mod.rs
+  s_cbb9eb48f20987::t_81f139b2f23297 1-13,17-628
+tests/react_loop.rs
+  s_a073705f13e299::t_c69bea3e604173 1-350
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "62cf4760274d279cc337d113042cc26ed412c1e7",
+  "prompts": {},
+  "sessions": {
+    "s_a073705f13e299": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f0e7e8f4-9192-4df7-9cc6-e6ad4d456ae8",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_cbb9eb48f20987": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce3d391e-1f33-46f3-a88f-32ae836f78cb",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
