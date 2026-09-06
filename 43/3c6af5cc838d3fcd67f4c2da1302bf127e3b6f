@@ -1,0 +1,19 @@
+research/logact-2604.07988.md
+  s_97a5b6a71fd378::t_a03b41db189a84 1-263
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "433c6af5cc838d3fcd67f4c2da1302bf127e3b6f",
+  "prompts": {},
+  "sessions": {
+    "s_97a5b6a71fd378": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6d7c358-9bbd-482c-b7b5-4c50664185d0",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
