@@ -1,0 +1,28 @@
+README.md
+  s_ca865a5a1df6b4::t_09b90dc1ccd460 28,30
+  s_553c4a5c7c40dd::t_c9ec92244e511e 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c0d63e9f72df7fb289a0344e784bc607a97ec2f9",
+  "prompts": {},
+  "sessions": {
+    "s_553c4a5c7c40dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1c563fd0-e9f4-4ec0-b2a8-bbc4f63033f5",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_ca865a5a1df6b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "90924e2c-1751-4e67-8fb9-f9c71abd7021",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
