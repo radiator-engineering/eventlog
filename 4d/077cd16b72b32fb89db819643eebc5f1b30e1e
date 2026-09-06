@@ -1,0 +1,45 @@
+.claude/settings.json
+  s_f37cc1e1350569::t_d45f7ecd1e2355 1-14
+.context/DECISIONS.md
+  s_f37cc1e1350569::t_f48b630885879a 1-77
+.context/EVENTLOG.md
+  s_f37cc1e1350569::t_6a197ce2b7fcfa 1-53
+.context/bin/controller-stop-hook.sh
+  s_f37cc1e1350569::t_f3c5f0e1a5d16f 1-51
+.context/bin/cursor-commit-reactor.sh
+  s_f37cc1e1350569::t_9c727e747e7c04 1-200
+.context/bin/doc-sync-reactor.sh
+  s_f37cc1e1350569::t_757c2ecbf72b05 1-164
+.context/bin/run-reactor.sh
+  s_f37cc1e1350569::t_c235241380b158 1-53
+.context/handoffs/cursor-committer.md
+  s_f37cc1e1350569::t_1557641741d05d 1-48
+.context/handoffs/doc-worker.md
+  s_f37cc1e1350569::t_1f6fa13eb2f5c7 1-53
+.context/workspace.env
+  s_f37cc1e1350569::t_0a44739b1013e5 1-6
+.githooks/commit-msg
+  s_f37cc1e1350569::t_7c113c9eef3458 1-14
+.gitignore
+  s_f37cc1e1350569::t_a1ab773fdfe6cf 1-6
+AGENTS.md
+  s_f37cc1e1350569::t_34c7341c5bc3e2 1-38
+CLAUDE.md
+  s_f37cc1e1350569::t_bbf8e89edec883 1-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "4d077cd16b72b32fb89db819643eebc5f1b30e1e",
+  "prompts": {},
+  "sessions": {
+    "s_f37cc1e1350569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a7849e9-7c44-47c6-9234-07e888a6fea6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
