@@ -4,9 +4,9 @@ Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 `schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
 ([reference](claims.md)), `open` ([reference](open.md)), `agents`, `state`,
 `why` ([reference](query-commands.md)), `append`, `vocab`
-([reference](append.md)), `tui` ([reference](tui.md)), `guard`
-([reference](guard.md)), `init`, `doctor`, `protect`
-([reference](scaffold.md)), `skill`, and `completions`
+([reference](append.md)), `tui` ([reference](tui.md)), `react`
+([reference](react-command.md)), `guard` ([reference](guard.md)), `init`,
+`doctor`, `protect` ([reference](scaffold.md)), `skill`, and `completions`
 ([reference](skill.md)) are implemented, the rest still print `eventlog
 <name>: not implemented` to stderr and exit 1. This page documents the
 frozen command set so later tasks can fill in behavior without changing
@@ -35,7 +35,7 @@ Every command accepts:
 | `claims` | Report files a worker's claim does not cover ([reference](claims.md)). Hidden alias: `check-claims`. |
 | `open` | Open an event's ref in `$EDITOR` or `$PAGER` ([reference](open.md)). |
 | `tui` | Interactive terminal UI over the log ([reference](tui.md)). |
-| `react` | Reactor runtime. Subcommand: `test` (dry-run one reaction against a real sequence number). |
+| `react` | Reactor runtime: live loop, or `test <seq>` to dry-run one reaction against a real sequence number ([reference](react-command.md)). |
 | `guard` | Hook guard for agent tool calls ([reference](guard.md)). Subcommand: `install`. |
 | `init` | Create a new coordination log and scaffold ([reference](scaffold.md)). |
 | `doctor` | Diagnose common setup problems ([reference](scaffold.md)). |
@@ -69,6 +69,7 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Query commands](query-commands.md) — `agents`, `state`, and `why`.
 - [Append](append.md) — the `append` library function and the `append`/`vocab` commands.
 - [TUI](tui.md) — the live terminal UI over the folded log.
+- [React command](react-command.md) — the `react` and `react test` CLI, wiring the reactor loop to the rule voter and the action runner.
 - [Guard](guard.md) — parsing agent hook payloads and the shared denylist.
 - [Scaffold and setup](scaffold.md) — `init`, `doctor`, and `protect`.
 - [Skill and completions](skill.md) — installing the embedded skill and generating shell completions.
