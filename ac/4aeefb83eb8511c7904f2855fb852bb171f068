@@ -1,0 +1,22 @@
+src/log/append.rs
+  s_f967523fddc2ab::t_15b9a16e8c77ad 15,33-41,72,80,82,84,205,207-209,220-229,235,244-251
+tests/log_append.rs
+  s_f967523fddc2ab::t_12cceeff74affc 2-3,5
+  s_f967523fddc2ab::t_e318d3c391166a 208-320
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "ac4aeefb83eb8511c7904f2855fb852bb171f068",
+  "prompts": {},
+  "sessions": {
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
