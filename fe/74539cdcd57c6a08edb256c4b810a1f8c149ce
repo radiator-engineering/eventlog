@@ -1,0 +1,16 @@
+.context/DECISIONS.md
+  h_63f2916b00d585 202-220
+.gitattributes
+  h_63f2916b00d585 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "fe74539cdcd57c6a08edb256c4b810a1f8c149ce",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
