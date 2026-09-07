@@ -1,35 +1,44 @@
 # Committer action script for `eventlog react`
 
-Pass this script after `--`. The runtime owns the lock, resume, intent, voter,
-veto window, violation detection, and ack. Your script receives the driving
-event as JSON on stdin and reads `EVENTLOG_PATHS` and `EVENTLOG_OUTCOME_FILE`.
+The runtime owns lock, resume, intent, voter, veto window, git check and
+ack. This script is only the pass. It reads the driving `result` event from
+stdin and stages exactly `EVENTLOG_PATHS`, the authorized set.
 
 ```bash
 #!/usr/bin/env bash
-# Committer action: one git commit per decision key=commit-message.
+# Committer action: one commit per `result` that names paths.
 set -euo pipefail
 read -r event
-msg=$(jq -r '.value' <<<"$event")
+msg=$(jq -r '.summary // "land result \(.seq)"' <<<"$event")
+if [ -z "${EVENTLOG_PATHS:-}" ]; then
+  printf 'outcome=skipped\ndetail=no paths on the driving event\n' > "$EVENTLOG_OUTCOME_FILE"
+  exit 0
+fi
 # shellcheck disable=SC2086
 git add -- ${EVENTLOG_PATHS//,/ }
 if git diff --cached --quiet; then
   printf 'outcome=skipped\ndetail=nothing staged\n' > "$EVENTLOG_OUTCOME_FILE"
   exit 0
 fi
-git commit -m "$msg"
-sha=$(git rev-parse --short HEAD)
-printf 'outcome=committed\nref=%s\nsummary=%s\n' "$sha" "$msg" > "$EVENTLOG_OUTCOME_FILE"
+git commit -q -m "$msg"
+printf 'outcome=committed\nref=%s\n' "$(git rev-parse --short HEAD)" > "$EVENTLOG_OUTCOME_FILE"
 ```
 
-Launch:
+`outcome` and `ref` land on the `ack`. Any other key you write is folded
+into `detail=`.
 
-```bash
-eventlog react --as committer --on decision --filter key=commit-message --git -- \
-  bash path/to/this-script
+Launch, in a pane that outlives the agents' turns:
+
+```sh
+eventlog react --as committer --on result --git -- bash .context/bin/commit-action.sh
+eventlog append spawn agent=committer role=commit-reactor runtime=eventlog-react
 ```
 
-Dry-run against seq 42:
+Dry-run against seq 42 (writes nothing):
 
-```bash
-eventlog react test 42 --as committer --git -- bash path/to/this-script
+```sh
+eventlog react test 42 --as committer --git -- bash .context/bin/commit-action.sh
 ```
+
+Add `--filter agent=<worker>` to react to one worker's results only, and
+`--timeout 900s` when the action runs a model.
