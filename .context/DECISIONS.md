@@ -232,3 +232,6 @@ coordination survey, "a file that two tasks both need gets exactly one owner".
 `eventlog init` rewrote `EVENTLOG.md` and `eventlog.toml` whenever they
 differed from its templates, which is every hand-edited copy. It now writes a
 template only when the file is absent.
+
+## repo-name = radiator-engineering/eventlog (2026-09-07)
+The GitHub repository is `radiator-engineering/eventlog`, private, matching the crate and binary name. `Cargo.toml` points there. The local folder is still `event-log`; renaming it means `drove down`, a move, and `drove up`, since Drove keys its state on the path.

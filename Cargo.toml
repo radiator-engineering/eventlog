@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
 license = "Apache-2.0"
-repository = "https://github.com/radiator-engineering/event-log"
+repository = "https://github.com/radiator-engineering/eventlog"
 
 [[bin]]
 name = "eventlog"
