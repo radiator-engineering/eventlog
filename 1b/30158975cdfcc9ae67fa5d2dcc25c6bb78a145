@@ -1,0 +1,29 @@
+tests/scaffold.rs
+  s_64cd7810333b01::t_c641f667c47316 12-21,72-648
+  s_64cd7810333b01::t_0e83ee69a43854 649
+tests/cli_surface.rs
+  s_64cd7810333b01::t_c641f667c47316 19-21
+src/cli.rs
+  s_64cd7810333b01::t_c641f667c47316 47-52,238-293,367-369
+skill/event-log-coordination/SKILL.md
+  s_64cd7810333b01::t_c641f667c47316 33-35,95-134
+  s_64cd7810333b01::t_6f4b2bc84c4f24 135
+src/cmd/mod.rs
+  s_64cd7810333b01::t_c641f667c47316 1,9,14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1b30158975cdfcc9ae67fa5d2dcc25c6bb78a145",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
