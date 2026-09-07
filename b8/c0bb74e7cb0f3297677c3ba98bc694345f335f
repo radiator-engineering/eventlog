@@ -1,0 +1,14 @@
+tests/query_fold.rs
+  h_63f2916b00d585 306-453
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b8c0bb74e7cb0f3297677c3ba98bc694345f335f",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
