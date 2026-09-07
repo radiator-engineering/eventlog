@@ -1,0 +1,21 @@
+README.md
+  s_36e95e44f756fe::t_e6aae2c33eb4b3 8
+docs/explanation/log-scope-and-decisions-merge.md
+  s_36e95e44f756fe::t_f52582e2649201 1-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "cbbd0d1bcdfa124bdce276294f337c448c2dc7db",
+  "prompts": {},
+  "sessions": {
+    "s_36e95e44f756fe": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be4059a8-2fdb-4596-800b-51533bcae65c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
