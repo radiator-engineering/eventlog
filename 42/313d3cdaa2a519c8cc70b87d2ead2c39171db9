@@ -1,0 +1,19 @@
+.context/DECISIONS.md
+  s_508497440a5d24::t_52425ac7fc9db9 153-174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "42313d3cdaa2a519c8cc70b87d2ead2c39171db9",
+  "prompts": {},
+  "sessions": {
+    "s_508497440a5d24": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ca2e13d-e51a-4e27-a7ba-752b0097173e",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
