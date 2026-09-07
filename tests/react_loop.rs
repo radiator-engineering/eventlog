@@ -21,6 +21,10 @@ struct Fake {
     runs: Arc<Mutex<Vec<u64>>>,
     veto: Option<String>,
     unauthorized: Option<String>,
+    /// Snapshots handed back in order; empty means a clean, unmoving tree.
+    snapshots: Arc<Mutex<Vec<GitSnapshot>>>,
+    /// What the action "committed" between the two snapshots.
+    committed: Vec<String>,
 }
 
 impl Steps for Fake {
@@ -55,7 +59,19 @@ impl Steps for Fake {
     }
 
     fn snapshot(&mut self) -> anyhow::Result<GitSnapshot> {
-        Ok(GitSnapshot::default())
+        let mut scripted = self.snapshots.lock().unwrap();
+        if scripted.is_empty() {
+            return Ok(GitSnapshot::default());
+        }
+        Ok(scripted.remove(0))
+    }
+
+    fn committed(
+        &mut self,
+        _before: &GitSnapshot,
+        _after: &GitSnapshot,
+    ) -> anyhow::Result<Vec<String>> {
+        Ok(self.committed.clone())
     }
 }
 
@@ -95,10 +111,15 @@ fn write_log(path: &Path, rows: &[Row<'_>]) {
 }
 
 fn reactor(path: &Path, root: &Path, fake: Fake) -> Reactor {
+    reactor_with(path, root, fake, false)
+}
+
+fn reactor_with(path: &Path, root: &Path, fake: Fake, git: bool) -> Reactor {
     let cfg = ReactorConfig {
         name: "commit".to_string(),
         on: vec!["result".to_string()],
         command: vec!["true".to_string()],
+        git,
         ..ReactorConfig::default()
     };
     Reactor::new(cfg, Log::open(path), Config::default(), root.to_path_buf())
@@ -346,5 +367,82 @@ fn a_dry_handle_returns_the_events_it_would_append_and_writes_none() {
         std::fs::read_to_string(&log).unwrap(),
         before,
         "log was written"
+    );
+}
+
+/// Spec 7.4.6 as amended by decision `violation-scope` (seq 474): a
+/// `violation` names only files the action committed outside the authorized
+/// set. Files that merely became dirty during the pass are somebody else's
+/// work in progress: silent when an open claim covers them, an `observed`
+/// line when nothing does. Never a violation.
+#[test]
+fn a_git_pass_blames_only_what_it_committed_and_observes_the_rest() {
+    let dir = tempfile::tempdir().unwrap();
+    let log = dir.path().join(".context/events.jsonl");
+    write_log(
+        &log,
+        &[
+            (1, "spawn", &[("agent", "w")]),
+            (2, "spawn", &[("agent", "other")]),
+            (3, "claim", &[("agent", "other"), ("paths", "src/other.rs")]),
+            (
+                4,
+                "ack",
+                &[("by", "commit"), ("seq_done", "4"), ("outcome", "skipped")],
+            ),
+            (5, "result", RESULT),
+        ],
+    );
+
+    let fake = Fake {
+        snapshots: Arc::new(Mutex::new(vec![
+            GitSnapshot {
+                head: "before".to_string(),
+                status: vec!["src/pre.rs".to_string()],
+            },
+            GitSnapshot {
+                head: "after".to_string(),
+                status: vec![
+                    "src/pre.rs".to_string(),
+                    "src/a.rs".to_string(),
+                    "src/other.rs".to_string(),
+                    "src/stray.rs".to_string(),
+                ],
+            },
+        ])),
+        committed: vec!["src/a.rs".to_string(), "src/b.rs".to_string()],
+        ..Fake::default()
+    };
+    let mut r = reactor_with(&log, dir.path(), fake, true);
+    r.catch_up().unwrap();
+
+    let new: Vec<Event> = events(&log).into_iter().filter(|e| e.seq > 5).collect();
+    let violation = new
+        .iter()
+        .find(|e| e.r#type == "violation")
+        .expect("no violation for the unauthorized commit");
+    assert_eq!(
+        violation.fields.get("paths").map(String::as_str),
+        Some("src/b.rs"),
+        "only the committed, unauthorized file is a violation"
+    );
+    assert_eq!(violation.seq_ref("for"), Some(5));
+
+    let observed = new
+        .iter()
+        .find(|e| e.r#type == "observed")
+        .expect("no observed line for the unclaimed stray file");
+    assert_eq!(
+        observed.fields.get("paths").map(String::as_str),
+        Some("src/stray.rs"),
+        "src/pre.rs was dirty before, src/a.rs is authorized, src/other.rs is claimed"
+    );
+    assert_eq!(observed.seq_ref("for"), Some(5));
+    assert_eq!(observed.writer(), "commit");
+
+    let ack = new.iter().find(|e| e.r#type == "ack").expect("no ack");
+    assert_eq!(
+        ack.fields.get("outcome").map(String::as_str),
+        Some("committed")
     );
 }

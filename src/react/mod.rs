@@ -110,6 +110,16 @@ pub trait Steps {
 
     /// Spec 7.4.6. `HEAD` and the working tree right now.
     fn snapshot(&mut self) -> anyhow::Result<GitSnapshot>;
+
+    /// Spec 7.4.6. Files changed by the commits between the two snapshots:
+    /// the only writes the action can be blamed for.
+    fn committed(
+        &mut self,
+        _before: &GitSnapshot,
+        _after: &GitSnapshot,
+    ) -> anyhow::Result<Vec<String>> {
+        Ok(Vec::new())
+    }
 }
 
 /// The steps [`Reactor::new`] fits until the caller installs the real ones.
@@ -328,11 +338,20 @@ impl Reactor {
                 });
         }
 
-        // 7.4.6 what the action touched outside the authorized set. Detection
-        // after the fact: the commit stands.
+        // 7.4.6 what the action committed outside the authorized set. Detection
+        // after the fact: the commit stands. Only commits are the action's
+        // doing (decision `violation-scope`): the tree is shared, so a file
+        // that became dirty meanwhile is another agent's work in progress.
+        // Under an open claim it is expected and silent; unclaimed, it is
+        // recorded as `observed` so the controller can see it, without blame.
         if let Some(before) = before {
             let after = self.steps.snapshot()?;
-            let outside = outside_authorized(&before, &after, &authorized);
+            let committed = self.steps.committed(&before, &after)?;
+            let outside: Vec<String> = committed
+                .iter()
+                .filter(|p| !authorized.iter().any(|a| covers(a, p)))
+                .cloned()
+                .collect();
             if !outside.is_empty() {
                 written.push(self.emit(
                     dry,
@@ -341,6 +360,20 @@ impl Reactor {
                         ("agent", self.cfg.name.clone()),
                         ("for", driving.seq.to_string()),
                         ("paths", outside.join(",")),
+                    ],
+                )?);
+            }
+            let observed: Vec<String> = newly_dirty(&before, &after, &authorized)
+                .into_iter()
+                .filter(|p| state.claim_owner(p).is_none())
+                .collect();
+            if !observed.is_empty() {
+                written.push(self.emit(
+                    dry,
+                    "observed",
+                    &[
+                        ("for", driving.seq.to_string()),
+                        ("paths", observed.join(",")),
                     ],
                 )?);
             }
@@ -520,7 +553,7 @@ impl Reactor {
 
 /// The reference and label fields the reactor writes, added to the loaded
 /// vocabulary so its own lines validate: `intent action=`, `ack for=`,
-/// `veto intent=`, `violation for=`.
+/// `veto intent=`, `violation for=`, `observed for=`.
 fn with_reactor_fields(mut config: Config) -> Config {
     let optional = |names: &[&str]| TypeSpec {
         fields: Vec::new(),
@@ -531,6 +564,13 @@ fn with_reactor_fields(mut config: Config) -> Config {
     extra.insert("ack".to_string(), optional(&["for"]));
     extra.insert("veto".to_string(), optional(&["intent"]));
     extra.insert("violation".to_string(), optional(&["for"]));
+    extra.insert(
+        "observed".to_string(),
+        TypeSpec {
+            fields: vec!["paths".to_string()],
+            optional: ["for", "ref", "detail"].map(str::to_string).to_vec(),
+        },
+    );
     config.vocabulary.merge_file(extra);
     config
 }
@@ -547,12 +587,8 @@ fn field_of(event: &Event, key: &str) -> Option<String> {
 }
 
 /// Paths dirty after the action that were not dirty before and that no
-/// authorized path covers.
-fn outside_authorized(
-    before: &GitSnapshot,
-    after: &GitSnapshot,
-    authorized: &[String],
-) -> Vec<String> {
+/// authorized path covers: work in progress seen while the action ran.
+fn newly_dirty(before: &GitSnapshot, after: &GitSnapshot, authorized: &[String]) -> Vec<String> {
     after
         .status
         .iter()

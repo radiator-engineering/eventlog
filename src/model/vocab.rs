@@ -76,6 +76,7 @@ impl Vocabulary {
             ("progress", &["msg"], &["agent", "ref"]),
             ("seam", &["agents"], &["subject", "ref"]),
             ("violation", &["agent", "paths"], &["ref", "detail"]),
+            ("observed", &["paths"], &["for", "ref", "detail"]),
             ("ack", &["seq_done", "outcome"], &["ref", "detail"]),
             ("note", &["msg"], &["agent", "ref"]),
             ("intent", &[], &["agent", "paths", "msg", "for", "ref"]),

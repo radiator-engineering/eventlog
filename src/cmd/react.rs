@@ -247,6 +247,20 @@ impl Steps for RealSteps {
             status: snap.dirty.into_iter().collect(),
         })
     }
+
+    fn committed(
+        &mut self,
+        before: &GitSnapshot,
+        after: &GitSnapshot,
+    ) -> anyhow::Result<Vec<String>> {
+        let head = |s: &GitSnapshot| action::Snapshot {
+            head: Some(s.head.clone()).filter(|h| !h.is_empty()),
+            dirty: BTreeSet::new(),
+        };
+        Ok(action::touched(&head(before), &head(after), &self.root)
+            .into_iter()
+            .collect())
+    }
 }
 
 /// Spec 7.4.7: the outcome file names the outcome; otherwise exit 0 is

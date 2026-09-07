@@ -117,11 +117,19 @@ pub fn snapshot(root: &Path) -> Result<Snapshot> {
     })
 }
 
-/// Files changed by commits between snapshots plus the dirty delta.
+/// Files changed by the commits the action made between the snapshots:
+/// `git diff --name-only before..after`. Only what was committed counts as
+/// the action's doing; the working tree is shared with every other agent,
+/// so a file that merely became dirty is reported by [`newly_dirty`], never
+/// blamed on the action.
 pub fn touched(before: &Snapshot, after: &Snapshot, root: &Path) -> BTreeSet<String> {
-    let mut out = commit_touched(before.head.as_deref(), after.head.as_deref(), root);
-    out.extend(dirty_delta(&before.dirty, &after.dirty));
-    out
+    commit_touched(before.head.as_deref(), after.head.as_deref(), root)
+}
+
+/// Paths dirty after the action that were not dirty before. Somebody's work
+/// in progress, observed while the action ran; not the action's own writes.
+pub fn newly_dirty(before: &Snapshot, after: &Snapshot) -> BTreeSet<String> {
+    after.dirty.difference(&before.dirty).cloned().collect()
 }
 
 /// Paths in `touched` that are not covered by `authorized`.
@@ -204,7 +212,10 @@ fn git_output(root: &Path, args: &[&str]) -> Result<String> {
             String::from_utf8_lossy(&out.stderr)
         );
     }
-    Ok(String::from_utf8_lossy(&out.stdout).trim().to_string())
+    // Only the tail is trimmed: porcelain's first line starts with its status
+    // columns (` M path`), and trimming that space would eat the path's
+    // first character when the parser skips the column.
+    Ok(String::from_utf8_lossy(&out.stdout).trim_end().to_string())
 }
 
 fn parse_porcelain(status: &str) -> BTreeSet<String> {
@@ -237,8 +248,4 @@ fn commit_touched(before: Option<&str>, after: Option<&str>, root: &Path) -> BTr
     git_output(root, &["diff", "--name-only", before, after])
         .map(|out| out.lines().map(str::to_string).collect())
         .unwrap_or_default()
-}
-
-fn dirty_delta(before: &BTreeSet<String>, after: &BTreeSet<String>) -> BTreeSet<String> {
-    before.symmetric_difference(after).cloned().collect()
 }

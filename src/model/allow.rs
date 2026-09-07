@@ -19,6 +19,7 @@ const REACTOR_TYPES: &[&str] = &[
     "note",
     "escalate",
     "violation",
+    "observed",
     "intent",
     "veto",
     "result",
