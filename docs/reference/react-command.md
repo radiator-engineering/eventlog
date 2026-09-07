@@ -20,8 +20,8 @@ eventlog react test <seq> --as <name> [--on <t1,t2>] [--filter k=v]... \
 | `--on <t1,t2,...>` | Comma-separated event types to react to. Required for the live loop; ignored for `react test`, which already has its event from `<seq>`. |
 | `--filter k=v` | An extra condition the driving event must meet, beyond its type. Repeatable. Each value must contain an `=`. |
 | `--window <dur>` | How long to wait for a veto after declaring intent. Default `0s`. |
-| `--git` | Snapshot git before and after the action; report files the action committed outside the authorized set as a `violation`, and unclaimed files that became dirty meanwhile as `observed`. |
-| `--timeout <dur>` | How long the action command may run. Default `600s`. |
+| `--git` | Snapshot git before and after the action; report files the action committed outside the authorized set as a `violation`, and unclaimed files that became dirty meanwhile as `observed`. `action::snapshot` parses status from NUL-delimited porcelain, so a path with a space, a quote, or `->` in it is tracked exactly. |
+| `--timeout <dur>` | How long the action command may run. Default `600s`. On timeout, `action::run` kills the whole process tree (SIGTERM, then SIGKILL after a grace period on Unix; `taskkill /T` on Windows), not just the direct child, so a descendant cannot outlive the deadline or leave an optimistic outcome file behind. |
 | `-- <command>...` | The action command. Required; everything after `--` is passed through as argv. |
 
 Durations accept bare digits (seconds, matching the old `PASS_TIMEOUT`
@@ -71,6 +71,16 @@ fallback stdout line). `RealSteps::run` sorts those fields against the
 If the command reports no `outcome=` at all, `RealSteps` fills one in: exit
 0 is `committed`; a timeout or a non-zero exit is `failed`, with `timed out
 after <n>s` or `exit <n>` added to `detail`.
+
+On a timeout or a non-zero exit, `action::run` folds a bounded tail of the
+action's stderr (up to 1024 bytes) into `detail`, so a failure carries its
+own diagnostics into the log instead of just an exit code. `action::run`
+never inherits the action's stderr onto the reactor's own; it pipes and
+drains it concurrently with stdout, so an action that writes to stderr
+cannot deadlock the pipe. `bounded_detail` caps the assembled `detail` —
+action-supplied detail, spillover fields, and the stderr tail — at 2048
+bytes, the log's field limit (reference), keeping the end of the text: the
+stderr tail is already a tail, and the failure reason comes last.
 
 ## Tests
 
