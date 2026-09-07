@@ -1,0 +1,21 @@
+.context/DECISIONS.md
+  s_e4f8921a7ce56d::t_fbf2abbaeb1d56 311-314
+.context/handoffs/infra-contract.md
+  s_e4f8921a7ce56d::t_a64efbcbe20997 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b9cffa64914bddc74fda50c1be932b5e804c89d9",
+  "prompts": {},
+  "sessions": {
+    "s_e4f8921a7ce56d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07c46-b6e2-7d90-a0a4-8093c266dc05",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
