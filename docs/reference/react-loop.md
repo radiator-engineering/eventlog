@@ -103,10 +103,17 @@ writes none of them.
    when `cfg.git` is set. `outcome=retryable` gets exactly one retry; any
    other failure to run the command is captured as `outcome=failed
    detail=<error>` rather than propagated.
-6. **Violation check**: paths dirty after the run that were not dirty
-   before and that no authorized path covers become a
+6. **Violation check**: files changed by the commits the action made
+   (`Steps::committed`, `git diff --name-only` between the two `HEAD`s)
+   that no authorized path covers become a
    `violation for=<driving seq> paths=<...>` line — detection, not
-   prevention; the action already ran.
+   prevention; the commit stands. Paths that merely became dirty during the
+   run are never a violation: the tree is shared, so they are another
+   agent's work in progress. Under an open claim they are expected and
+   silent; unclaimed, they are recorded as
+   `observed for=<driving seq> paths=<...>` so the controller can see them,
+   without blame. `Steps::committed` defaults to an empty list, so a
+   `Steps` without git reports no violations.
 7. **Ack**: `ack seq_done=<driving seq> for=<intent seq> outcome=<outcome>`,
    plus every other field the outcome carried. The fields `seq`, `ts`,
    `prev`, `by`, `seq_done`, `for`, and `outcome` are dropped from the

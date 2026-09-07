@@ -172,3 +172,30 @@ truncate, overwrite and `rm` are refused by the kernel. Lift with
 ## handoff-briefs = committed (2026-09-06)
 The `.context/handoffs/*.md` briefs are tracked. The log names them by `ref=`,
 so a replay needs them in history.
+
+## agent-topology = parallel-worktrees (2026-09-06, seq 473)
+Every spawned worker gets its own `git worktree` under `.worktrees/<name>`,
+branched from `main`; it never edits the controller's checkout. Before the
+controller accepts a worker's report it runs
+`eventlog claims <name> main` in that worktree, and only then appends the
+`result` (which the commit reactor lands from the worker's branch). This is
+the survey's recommendation (`research/survey-agent-coordination.md`) and the
+open thread the neuroarxiv report left undecided: with one shared tree the
+committer's git check cannot tell one agent's edits from another's.
+
+## violation-scope = committed-files-only (2026-09-06, seq 474)
+A reactor's `violation` names only the files its action *committed* outside
+the authorized set (`git diff --name-only` between the two `HEAD`s). Files
+that merely became dirty while the action ran are never a violation: the tree
+is shared, so they are another agent's work in progress. Under an open claim
+they are expected and silent; unclaimed, the reactor records them as
+`observed by=<reactor> for=<seq> paths=<list>` so the controller can see
+them, with no blame attached. The controller's own edits are therefore never
+a violation. Grounded in Causal Agent Replay (post-hoc attribution from a
+shared tree is weak) and LogAct (blame only what an agent declared and did).
+This also fixed the porcelain parse that dropped each path's first letter.
+
+## model-contract amendment: `observed` event type (2026-09-06)
+The frozen model contract (seq 85) gains one reactor-written type:
+`observed` (required `paths`; optional `for`, `ref`, `detail`), listed in
+`REACTOR_TYPES` and the default vocabulary. No existing type changed.

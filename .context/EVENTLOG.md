@@ -35,7 +35,8 @@ Parallel-work events (append these when workers run side by side):
 | `claim`     | agent, paths (comma-separated globs)             | the files this worker owns; nobody else edits  |
 | `progress`  | agent, msg, ref                                  | controller polled a working agent; short note  |
 | `seam`      | agents, subject, ref                             | a cross-worker dependency found mid-work       |
-| `violation` | agent, paths                                     | worker changed files outside its claim         |
+| `violation` | agent, paths                                     | worker changed files outside its claim; from a reactor: files its action committed outside the authorized set |
+| `observed`  | by, paths, for                                   | a reactor saw unclaimed files turn dirty while it acted; work in progress, no blame |
 | `ack`       | by, seq_done, outcome, ref                       | a reactor acted on event seq_done              |
 
 Any line the controller did not write carries `by=<agent>`; only writers named

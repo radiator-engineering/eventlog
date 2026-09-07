@@ -20,7 +20,7 @@ eventlog react test <seq> --as <name> [--on <t1,t2>] [--filter k=v]... \
 | `--on <t1,t2,...>` | Comma-separated event types to react to. Required for the live loop; ignored for `react test`, which already has its event from `<seq>`. |
 | `--filter k=v` | An extra condition the driving event must meet, beyond its type. Repeatable. Each value must contain an `=`. |
 | `--window <dur>` | How long to wait for a veto after declaring intent. Default `0s`. |
-| `--git` | Snapshot git before and after the action, and report writes outside the authorized set as a `violation`. |
+| `--git` | Snapshot git before and after the action; report files the action committed outside the authorized set as a `violation`, and unclaimed files that became dirty meanwhile as `observed`. |
 | `--timeout <dur>` | How long the action command may run. Default `600s`. |
 | `-- <command>...` | The action command. Required; everything after `--` is passed through as argv. |
 

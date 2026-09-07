@@ -19,7 +19,8 @@ Claude Code reads it through CLAUDE.md, which imports it.
 - Report a finished change (the last step of every task that touches files, before you answer the user):
   `eventlog append result ref=<main file> paths=<comma-separated changed files> summary="<one line>"`
 - Record a decision: `eventlog append decision key=<k> value=<v> ref=.context/DECISIONS.md`, and add the entry to `.context/DECISIONS.md`.
-- Spawn a worker: write its brief to `.context/handoffs/<name>.md` (task, claimed paths, the pinned contract it builds against, "do not append to the log"), then `eventlog append spawn agent=<name> …`, `prompt agent=<name> ref=<brief>`, `claim agent=<name> paths=<globs>`. When it reports: `result agent=<name> ref=<brief> …`, then `retire agent=<name>`. Freeze anything two workers share (a contract, a model) as a `decision` before they start.
+- Spawn a worker: write its brief to `.context/handoffs/<name>.md` (task, claimed paths, the pinned contract it builds against, "do not append to the log"), give it its own worktree (`git worktree add .worktrees/<name> -b <name> main`; decision `agent-topology`), then `eventlog append spawn agent=<name> …`, `prompt agent=<name> ref=<brief>`, `claim agent=<name> paths=<globs>`. When it reports: run `eventlog claims <name> main` in its worktree, then `result agent=<name> ref=<brief> …`, then `retire agent=<name>`. Freeze anything two workers share (a contract, a model) as a `decision` before they start.
+- Read a reactor's `violation` as "its action committed a file outside the authorized set", and an `observed` as "an unclaimed file turned dirty while it acted" (work in progress, no blame; decision `violation-scope`).
 - Read the log: `eventlog view --last 20`, `eventlog state`, or `jq -c . .context/events.jsonl`. Run any read of the log as its own command; the guard blocks compound commands that name the log.
 
 ### Boundaries (everyone)

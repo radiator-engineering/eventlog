@@ -69,22 +69,31 @@ pub struct Snapshot {
 
 pub fn snapshot(root: &Path) -> Result<Snapshot>;
 pub fn touched(before: &Snapshot, after: &Snapshot, root: &Path) -> BTreeSet<String>;
+pub fn newly_dirty(before: &Snapshot, after: &Snapshot) -> BTreeSet<String>;
 pub fn outside(touched: &BTreeSet<String>, authorized: &[RelPath]) -> Vec<String>;
 ```
 
 `snapshot` reads `git rev-parse HEAD` and `git status --porcelain` under
-`root`. Call it once before running the action and once after.
+`root`. Call it once before running the action and once after. Only the
+trailing whitespace of the porcelain output is trimmed: the first line
+starts with its status columns (` M path`), and trimming that leading space
+used to drop the path's first character ("GENTS.md" for `AGENTS.md`).
 
-`touched` combines two sources of change between the two snapshots: every
-file in `git diff --name-only` between the two `HEAD`s (commits the action
-made), plus the symmetric difference of the two `dirty` sets (working-tree
-changes the action left uncommitted, in either direction). If `HEAD` did
-not move, the commit side is empty.
+`touched` is every file in `git diff --name-only` between the two `HEAD`s:
+the commits the action made. If `HEAD` did not move, it is empty. The
+working tree is not part of it. The tree is shared with every other agent,
+so a file that became dirty while the action ran is somebody's work in
+progress, not the action's write (decision `violation-scope` in
+`.context/DECISIONS.md`).
+
+`newly_dirty` is that other set: paths dirty after the action that were not
+dirty before. The loop reports the unclaimed ones as `observed`, never as a
+violation.
 
 `outside` filters `touched` down to the paths not covered by `authorized`
 — the same authorized-set semantics as `voter::authorize` (literal path,
 directory prefix, or glob). A non-empty result is the git violation: the
-action touched a file the driving event never authorized.
+action committed a file the driving event never authorized.
 
 ## Tests
 
@@ -93,8 +102,10 @@ writes `outcome=committed` and `ref=abc` to the outcome file produces both
 fields; a command with no outcome file falls back to the last
 `outcome=...` stdout line; a command that outlives its timeout reports
 `timed_out`; and, in a temporary git repository, committing two files
-while only one is authorized makes `outside` report the other. Run them
-with:
+while only one is authorized makes `outside` report the other, a tracked
+modification on the first porcelain line keeps its full path, and a file
+dirtied during the action lands in `newly_dirty` but not in `touched`. Run
+them with:
 
 ```sh
 cargo test
