@@ -1,6 +1,6 @@
 # Run a log-driven repo
 
-This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes `eventlog` is installed (`cargo install eventlog-cli --locked`, or `cargo install --path . --locked` from a local checkout) and the project is a git repository.
+This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes the latest stable `eventlog` is installed (`cargo install eventlog-cli --locked`, or `cargo install --path . --locked` from a local checkout) and the project is a git repository.
 
 ## 1. Create the log
 
@@ -40,15 +40,14 @@ main = workspace("main", panes = eventlog_reactors())
 
 That helper wires `eventlog lifecycle start`/`stop` to each pane's `on_start`/`on_stop`, so a supervisor spawns and retires the reactor and its claims without you hand-appending `spawn`, `claim`, and `retire`, and wires each pane's `serve` command to `eventlog react --as committer --on result --git -- eventlog action commit`, the packaged action that stages and commits exactly `$EVENTLOG_PATHS` and leaves unrelated staged work alone (see [Action](../reference/action.md)).
 
-Writing your own action script is still supported: it must stage `$EVENTLOG_PATHS`, commit, and write `outcome=committed` to `$EVENTLOG_OUTCOME_FILE` (the skill's `references/reactor-example.md` is a 15-line version), and you spawn it by hand:
+Writing your own action script is still supported: it must preserve exact `$EVENTLOG_PATHS` boundaries and unrelated staging, commit, and write a truthful outcome with actual commit refs to `$EVENTLOG_OUTCOME_FILE`. The skill's `references/reactor-example.md` shows the packaged alternative. To launch a custom action, start its lifecycle before the blocking reactor command:
 
 ```sh
+eventlog lifecycle start committer --role commit-reactor
 eventlog react --as committer --on result --git -- bash .context/bin/commit-action.sh
-eventlog append spawn agent=committer role=commit-reactor runtime=eventlog-react
-eventlog append claim agent=committer paths=.context/DECISIONS.md
 ```
 
-Either way, the runtime holds a lock so a second instance refuses to start, resumes from its own `ack` lines after a restart, and dry-runs one event with `eventlog react test <seq> --as committer -- ...`.
+Either way, the runtime holds a lock so a second instance refuses to start, resumes from its own `ack` lines after a restart, and tests one event with `eventlog react test <seq> --as committer --git -- ...`. Use a disposable repository for this test: the action runs normally, while the runtime prints its coordination events instead of appending them.
 
 ## 4. Spawn a worker
 
