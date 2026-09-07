@@ -1,0 +1,23 @@
+docs/explanation/controller-caller-pane.md
+  s_0ed6720238ed7e::t_fa8ee0f239329b 40
+docs/explanation/drovefile-session-pin.md
+  s_0ed6720238ed7e::t_fa01898fecd6e7 1-23
+README.md
+  s_0ed6720238ed7e::t_df1e2a1faa68fd 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "94fb1e42f109aa34c22c01e85e0321c1c8d460d0",
+  "prompts": {},
+  "sessions": {
+    "s_0ed6720238ed7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a555a34c-6928-44bd-8008-b2b5380619a5",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
