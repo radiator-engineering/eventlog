@@ -6,7 +6,7 @@ Claude Code reads it through CLAUDE.md, which imports it.
 <!-- log-driven-workspace:start — managed by setup-log-driven-workspace; refresh with setup.sh --orders -->
 ## Coordination: this repo is log-driven
 
-`.context/events.jsonl` is the append-only coordination log. Two reactors watch it, and nobody pings them: the **commit reactor** commits the files a `result` names; the **doc worker** then documents what was committed, editing only `docs,README.md,AGENTS.md`. Until a `result` is appended, nothing is committed and nothing is documented.
+`.context/events.jsonl` is the append-only coordination log. Two reactors watch it, and nobody pings them: the **commit reactor** commits the files a `result` names; the **doc worker** then documents what was committed, editing only `docs,README.md`. This file belongs to the controller (decision `agents-md-owner`). Until a `result` is appended, nothing is committed and nothing is documented.
 
 ### Which agent are you?
 

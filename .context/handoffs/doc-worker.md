@@ -41,8 +41,10 @@ import stub for it; never edit `CLAUDE.md`). After the docs, in the same pass:
 never force all four. Create the structure if it does not exist.
 
 ## Hard rules
-- Edit ONLY under your doc roots (the reactor prints them: by default `docs/`,
-  `README.md` and `AGENTS.md`). Nothing else.
+- Edit ONLY under your doc roots (the reactor prints them: by default `docs/`
+  and `README.md`). Nothing else. `AGENTS.md` belongs to the controller
+  (decision `agents-md-owner`); if the shipped change made a line there
+  stale, say so in your report instead of editing it.
 - Never write, edit, or append to `.context/events.jsonl`. The reactor reports
   your work as a `result by=doc-worker`; the committer lands it.
 - Never run `git commit`, `git add`, or any state-changing git command.
