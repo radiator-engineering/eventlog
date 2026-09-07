@@ -194,7 +194,22 @@ fn docs() -> anyhow::Result<i32> {
         );
         return Ok(1);
     }
-    let before = repo_snapshot()?;
+    let log_path = std::env::var_os("EVENTLOG_LOG")
+        .map(std::path::PathBuf::from)
+        .unwrap_or(log_config::load(&root)?.log.path);
+    let log_path = root.join(log_path);
+    // Resolve the parent as well when the log has not been created yet. This
+    // also handles aliases such as /var versus /private/var on macOS.
+    let log_path = log_path.canonicalize().unwrap_or_else(|_| {
+        match (log_path.parent(), log_path.file_name()) {
+            (Some(parent), Some(name)) => parent
+                .canonicalize()
+                .map(|parent| parent.join(name))
+                .unwrap_or_else(|_| log_path.clone()),
+            _ => log_path.clone(),
+        }
+    });
+    let before = repo_snapshot(&log_path)?;
     let (program, argv) = config
         .docs
         .command
@@ -212,7 +227,7 @@ fn docs() -> anyhow::Result<i32> {
         );
         return Ok(1);
     }
-    let after = repo_snapshot()?;
+    let after = repo_snapshot(&log_path)?;
     let changed: Vec<String> = before
         .keys()
         .chain(after.keys())
@@ -236,6 +251,10 @@ fn docs() -> anyhow::Result<i32> {
             None,
         );
         return Ok(1);
+    }
+    if changed.is_empty() {
+        report("skipped", "no documentation changes", None);
+        return Ok(0);
     }
     let refs = refs.map(|context| context.refs).unwrap_or_default();
     append_docs_result(&config.docs.identity, &refs, &changed)?;
@@ -386,18 +405,27 @@ fn nul_list(bytes: &[u8]) -> Vec<String> {
         .collect()
 }
 
-fn repo_snapshot() -> anyhow::Result<BTreeMap<String, String>> {
-    let root = std::env::current_dir().context("current directory")?;
+fn repo_snapshot(log_path: &std::path::Path) -> anyhow::Result<BTreeMap<String, String>> {
+    let root = std::env::current_dir()
+        .context("current directory")?
+        .canonicalize()?;
     let mut out = BTreeMap::new();
-    snapshot_path(&root, &root, &mut out)?;
+    snapshot_path(&root, &root, log_path, &mut out)?;
     Ok(out)
 }
 
 fn snapshot_path(
     root: &std::path::Path,
     path: &std::path::Path,
+    log_path: &std::path::Path,
     out: &mut BTreeMap<String, String>,
 ) -> anyhow::Result<()> {
+    // These paths belong to the coordination runtime and may change while
+    // another reactor works. All other files, including .context content,
+    // remain subject to the documentation roots check.
+    if crate::model::paths::is_log_or_lock(log_path, path) {
+        return Ok(());
+    }
     let meta = match std::fs::symlink_metadata(path) {
         Ok(meta) => meta,
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(()),
@@ -409,7 +437,7 @@ fn snapshot_path(
             if entry.file_name() == ".git" {
                 continue;
             }
-            snapshot_path(root, &entry.path(), out)?;
+            snapshot_path(root, &entry.path(), log_path, out)?;
         }
         return Ok(());
     }
