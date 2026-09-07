@@ -1,0 +1,26 @@
+src/scaffold/templates/eventlog-reactors.star
+  s_64cd7810333b01::t_c641f667c47316 1-11
+src/cmd/setup.rs
+  s_64cd7810333b01::t_c641f667c47316 1-62
+src/scaffold/templates/eventlog-setup.toml
+  s_64cd7810333b01::t_c641f667c47316 1-21
+src/scaffold/mod.rs
+  s_64cd7810333b01::t_c641f667c47316 13-16,47-219
+  s_64cd7810333b01::t_87801933494746 220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "49746002fc5771ab03a33490dd22ed382868b504",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
