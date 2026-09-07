@@ -33,6 +33,7 @@ version = 2
 identity = "committer"
 model = "composer-2.5-fast"
 timeout = "600s"
+command = []
 
 [docs]
 identity = "doc-worker"
@@ -49,7 +50,12 @@ eventlog = "eventlog"
 no `..` or absolute path (`invalid_docs_roots_fail_setup_without_mutation_or_panic`
 in `tests/scaffold.rs` checks all four). `docs.command` is an argv list run
 directly, never through a shell; leave it empty and set a local stub for
-tests. `upgrade` keeps every field you edit by hand — see
+tests. `commit.command` is the same kind of argv list; an empty list (the
+default) keeps `eventlog action commit` in direct `git commit` mode. Set it
+to run a model-backed commit author in a disposable clone instead — see
+[Action](action.md#configured-commit-author). An argv entry that is exactly
+`{model}` is replaced with `commit.model`. `upgrade` keeps every field you
+edit by hand — see
 `setup_is_repeatable_preserves_customization_and_rejects_malformed_config` in
 `tests/scaffold.rs` — and rejects the file only when it fails to parse as
 TOML against the schema above.
