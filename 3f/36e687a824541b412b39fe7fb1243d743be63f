@@ -1,0 +1,14 @@
+src/scaffold/mod.rs
+  h_63f2916b00d585 33-36,111-112,166-180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "3f36e687a824541b412b39fe7fb1243d743be63f",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
