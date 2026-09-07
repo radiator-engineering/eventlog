@@ -38,3 +38,8 @@ ctrlc = { version = "3.5.2", features = ["termination"] }
 assert_cmd = "2"
 predicates = "3"
 tempfile = "3"
+
+# The profile cargo-dist builds release artifacts with (release.yml).
+[profile.dist]
+inherits = "release"
+lto = "fat"
