@@ -292,3 +292,11 @@ Homebrew formula can download release assets without a token, matching
 radiator-engineering/Drove. The tap is `radiator-engineering/homebrew-tap`;
 its formula publish job needs a `HOMEBREW_TAP_TOKEN` secret (contents write
 on the tap), which neither repo has yet.
+
+## crate-name = eventlog-cli (2026-09-07)
+crates.io already has an unrelated `eventlog` crate (a Windows Event Log
+library, since 2020), so the package is `eventlog-cli`. The binary, the lib
+crate and the Homebrew formula stay `eventlog` (`[package.metadata.dist]
+formula = "eventlog"`); the cargo-dist archives and installer scripts take
+the `eventlog-cli-` prefix. Install paths: `cargo install eventlog-cli`,
+`brew install radiator-engineering/tap/eventlog`, or the release installer.
