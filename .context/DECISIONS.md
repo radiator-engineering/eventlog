@@ -285,3 +285,10 @@ The commit action runs a Cursor agent, which stayed alive past 300s on a
 was archived; deletion is pending a `delete_repo` token scope. The skill's
 only home is `skill/` in this repo. Drove bugs filed upstream as
 radiator-engineering/Drove issues 20, 21, 22.
+
+## repo-visibility = public (2026-09-07)
+The GitHub repo went public so the cargo-dist installer script and the
+Homebrew formula can download release assets without a token, matching
+radiator-engineering/Drove. The tap is `radiator-engineering/homebrew-tap`;
+its formula publish job needs a `HOMEBREW_TAP_TOKEN` secret (contents write
+on the tap), which neither repo has yet.
