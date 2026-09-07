@@ -5,9 +5,9 @@ Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
 | --- | --- | --- | --- | --- |
-| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-5 root-policy fixes |
+| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-5 reported; awaiting review |
 | infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | approved; awaiting integration |
-| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | round-4 changes requested; awaiting setup |
+| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | final root-policy acceptance gate |
 
 All three interactive Codex TUIs were visually verified on the assigned model and worktree, with their initial assignment submitted and work underway. Initial Herdr start calls returned agent_not_ready due to repository/hook trust menus; the controller accepted trust for this authorized repository and the Herdr hooks just installed, then verified that all agents began working. No model downgrade or headless fallback.
 
@@ -65,3 +65,10 @@ root policy panics during preview. Both are routed in `infra-setup-round5.md`.
 The reviewer requires literal root claims and real lifecycle/action tests,
 plus controlled invalid-policy errors with no mutation. Integration still
 waits for combined APPROVE; unchanged runtime/loop evidence can be preserved.
+
+Round-five setup report collected: tracked diff
+`aa90811ac005bf32a3017c2a59b9c6773650885f4a28e1abf87d43612645fd6d` verified,
+all five untracked hashes unchanged, runtime unchanged. Literal root lifecycle
+and docs-action tests and invalid-policy nonmutation tests pass with focused
+tests, formatting, Clippy and whitespace checks. Reviewer released via
+`infra-review-round5.md` for the final combined gate.
