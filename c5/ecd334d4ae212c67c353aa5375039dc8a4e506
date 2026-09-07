@@ -1,0 +1,19 @@
+docs/how-to/run-a-log-driven-repo.md
+  s_21c75b2896c2ca::t_3dd475d36aec47 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c5ecd334d4ae212c67c353aa5375039dc8a4e506",
+  "prompts": {},
+  "sessions": {
+    "s_21c75b2896c2ca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e5eea4-4876-4f49-970d-43e3a0fc1058",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
