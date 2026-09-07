@@ -57,6 +57,7 @@ the commit reactor writes from each `result` event. Do not edit it by hand.
 - **reference:** Document configured commit author and docs snapshot policy
 - **how-to:** Document published-crate install for eventlog 0.2.0
 - Clarify lifecycle restart, retire, and committer semantics
+- Document action repo-root cwd and tolerant stdin close
 
 ## [0.1.0] - 2026-09-07
 
