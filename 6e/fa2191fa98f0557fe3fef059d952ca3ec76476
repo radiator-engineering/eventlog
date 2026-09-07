@@ -1,0 +1,19 @@
+docs/how-to/run-a-log-driven-repo.md
+  s_64cd7810333b01::t_a479fd7eb51cdc 3,43,46,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6efa2191fa98f0557fe3fef059d952ca3ec76476",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
