@@ -1,0 +1,33 @@
+.context/handoffs/infra-review-round2.md
+  s_06c7d837fe3680::t_e18673a1c50524 1-30
+.context/handoffs/infra-runtime-fixes.md
+  s_06c7d837fe3680::t_ebb53599a6c68e 1-42
+.context/handoffs/infra-setup-fixes.md
+  s_06c7d837fe3680::t_d32a920264dc32 1-65
+.context/handoffs/infra-registry.md
+  s_1cd7a712b2d932::t_298664cc5d406c 3,19-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "7ed1594ccc0733e9f98ce75f45c8f424720c679d",
+  "prompts": {},
+  "sessions": {
+    "s_06c7d837fe3680": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07c67-cc9a-7b91-a602-4acad44ebceb",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_1cd7a712b2d932": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07c4b-cf5a-7513-bdbc-19d5fa66dc02",
+        "model": "unknown"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
