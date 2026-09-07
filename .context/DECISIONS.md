@@ -300,3 +300,11 @@ crate and the Homebrew formula stay `eventlog` (`[package.metadata.dist]
 formula = "eventlog"`); the cargo-dist archives and installer scripts take
 the `eventlog-cli-` prefix. Install paths: `cargo install eventlog-cli`,
 `brew install radiator-engineering/tap/eventlog`, or the release installer.
+
+## changelog = git-cliff-generated (2026-09-07)
+`CHANGELOG.md` is generated from conventional commit messages with git-cliff
+(`cliff.toml`), never hand-edited. Parallel workers therefore never touch it
+and it cannot conflict on merge. The commit reactor's message, derived from
+the `result` summary, is the changelog entry, so summaries should read as
+user-facing lines. Alternative kept in reserve: per-change fragment files in
+`changelog.d/` if curated wording ever diverges from commit messages.
