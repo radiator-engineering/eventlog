@@ -86,10 +86,13 @@ hand-edited settings and regenerates the Drove helper from them; `upgrade`
 refuses a malformed config without changing it; a config with an invalid
 `docs.roots` entry fails every `setup` subcommand without writing a file or
 panicking; and a rendered `Drovefile` referencing `eventlog_reactors()`
-passes `drove render`. Run them with:
+passes `drove render`. The render test is an explicit integration check
+requiring an installed Drove; the default suite has no Drove dependency:
 
 ```sh
 cargo test
+# With Drove installed:
+cargo test --test scaffold setup_helper_renders_with_drove -- --ignored
 ```
 
 ## See also

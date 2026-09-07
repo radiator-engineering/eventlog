@@ -60,7 +60,7 @@ cargo test        # tests/cli_surface.rs asserts every command above is recogniz
 ```
 
 Source: `src/cli.rs` defines the command enum and dispatch table; each
-`src/cmd/<name>.rs` holds that command (a stub, except `verify.rs`).
+`src/cmd/<name>.rs` implements that command.
 
 ## See also
 

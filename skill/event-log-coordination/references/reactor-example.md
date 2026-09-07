@@ -1,43 +1,30 @@
-# Committer action script for `eventlog react`
+# Committer action for `eventlog react`
 
-The runtime owns lock, resume, intent, voter, veto window, git check and
-ack. This script is only the pass. It reads the driving `result` event from
-stdin and stages exactly `EVENTLOG_PATHS`, the authorized set.
-
-```bash
-#!/usr/bin/env bash
-# Committer action: one commit per `result` that names paths.
-set -euo pipefail
-read -r event
-msg=$(jq -r '.summary // "land result \(.seq)"' <<<"$event")
-if [ -z "${EVENTLOG_PATHS:-}" ]; then
-  printf 'outcome=skipped\ndetail=no paths on the driving event\n' > "$EVENTLOG_OUTCOME_FILE"
-  exit 0
-fi
-# shellcheck disable=SC2086
-git add -- ${EVENTLOG_PATHS//,/ }
-if git diff --cached --quiet; then
-  printf 'outcome=skipped\ndetail=nothing staged\n' > "$EVENTLOG_OUTCOME_FILE"
-  exit 0
-fi
-git commit -q -m "$msg"
-printf 'outcome=committed\nref=%s\n' "$(git rev-parse --short HEAD)" > "$EVENTLOG_OUTCOME_FILE"
-```
-
-`outcome` and `ref` land on the `ack`. Any other key you write is folded
-into `detail=`.
-
-Launch, in a pane that outlives the agents' turns:
+The runtime owns locking, resume, intent, voting, the veto window, Git
+accounting and acknowledgments. Use the packaged commit action to preserve
+exact path boundaries and unrelated staged work, including filenames with
+spaces and glob characters:
 
 ```sh
-eventlog react --as committer --on result --git -- bash .context/bin/commit-action.sh
-eventlog append spawn agent=committer role=commit-reactor runtime=eventlog-react
+eventlog lifecycle start committer --role commit-reactor
+eventlog react --as committer --on result --git -- eventlog action commit
 ```
 
-Dry-run against seq 42 (writes nothing):
+Run the reactor in a persistent pane. A supervisor calls `lifecycle stop
+committer` when it stops that process. Generated Drove hooks wire this pair
+automatically.
+
+The action reads `EVENTLOG_PATHS`, commits only that authorized set, and
+reports `outcome` and actual commit `ref` values for the runtime's ack.
+Use `--message` for a fixed message or configure `[commit].command` in
+`.context/eventlog-setup.toml` for a model-backed author. The configured
+command inherits the driving event on stdin in an isolated checkout.
+
+Test against seq 42 in a disposable repository. This executes the action;
+the runtime prints its coordination events instead of appending them:
 
 ```sh
-eventlog react test 42 --as committer --git -- bash .context/bin/commit-action.sh
+eventlog react test 42 --as committer --git -- eventlog action commit
 ```
 
 Add `--filter agent=<worker>` to react to one worker's results only, and

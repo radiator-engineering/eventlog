@@ -94,7 +94,9 @@ changed:
    reserved sidecars (lock and checkpoint files) are excluded from both
    snapshots, so a reactor appending to the log while the docs command runs
    never fails the action; every other path, including the rest of
-   `.context/`, is still snapshotted and checked.
+   `.context/` and Git-ignored directories, is still snapshotted and checked.
+   Keep build outputs and disposable worktrees outside the repository during
+   a docs pass; ignoring those paths in Git does not exempt their edits.
 4. If any changed path falls outside `docs.roots`, fails with
    `outcome=failed` and the exact out-of-scope paths in `detail`; nothing is
    committed. `docs_action_fails_with_the_exact_out_of_scope_paths` covers

@@ -32,7 +32,7 @@ Flags go **before** the type. Fields are `key=value`.
 eventlog init                                   # log, EVENTLOG.md, eventlog.toml, gitignore lines; never overwrites
 eventlog setup preview                          # show reusable-owned configuration changes, writes nothing
 eventlog setup apply                            # init non-destructively and create .context/eventlog-setup.toml
-eventlog setup upgrade                          # same validation; refuses a customized owned setup file
+eventlog setup upgrade                          # preserves policy edits; refuses malformed config or edited generated helper
 eventlog append spawn agent=t2 model=sonnet role=impl
 eventlog append claim agent=t2 paths=src/api,docs/index.md
 eventlog append prompt agent=t2 ref=.context/handoffs/t2.md
@@ -65,8 +65,9 @@ optional = ["ref"]
 | `by does not match writer` | the controller passing `by=`; reactors pass `--as` instead |
 | unknown type / field | anything not in `eventlog vocab` |
 
-Paths are repo-relative: no `/`, `~`, or `..`. `--no-strict` is for repair
-only.
+Paths are repo-relative: separators and interior `..` are allowed, but
+absolute paths, leading `~`, and traversal above the root are rejected.
+`--no-strict` is for repair only.
 
 ## Worker lifecycle
 
@@ -111,8 +112,9 @@ on_start = ["eventlog", "lifecycle", "start", agent, "--model", model,
 on_stop = ["eventlog", "lifecycle", "stop", agent]
 ```
 
-`lifecycle start` is idempotent and restores its own claims after a prior
-`stop`; it leaves every other agent's claims intact. The supervisor invokes it
+`lifecycle start` is idempotent. After `stop`, it claims the paths supplied
+again with `--paths`; it does not recover historical claims automatically.
+It leaves every other agent's claims intact. The supervisor invokes it
 as the controller, so do not run it from a worker brief.
 
 Package reactor actions as direct argv too:
@@ -180,5 +182,6 @@ for anything the hook does not see.
 - Writing `by=` as the controller, or `--as` after the fields.
 - `git add -A` in a committer. Stage `EVENTLOG_PATHS` only.
 - Restarting a reactor from an agent's tool shell. It dies with the turn.
-- A `result` with no `spawn`, or a `retire` with no `result`.
+- A `result` with no open `spawn`. Accepted worker work needs a result before
+  retirement; supervisor `lifecycle stop` needs no preceding result.
 - Answering "add a type" with a new `append`; edit `eventlog.toml` first.

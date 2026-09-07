@@ -33,8 +33,9 @@ on_stop = ["eventlog", "lifecycle", "stop", agent]
 3. Appends `claim agent=<agent> paths=<missing>` for whichever of `--paths`
    the agent does not already hold. Paths it already claims are left alone.
 
-Restarting a reactor with `start` after a `stop` therefore restores exactly
-the claims it held before, without touching what any other agent claims —
+Restarting a reactor with `start` after a `stop` claims exactly the paths
+provided in the new `--paths`; omitting it creates an unclaimed lifecycle.
+Historical claims are not restored automatically. Other agents keep their claims —
 `lifecycle_start_stop_start_restores_only_its_own_claim` in
 `tests/scaffold.rs` covers this. A supervisor runs `start`/`stop`, not a
 worker: a worker never appends to the log (see the coordination skill).
@@ -42,15 +43,17 @@ worker: a worker never appends to the log (see the coordination skill).
 ## `eventlog lifecycle stop` — retire
 
 Appends `retire agent=<agent> disposition=stopped` if `<agent>` has an open
-spawn; does nothing if it does not. It closes the agent's claims, so its
-next result is vetoed `unclaimed-paths` until a fresh `start`.
+spawn; does nothing if it does not. Retirement needs no preceding result.
+It closes the agent's claims. Strict append rejects a later result with
+`open-spawn` until a fresh `start`; a non-strict repair result can reach the
+reactor and be vetoed `unclaimed-paths`.
 
 ## Tests
 
 `tests/scaffold.rs` covers: a claim naming a path that does not exist fails
 before any event is appended, and every other agent's claims are unaffected;
 and a `start`/`stop`/`start` cycle restores only the claims the restarted
-agent held, leaving a second agent's claims untouched. Run them with:
+agent passes again in `--paths`, leaving a second agent's claims untouched. Run them with:
 
 ```sh
 cargo test
