@@ -1,0 +1,26 @@
+Cargo.toml
+  s_64cd7810333b01::t_9e02c0389e2dc5 3
+CHANGELOG.md
+  s_64cd7810333b01::t_8224be22529470 7-15,20-22,34-54
+README.md
+  s_64cd7810333b01::t_852f1d7279e4dc 10,16-17
+  s_64cd7810333b01::t_a26b3355f91d9d 18
+Cargo.lock
+  s_64cd7810333b01::t_d9dc188e7c1fb1 440
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "beaa3a645576c976f5c7ee6facab390b8367a206",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
