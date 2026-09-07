@@ -1,0 +1,22 @@
+tests/react_action.rs
+  s_64cd7810333b01::t_af891ccc74b703 329,356-377
+  s_64cd7810333b01::t_8993aa60331e25 378
+src/react/action.rs
+  s_64cd7810333b01::t_af891ccc74b703 124,126-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "eb48179373864be8cc715370ab0b211f9cfae45e",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
