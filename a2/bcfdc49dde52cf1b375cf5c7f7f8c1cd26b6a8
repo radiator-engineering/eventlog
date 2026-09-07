@@ -1,0 +1,23 @@
+docs/reference/scaffold.md
+  s_14b89959c4bf4a::t_84224222eaaf29 102-105
+  s_14b89959c4bf4a::t_01ec5ad898f434 23-26
+  s_14b89959c4bf4a::t_078c3f3bb28aec 106
+docs/explanation/log-scope-and-decisions-merge.md
+  s_14b89959c4bf4a::t_bc75d7aefe6bbf 47-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "a2bcfdc49dde52cf1b375cf5c7f7f8c1cd26b6a8",
+  "prompts": {},
+  "sessions": {
+    "s_14b89959c4bf4a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "59e14933-3877-4ce2-a5d3-a73f4ffc0786",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
