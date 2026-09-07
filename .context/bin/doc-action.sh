@@ -76,6 +76,10 @@ Rules:
 - Never write, edit, or append to .context/events.jsonl; never run git commit, git add, or any git command that changes state. The reactor reports your work and a separate committer lands it.
 - If the change genuinely needs no documentation (pure internal refactor, coordination-only), change nothing and say so plainly.
 - Accuracy over volume: every command, path, and behavior you document must match the diff.
+- README.md has a fixed shape: one paragraph on what the tool is, Install, Daily commands, How the log drives work, Documentation, Layout. Edit a line in place when the change made it wrong. Never append a status sentence, a changelog line, or a per-file index entry to it. If nothing in that shape is wrong, leave README.md alone.
+- docs/reference/ is one page per command (what it does, flags, output, exit codes). Do not write a page for an internal module; that belongs in rustdoc comments in the source, which you may not edit. Update a command page only when its user-facing surface changed.
+- docs/explanation/ is for an invariant a maintainer must understand before changing the code (a lock rule, a validation rule, a trust boundary). It is not for "why we changed X": that rationale is a decision and lives in .context/DECISIONS.md, which the controller maintains. If the change is a decision, write nothing in docs/explanation/.
+- docs/how-to/run-a-log-driven-repo.md is the setup guide. Fix a step there when a command it names changed.
 EOF
 
 before="$(dirty_docs)"

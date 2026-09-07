@@ -235,3 +235,21 @@ template only when the file is absent.
 
 ## repo-name = radiator-engineering/eventlog (2026-09-07)
 The GitHub repository is `radiator-engineering/eventlog`, private, matching the crate and binary name. `Cargo.toml` points there. The local folder is still `event-log`; renaming it means `drove down`, a move, and `drove up`, since Drove keys its state on the path.
+
+## docs-shape = commands, invariants, one how-to (2026-09-07)
+`docs/reference/` is one page per command. `docs/explanation/` holds only
+invariants a maintainer must know before changing the code (lock reclaim,
+reactor lock liveness, hash-chain start rule, guard fail modes, model-contract
+precedence). Change rationale is a decision and lives here, not in a doc page.
+`docs/how-to/run-a-log-driven-repo.md` is the setup guide. `README.md` has a
+fixed shape (what it is, install, daily commands, how the log drives work,
+documentation, layout) and is edited in place, never appended to. Removed on
+this date: seven change-rationale explanation pages and seven module
+reference pages that restated the source (`log-module`, `query-module`,
+`model-contract`, `react-loop`, `react-voter`, `react-action`, `react-lock`);
+git history keeps them. The doc worker's prompt carries these rules.
+
+## stop-hook = claim-aware, one block per file set (2026-09-06, seq 447)
+The controller's Stop hook ignores files under another agent's open claim and
+blocks once per distinct set of unreported files (memo in
+`.git/eventlog-stop-hook-last`), so work in flight is not nagged every turn.
