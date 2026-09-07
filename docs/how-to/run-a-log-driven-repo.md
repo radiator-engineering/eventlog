@@ -1,6 +1,6 @@
 # Run a log-driven repo
 
-This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes `eventlog` is installed (`cargo install --path .` from this repo) and the project is a git repository.
+This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes `eventlog` is installed (`cargo install eventlog-cli --locked`, or `cargo install --path . --locked` from a local checkout) and the project is a git repository.
 
 ## 1. Create the log
 
