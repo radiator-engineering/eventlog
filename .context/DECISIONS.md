@@ -218,3 +218,17 @@ hand-maintained `EVENTLOG.md`, restored from git; init is not idempotent for
 that file, follow-up). `fsync = false` is kept: the event-sourcing survey
 (row 8) makes fsync an optional strict mode, and this log is local
 coordination state, not the durable record.
+
+## agents-md-owner = controller (2026-09-07)
+A claim is a path glob, so one file has one owner. `AGENTS.md` was under the
+doc worker's claim while its coordination block was controller-maintained;
+every controller `result` naming it was vetoed `claimed-by-other` (seam seq
+493). The doc worker's claim and doc roots narrow to `docs,README.md`; the
+controller owns and reports `AGENTS.md`. The doc worker reports a stale
+`AGENTS.md` line in its result instead of editing it. This follows the
+coordination survey, "a file that two tasks both need gets exactly one owner".
+
+## init-templates = write-if-missing (2026-09-07)
+`eventlog init` rewrote `EVENTLOG.md` and `eventlog.toml` whenever they
+differed from its templates, which is every hand-edited copy. It now writes a
+template only when the file is absent.
