@@ -1,0 +1,16 @@
+src/log/append.rs
+  h_63f2916b00d585 283-285,291,295-296,303
+tests/cmd_append.rs
+  h_63f2916b00d585 132-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b84552d678628ca1a64e4a5785ad8ce5e18d595d",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
