@@ -1,0 +1,32 @@
+tests/docs_snapshot.rs
+  s_64cd7810333b01::t_3c45201c9bbaba 1-11,20-24,33,39-42,48-52,62-67,70-72,79-87,90-91,100-105,110-111
+  s_64cd7810333b01::t_8d7ce3435a4661 112-114,117-146
+  s_64cd7810333b01::t_1f5eec09d81ec1 115-116
+  s_64cd7810333b01::t_586161ea1e3c5e 12-19,25-32,34-38,43-47,53-61,68-69,73-78,88-89,92-99,106-109
+src/cmd/action.rs
+  s_8b5df33aaf0427::t_8f910b44e5b08b 197-212,230,255-258,408-411,413,420,423-428,440
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "164793487441b5622841ac9d840e2ac0a8d33dfa",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_8b5df33aaf0427": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "3139b39c-f7e0-4b5b-9cf6-685e00f237f0",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
