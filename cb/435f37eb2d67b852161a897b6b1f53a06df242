@@ -1,0 +1,16 @@
+.context/DECISIONS.md
+  h_63f2916b00d585 235-237
+Cargo.toml
+  h_63f2916b00d585 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "cb435f37eb2d67b852161a897b6b1f53a06df242",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
