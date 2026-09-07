@@ -30,3 +30,5 @@ Round-2 verdict: CHANGES_REQUESTED. Round-1 findings 1–7 all pass, including t
 Reviewed hashes, not accepted: setup `d2fcc938…30b49`, runtime `1999e944…53050`.
 Two findings remain. Routed: customized setup values must drive the generated Drove reactors → infra-setup (`infra-setup-round3.md`, seq 628); invalid UTF-8 stderr overflows the ack detail limit → infra-runtime (`infra-runtime-round3.md`, seq 629). Seam seq 625 is now round-2 finding 1.
 Integration order on APPROVE: infra-runtime first (4 files), then infra-setup (12 files); path sets do not overlap.
+
+Round-3 reports (2026-09-07): setup `796745ca…67a6` (untracked set unchanged; helper rendered from TOML in `src/scaffold/mod.rs` with body-hash conflict detection). Runtime `9c9b03f3…34e8` (detail capped at 2 KiB post-decoding, UTF-8-safe front truncation; new live-reactor test). Runtime also edits `src/cmd/react.rs`, outside its claim: violation seq 636, no textual conflict with setup. Reviewer released for the round-3 gate.
