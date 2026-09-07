@@ -3,6 +3,10 @@ load("drove/reactors.star", "reactor")
 # Everything here runs the `eventlog` binary this repo ships
 # (`cargo install --path .`), not the retired shell toolkit.
 
+# The herdr session this layout lives in, so `drove up` works from any shell.
+# An explicit --session flag or a HERDR_SESSION in the environment still wins.
+herdr.session("event-log")
+
 protect_log = task(
     "protect-log",
     check = ["eventlog", "protect", "--status"],
