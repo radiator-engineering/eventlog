@@ -1,0 +1,19 @@
+docs/reference/react-command.md
+  s_99a7ae32c5c856::t_88394bf65a7381 34-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "e55ba11d7a1c7b654e752c0cb192cf7c6bf8d7d8",
+  "prompts": {},
+  "sessions": {
+    "s_99a7ae32c5c856": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ec5f46a-6b78-401d-8868-f75f9c74df76",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
