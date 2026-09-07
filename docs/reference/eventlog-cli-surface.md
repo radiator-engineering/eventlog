@@ -6,11 +6,12 @@ Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
 `why` ([reference](query-commands.md)), `append`, `vocab`
 ([reference](append.md)), `tui` ([reference](tui.md)), `react`
 ([reference](react-command.md)), `guard` ([reference](guard.md)), `init`,
-`doctor`, `protect` ([reference](scaffold.md)), `skill`, and `completions`
-([reference](skill.md)) are implemented, the rest still print `eventlog
-<name>: not implemented` to stderr and exit 1. This page documents the
-frozen command set so later tasks can fill in behavior without changing
-names or flags.
+`doctor`, `protect` ([reference](scaffold.md)), `setup`
+([reference](setup.md)), `lifecycle` ([reference](lifecycle.md)), `action`
+([reference](action.md)), `skill`, and `completions` ([reference](skill.md))
+are implemented, the rest still print `eventlog <name>: not implemented` to
+stderr and exit 1. This page documents the frozen command set so later
+tasks can fill in behavior without changing names or flags.
 
 ## Global flags
 
@@ -40,6 +41,9 @@ Every command accepts:
 | `init` | Create a new coordination log and scaffold ([reference](scaffold.md)). |
 | `doctor` | Diagnose common setup problems ([reference](scaffold.md)). |
 | `protect` | Toggle or report OS-level append-only protection ([reference](scaffold.md)). |
+| `setup` | Preview, apply, or upgrade reusable reactor policy ([reference](setup.md)). Subcommands: `preview`, `apply`, `upgrade`. |
+| `lifecycle` | Idempotently spawn, claim, and retire a reactor or worker ([reference](lifecycle.md)). Subcommands: `start`, `stop`. |
+| `action` | Run a packaged reactor action ([reference](action.md)). Subcommands: `commit`, `docs`. |
 | `schema` | Print the JSON Schema for log types ([reference](schema.md)). |
 | `skill` | Manage the embedded coordination skill ([reference](skill.md)). Subcommand: `install`. |
 | `completions` | Generate shell completions ([reference](skill.md)). |
@@ -72,4 +76,7 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [React command](react-command.md) — the `react` and `react test` CLI, wiring the reactor loop to the rule voter and the action runner.
 - [Guard](guard.md) — parsing agent hook payloads and the shared denylist.
 - [Scaffold and setup](scaffold.md) — `init`, `doctor`, and `protect`.
+- [Setup](setup.md) — `eventlog setup`, the reusable reactor policy scaffold.
+- [Lifecycle](lifecycle.md) — `eventlog lifecycle`, idempotent spawn/claim/retire for a reactor or worker.
+- [Action](action.md) — `eventlog action`, packaged commit and docs reactor actions.
 - [Skill and completions](skill.md) — installing the embedded skill and generating shell completions.
