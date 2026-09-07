@@ -1,0 +1,21 @@
+README.md
+  s_100b867b3312be::t_31b24fc0441aa8 44
+docs/how-to/cut-a-release.md
+  s_100b867b3312be::t_9308e93abee1c1 1-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "5679da46ee3f3a42f18f40ade1035513d64f382a",
+  "prompts": {},
+  "sessions": {
+    "s_100b867b3312be": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f8381f2f-58ab-48d3-8f21-585dd737a627",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
