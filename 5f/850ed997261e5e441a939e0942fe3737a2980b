@@ -1,0 +1,18 @@
+.context/bin/doc-action.sh
+  h_63f2916b00d585 26
+.context/handoffs/doc-worker.md
+  h_63f2916b00d585 44-47
+AGENTS.md
+  h_63f2916b00d585 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "5f850ed997261e5e441a939e0942fe3737a2980b",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
