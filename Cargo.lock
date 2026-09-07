@@ -436,7 +436,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "eventlog"
+name = "eventlog-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",

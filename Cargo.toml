@@ -1,9 +1,11 @@
 [package]
-name = "eventlog"
+name = "eventlog-cli"
 version = "0.1.0"
+description = "Append-only JSONL coordination log for multi-agent repos: one controller writes, reactors act on events"
 edition = "2024"
 rust-version = "1.88"
 license = "Apache-2.0"
+homepage = "https://github.com/radiator-engineering/eventlog"
 repository = "https://github.com/radiator-engineering/eventlog"
 
 [[bin]]
@@ -43,3 +45,7 @@ tempfile = "3"
 [profile.dist]
 inherits = "release"
 lto = "fat"
+
+[package.metadata.dist]
+# Keep the Homebrew formula named `eventlog` (brew install radiator-engineering/tap/eventlog)
+formula = "eventlog"
