@@ -136,11 +136,13 @@ fn validate_claim_paths(paths: &[String]) -> anyhow::Result<()> {
             if candidate.exists() {
                 continue;
             }
-            if path.as_str().contains('*') || path.as_str().contains('?') {
+            if path.as_str().contains(['*', '?', '[']) {
                 let mut builder = globset::GlobSetBuilder::new();
                 builder.add(globset::Glob::new(path.as_str())?);
                 let set = builder.build()?;
-                if walk_matches(std::path::Path::new("."), std::path::Path::new("."), &set)? {
+                if crate::log::append::glob_matches_under(std::path::Path::new("."), &set)
+                    .map_err(anyhow::Error::msg)?
+                {
                     continue;
                 }
             }
@@ -148,25 +150,4 @@ fn validate_claim_paths(paths: &[String]) -> anyhow::Result<()> {
         }
     }
     Ok(())
-}
-
-fn walk_matches(
-    root: &std::path::Path,
-    dir: &std::path::Path,
-    set: &globset::GlobSet,
-) -> anyhow::Result<bool> {
-    for entry in std::fs::read_dir(dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.file_name().is_some_and(|name| name == ".git") {
-            continue;
-        }
-        if path.is_dir() && walk_matches(root, &path, set)? {
-            return Ok(true);
-        }
-        if set.is_match(path.strip_prefix(root).unwrap_or(&path)) {
-            return Ok(true);
-        }
-    }
-    Ok(false)
 }

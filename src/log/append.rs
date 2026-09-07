@@ -266,7 +266,7 @@ fn check_claim_paths_exist(repo_root: &Path, paths_val: &str) -> Result<(), Stri
         if path.exists() {
             continue;
         }
-        if entry.as_str().contains('*') || entry.as_str().contains('?') {
+        if entry.as_str().contains(['*', '?', '[']) {
             let mut builder = GlobSetBuilder::new();
             builder.add(Glob::new(entry.as_str()).map_err(|e| e.to_string())?);
             let set = builder.build().map_err(|e| e.to_string())?;
@@ -279,28 +279,25 @@ fn check_claim_paths_exist(repo_root: &Path, paths_val: &str) -> Result<(), Stri
     Ok(())
 }
 
-fn glob_matches_under(repo_root: &Path, set: &globset::GlobSet) -> Result<bool, String> {
-    // Match every file against its path relative to the repo root, so a
-    // claim like `src/api/**` matches `src/api/ping.rs` the way the fold does.
-    fn walk(root: &Path, dir: &Path, set: &globset::GlobSet) -> Result<bool, String> {
-        let read = std::fs::read_dir(dir).map_err(|e| e.to_string())?;
-        for entry in read {
+pub(crate) fn glob_matches_under(repo_root: &Path, set: &globset::GlobSet) -> Result<bool, String> {
+    // Claims can intentionally include ignored files. Walk without following
+    // directory symlinks, and exclude Git internals from repository claims.
+    let mut pending = vec![repo_root.to_path_buf()];
+    while let Some(dir) = pending.pop() {
+        for entry in std::fs::read_dir(dir).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
+            if entry.file_name() == ".git" {
+                continue;
+            }
             let path = entry.path();
-            if path.is_dir() {
-                if walk(root, &path, set)? {
-                    return Ok(true);
-                }
-            } else {
-                let rel = path.strip_prefix(root).unwrap_or(&path);
-                if set.is_match(rel) {
-                    return Ok(true);
-                }
+            if entry.file_type().map_err(|e| e.to_string())?.is_dir() {
+                pending.push(path);
+            } else if set.is_match(path.strip_prefix(repo_root).unwrap_or(&path)) {
+                return Ok(true);
             }
         }
-        Ok(false)
     }
-    walk(repo_root, repo_root, set)
+    Ok(false)
 }
 
 fn finalize_event(log: &Log, tail: &Tail, mut event: Event) -> Event {

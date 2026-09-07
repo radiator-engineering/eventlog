@@ -129,19 +129,6 @@ fn setup_is_repeatable_preserves_customization_and_rejects_malformed_config() {
             "missing {expected} in {reactors}"
         );
     }
-    fs::write(
-        dir.path().join("Drovefile"),
-        "load(\".context/eventlog-reactors.star\", \"eventlog_reactors\")\nmain = workspace(\"main\", panes = eventlog_reactors())\nprofile(\"default\", workspaces = [main])\n",
-    )
-    .unwrap();
-    assert!(
-        StdCommand::new("drove")
-            .arg("render")
-            .current_dir(dir.path())
-            .status()
-            .unwrap()
-            .success()
-    );
     fs::write(&config, "[docs\n").unwrap();
     Command::cargo_bin("eventlog")
         .unwrap()
@@ -769,4 +756,85 @@ fn protect_status_before_and_after_protect() {
         .assert()
         .success()
         .code(0);
+}
+
+#[test]
+fn bracket_globs_work_in_lifecycle_and_strict_append() {
+    for lifecycle in [false, true] {
+        let dir = TempDir::new().unwrap();
+        init_git_repo(&dir);
+        fs::create_dir(dir.path().join("src")).unwrap();
+        fs::write(dir.path().join("src/a.rs"), "fixture").unwrap();
+        let mut command = Command::cargo_bin("eventlog").unwrap();
+        command.current_dir(dir.path());
+        if lifecycle {
+            command.args(["lifecycle", "start", "bracket", "--paths", "src/[ab].rs"]);
+        } else {
+            Command::cargo_bin("eventlog")
+                .unwrap()
+                .current_dir(dir.path())
+                .args(["append", "spawn", "agent=bracket"])
+                .assert()
+                .success();
+            command.args(["append", "claim", "agent=bracket", "paths=src/[ab].rs"]);
+        }
+        command.assert().success();
+    }
+}
+
+#[test]
+#[ignore = "requires installed Drove; run cargo test --test scaffold setup_helper_renders_with_drove -- --ignored"]
+fn setup_helper_renders_with_drove() {
+    let dir = TempDir::new().unwrap();
+    init_git_repo(&dir);
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["setup", "apply"])
+        .assert()
+        .success();
+    fs::write(
+        dir.path().join("Drovefile"),
+        "load(\".context/eventlog-reactors.star\", \"eventlog_reactors\")\nmain = workspace(\"main\", panes = eventlog_reactors())\nprofile(\"default\", workspaces = [main])\n",
+    )
+    .unwrap();
+    assert!(
+        StdCommand::new("drove")
+            .arg("render")
+            .current_dir(dir.path())
+            .status()
+            .unwrap()
+            .success()
+    );
+}
+
+#[test]
+#[cfg(unix)]
+fn claim_globs_do_not_follow_directory_symlink_cycles() {
+    let dir = TempDir::new().unwrap();
+    init_git_repo(&dir);
+    fs::create_dir(dir.path().join("src")).unwrap();
+    std::os::unix::fs::symlink(dir.path(), dir.path().join("src/cycle")).unwrap();
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["lifecycle", "start", "cycle", "--paths", "src/[ab].rs"])
+        .timeout(std::time::Duration::from_secs(3))
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains("claim-path-missing"));
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["append", "spawn", "agent=cycle"])
+        .assert()
+        .success();
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["append", "claim", "agent=cycle", "paths=src/[ab].rs"])
+        .timeout(std::time::Duration::from_secs(3))
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains("claim-path-missing"));
 }
