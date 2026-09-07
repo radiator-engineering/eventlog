@@ -5,9 +5,9 @@ Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
 | --- | --- | --- | --- | --- |
-| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | running |
-| infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | running |
-| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | running |
+| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-4 reported; awaiting review |
+| infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | approved; awaiting integration |
+| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | round-4 acceptance gate |
 
 All three interactive Codex TUIs were visually verified on the assigned model and worktree, with their initial assignment submitted and work underway. Initial Herdr start calls returned agent_not_ready due to repository/hook trust menus; the controller accepted trust for this authorized repository and the Herdr hooks just installed, then verified that all agents began working. No model downgrade or headless fallback.
 
@@ -46,3 +46,11 @@ Preserved Codex session IDs: setup `01a07c4b-bd41-7623-b0fd-973cd1eda368`; runti
 Round-3 verdict: CHANGES_REQUESTED, one finding. Runtime `9c9b03f3…34e8` passes every gate (invalid UTF-8 ack, closed loop, resume, clippy, fmt, full tests); the `src/cmd/react.rs` placement is accepted as an explicit scope exception (note after violation seq 636). Setup `796745ca…67a6` propagates identities, models, timeouts and executable, and the body-hash guard works, but `docs.roots` is not rendered into the docs lifecycle `--paths` (hard-coded `docs/**,README.md`), so a docs result under custom roots could be rejected as unclaimed.
 Routed: → infra-setup (`infra-setup-round4.md`). infra-runtime idle, no further work requested. Integration on the combined APPROVE: runtime first (5 files incl. `src/cmd/react.rs`), then setup.
 Panes now in `herdr --session event-log`: setup w9:p1, runtime wA:p1, review wB:p1.
+
+Round-4 report collected by the successor Codex controller in w6:p6:
+setup `715b62d368fec03c243b1f954a3af1f05c6a35ce9d6a1885512b05083c008f96`
+independently verified; all five untracked hashes match round three. Runtime
+remains `9c9b03f3c04aaa3b4cb2995cc50d508e1f01ecd9937b53e80acb9081a9cf34e8`.
+Both implementation workers finished; review had been idle awaiting routing.
+Reviewer released for the combined gate via `infra-review-round4.md`, including
+verification of extensionless file and dotted directory root semantics.
