@@ -17,6 +17,7 @@ pub mod voter;
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 
 use globset::Glob;
@@ -32,6 +33,8 @@ pub use lock::ReactorLock;
 
 /// How often the loop looks for new lines once it has caught up.
 const POLL: Duration = Duration::from_millis(200);
+/// How often the live loop looks at the stop flag while it sleeps.
+const STOP_CHECK: Duration = Duration::from_millis(100);
 /// A crash loop: this many restarts inside [`RESTART_WINDOW`] stops the
 /// runtime instead of hammering the log.
 const MAX_RESTARTS: usize = 5;
@@ -193,12 +196,24 @@ impl Reactor {
 
     /// Take the lock, then catch up and keep catching up until killed.
     pub fn run(&mut self) -> anyhow::Result<()> {
+        self.run_until(&AtomicBool::new(false))
+    }
+
+    /// The live loop, returning `Ok(())` once `stop` is set so the lock is
+    /// released on the way out. A signal handler sets `stop`; without one
+    /// the loop never returns.
+    pub fn run_until(&mut self, stop: &AtomicBool) -> anyhow::Result<()> {
         let dir = self.lock_dir();
         let _lock = ReactorLock::acquire(&dir)?;
-        loop {
+        while !stop.load(Ordering::SeqCst) {
             self.catch_up()?;
-            std::thread::sleep(POLL);
+            let mut slept = Duration::ZERO;
+            while slept < POLL && !stop.load(Ordering::SeqCst) {
+                std::thread::sleep(STOP_CHECK);
+                slept += STOP_CHECK;
+            }
         }
+        Ok(())
     }
 
     /// One pass: baseline if this reactor has never acked, then close any
@@ -614,6 +629,7 @@ pub fn supervise(
     log: Log,
     config: Config,
     root: PathBuf,
+    stop: &AtomicBool,
     steps: impl Fn() -> Box<dyn Steps>,
 ) -> ! {
     let mut restarts: Vec<Instant> = Vec::new();
@@ -625,7 +641,14 @@ pub fn supervise(
             root.clone(),
         )
         .with_steps(steps());
-        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| reactor.run()));
+        let outcome =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| reactor.run_until(stop)));
+        if stop.load(Ordering::SeqCst) {
+            // A signal asked us to stop: the loop returned, `reactor` drops
+            // here and its lock directory with it. Not a restart.
+            drop(reactor);
+            std::process::exit(0);
+        }
         let detail = match outcome {
             Ok(Ok(())) => "loop returned".to_string(),
             Ok(Err(e)) => e.to_string(),

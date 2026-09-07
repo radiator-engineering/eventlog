@@ -8,6 +8,8 @@
 
 use std::collections::BTreeSet;
 use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 use anyhow::Context;
@@ -50,8 +52,9 @@ pub fn run(args: &CliArgs) -> anyhow::Result<i32> {
     }
 }
 
-/// The live loop. Never returns: [`supervise`] restarts the reactor until it
-/// will not stay up, then exits the process.
+/// The live loop. [`supervise`] restarts the reactor until it will not stay
+/// up, then exits the process; SIGINT, SIGTERM and SIGHUP stop it cleanly so
+/// the lock directory is released.
 fn live(
     reactor_cfg: ReactorConfig,
     cfg: Config,
@@ -64,6 +67,10 @@ fn live(
         reactor_cfg.on.join(","),
         log_path.display()
     );
+    let stop = Arc::new(AtomicBool::new(false));
+    let flag = Arc::clone(&stop);
+    ctrlc::set_handler(move || flag.store(true, Ordering::SeqCst))
+        .context("installing the signal handler")?;
     let steps_cfg = cfg.clone();
     let steps_root = repo_root.clone();
     let name = reactor_cfg.name.clone();
@@ -73,6 +80,7 @@ fn live(
         Log::open(&log_path),
         cfg,
         repo_root,
+        &stop,
         move || -> Box<dyn Steps> {
             Box::new(RealSteps::new(
                 name.clone(),
@@ -208,6 +216,7 @@ impl Steps for RealSteps {
                 .agent
                 .clone()
                 .unwrap_or_else(|| driving.writer().to_string()),
+            from_controller: driving.by.is_none(),
         };
         voter::check(&self.name, &auth, state, &self.cfg)
             .err()

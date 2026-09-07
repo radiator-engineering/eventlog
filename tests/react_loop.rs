@@ -446,3 +446,20 @@ fn a_git_pass_blames_only_what_it_committed_and_observes_the_rest() {
         Some("committed")
     );
 }
+
+/// A signal sets the stop flag; the loop returns and the lock directory goes
+/// with it, so the next start does not have to reclaim a stale lock.
+#[test]
+fn run_until_releases_the_lock_when_stopped() {
+    use std::sync::atomic::AtomicBool;
+    let dir = tempfile::tempdir().unwrap();
+    let log = dir.path().join(".context/events.jsonl");
+    write_log(&log, &[(1, "spawn", &[("agent", "w")])]);
+    let mut r = reactor(&log, dir.path(), Fake::default());
+    let lock_dir = r.lock_dir();
+    r.run_until(&AtomicBool::new(true)).unwrap();
+    assert!(
+        !lock_dir.exists(),
+        "lock dir left behind after a clean stop"
+    );
+}

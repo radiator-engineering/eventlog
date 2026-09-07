@@ -32,6 +32,7 @@ notify = "6"
 include_dir = "0.7"
 schemars = "0.8"
 anyhow = "1"
+ctrlc = { version = "3.5.2", features = ["termination"] }
 
 [dev-dependencies]
 assert_cmd = "2"
