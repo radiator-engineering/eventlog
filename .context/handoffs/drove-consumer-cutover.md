@@ -123,11 +123,38 @@ maps to 528. Only the audited existing layout IDs were imported. Native
 Composer was verified before the remaining three existing panes were
 reconciled, with zero creates/failures/focus changes.
 
-Final Drove convergence remains under its controller: backend command restart
-was found to type into running programs, and is being repaired separately.
-Creating its worktree inside Drove during a live docs snapshot correctly
-failed the outside-root guard (ack 538); Sonnet itself reported no historical
-docs changes needed. The controller is keeping the tree static through the
-next docs pass, then moving it outside the repo and reissuing the unchanged
-audited recovery refs for a truthful native docs acknowledgment. This is not
-an exemption from the outside-root policy or a reason to rewrite history.
+Drove's final backend repair is committed as `10dde86`, with decision/report
+commit `3170fb1`. It creates restartable shell panes, uses atomic input,
+interrupts existing jobs and waits for a verified shell before replacement,
+refuses unsupported direct-program roots, and selects the foreground group
+leader instead of transient child processes. All 331 tests and strict Clippy
+passed. Live disposable tests proved a new viewer PID in the same pane,
+exact hook counts, zero-action repeat, and refusal to replace an INT-ignoring
+job whose root PID remains unchanged and whose restart stays retryable.
+
+Creating the restart worktree inside Drove during a live docs snapshot
+correctly failed the outside-root guard (ack 538). The controller moved it
+outside the repository after docs settled and reissued the unchanged audited
+historical refs at 546. Native docs acknowledged that retry at 548 as
+`skipped`, no documentation changes. No history was rewritten or policy
+exemption introduced. Bootstrap docs were committed as `8022a9b`.
+
+The final Drove release is installed with SHA-256
+`9246868482f2a2418369e9b411d758ee6af002cc0f0a21f0eb37896dcc63b6f6`.
+Production idle stop/resume released native locks, retired identities at
+552/553, then restored them through Drove hooks at 554–557 in the same panes.
+Checkpoints 540/546 were preserved through that proof without replay.
+Repeat `up` returned `already_running`; setup reported no changes.
+
+Final result 558 was acknowledged at 560 with exact backend/DECISIONS/report
+paths. Sonnet result 562 was committed as
+`9b48d3adf8a4a09ebf07e71529e4e3a19d4f055e` at acknowledgment 565, and its own
+docs trigger was suppressed at 567. Independent final verification found:
+
+- Drove root source and index clean at `9b48d3a`.
+- `drove plan --json`: `in_sync`, no actions, controller adopted.
+- Exactly the original three workspaces, six tabs and seven panes preserved.
+- Committer checkpoint 562 and docs checkpoint 565, both with zero unacked
+  events; no open intents or escalations.
+
+The requested upstream reinstall and Drove setup/recovery repair are complete.
