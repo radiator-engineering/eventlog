@@ -1,0 +1,22 @@
+skill/event-log-coordination/README.md
+  h_63f2916b00d585 4-5,8-12,14-16,20-29,32,34-41
+skill/event-log-coordination/SKILL.md
+  h_63f2916b00d585 4-9,16-39,42-46,48-51,54-89,92-95,97,99-100,102-109,111,113-117
+skill/event-log-coordination/references/herdr-integration.md
+  h_63f2916b00d585 3-35,39-42
+skill/event-log-coordination/references/log-reactors.md
+  h_63f2916b00d585 1-66,69-72,74,76-77,79-82
+skill/event-log-coordination/references/reactor-example.md
+  h_63f2916b00d585 3-5,9,12-16,23-24,27-28,30-34,37,39-40,42-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "7770d3032b5be7367c4441ccc11b435d597b0d12",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
