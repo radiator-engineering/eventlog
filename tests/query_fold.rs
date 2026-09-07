@@ -303,3 +303,151 @@ fn approval_for_seq_closes_only_that_escalation_and_by_is_the_default_subject() 
         .collect();
     assert_eq!(open, vec![3]);
 }
+
+#[test]
+fn each_lifecycle_event_moves_the_agent_to_its_phase() {
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"spawn","agent":"w"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"prompt","agent":"w","ref":"b.md"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"claim","agent":"w","paths":"src/x.rs"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"progress","agent":"w","msg":"halfway"}"#,
+        r#"{"seq":5,"ts":"2026-09-06T00:00:04Z","type":"result","agent":"w","ref":"src/x.rs"}"#,
+        r#"{"seq":6,"ts":"2026-09-06T00:00:05Z","type":"retire","agent":"w","disposition":"accepted"}"#,
+    ]);
+    let cfg = Config::default();
+    let phase_at = |at: u64| query::fold_at(&events, &cfg, at).agents["w"].phase;
+    assert_eq!(phase_at(1), Phase::Spawned);
+    assert_eq!(phase_at(2), Phase::Prompted);
+    assert_eq!(phase_at(3), Phase::Claimed);
+    assert_eq!(phase_at(4), Phase::Progressing);
+    assert_eq!(phase_at(5), Phase::Resulted);
+    assert_eq!(phase_at(6), Phase::Retired);
+}
+
+#[test]
+fn a_phase_never_moves_backwards_within_one_lifecycle() {
+    // A late prompt or claim after a result does not undo the result.
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"spawn","agent":"w"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"result","agent":"w","ref":"a.md"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"claim","agent":"w","paths":"a.md"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"progress","agent":"w","msg":"late"}"#,
+    ]);
+    let state = query::fold(&events, &Config::default());
+    assert_eq!(state.agents["w"].phase, Phase::Resulted);
+}
+
+#[test]
+fn a_live_claim_is_keyed_by_glob_and_owner() {
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"spawn","agent":"w"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"spawn","agent":"v"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"claim","agent":"w","paths":"shared.md"}"#,
+        // The same agent claiming the same glob again is a no-op.
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"claim","agent":"w","paths":"shared.md"}"#,
+        // A second agent claiming the same glob is a second live claim.
+        r#"{"seq":5,"ts":"2026-09-06T00:00:04Z","type":"claim","agent":"v","paths":"shared.md"}"#,
+    ]);
+    let state = query::fold(&events, &Config::default());
+    assert_eq!(
+        state.claims,
+        vec![
+            ("shared.md".to_string(), "w".to_string()),
+            ("shared.md".to_string(), "v".to_string()),
+        ]
+    );
+    assert_eq!(state.agents["w"].claims, vec!["shared.md".to_string()]);
+    assert_eq!(state.agents["v"].claims, vec!["shared.md".to_string()]);
+    // The first live claim wins ownership.
+    assert_eq!(state.claim_owner("shared.md"), Some("w"));
+}
+
+#[test]
+fn an_ack_for_the_same_seq_done_keeps_the_first_ts() {
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"ack","by":"r","seq_done":"5","outcome":"committed"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"ack","by":"r","seq_done":"5","outcome":"skipped"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"ack","by":"r","seq_done":"4","outcome":"skipped"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"ack","by":"r","seq_done":"6","outcome":"committed"}"#,
+    ]);
+    let cfg = Config::default();
+    // Equal: the first ack that reached 5 keeps its ts.
+    let at_2 = query::fold_at(&events, &cfg, 2);
+    assert_eq!(at_2.reactors["r"].last_ack_seq, Some(5));
+    assert_eq!(
+        at_2.reactors["r"].last_ack_ts.as_deref(),
+        Some("2026-09-06T00:00:00Z")
+    );
+    // Lower: nothing moves.
+    let at_3 = query::fold_at(&events, &cfg, 3);
+    assert_eq!(at_3.reactors["r"].last_ack_seq, Some(5));
+    assert_eq!(
+        at_3.reactors["r"].last_ack_ts.as_deref(),
+        Some("2026-09-06T00:00:00Z")
+    );
+    // Higher: both move.
+    let tip = query::fold(&events, &cfg);
+    assert_eq!(tip.reactors["r"].last_ack_seq, Some(6));
+    assert_eq!(
+        tip.reactors["r"].last_ack_ts.as_deref(),
+        Some("2026-09-06T00:00:03Z")
+    );
+}
+
+#[test]
+fn the_controller_and_spawned_agents_are_never_orphans() {
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"spawn","agent":"w"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"progress","agent":"w","msg":"working"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"result","agent":"w","ref":"a.md"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"retire","agent":"w","disposition":"accepted"}"#,
+        // The controller never spawns, and is never an open lifecycle.
+        r#"{"seq":5,"ts":"2026-09-06T00:00:04Z","type":"result","agent":"controller","ref":"b.md"}"#,
+        r#"{"seq":6,"ts":"2026-09-06T00:00:05Z","type":"progress","agent":"controller","msg":"tidy"}"#,
+    ]);
+    let state = query::fold(&events, &Config::default());
+    assert!(
+        state.open_lifecycles.is_empty(),
+        "unexpected open lifecycles: {:?}",
+        state.open_lifecycles
+    );
+}
+
+#[test]
+fn each_orphan_is_named_once_in_first_seen_order() {
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"progress","agent":"ghost","msg":"a"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"retire","agent":"phantom","disposition":"lost"}"#,
+        r#"{"seq":3,"ts":"2026-09-06T00:00:02Z","type":"result","agent":"ghost","ref":"a.md"}"#,
+        r#"{"seq":4,"ts":"2026-09-06T00:00:03Z","type":"result","agent":"phantom","ref":"b.md"}"#,
+    ]);
+    let state = query::fold(&events, &Config::default());
+    assert_eq!(
+        state.open_lifecycles,
+        vec!["ghost".to_string(), "phantom".to_string()]
+    );
+}
+
+#[test]
+fn the_fold_starts_from_the_configured_allowlist() {
+    // A `[writers]` table in the config file, not the built-in, is where the
+    // fold starts; a decision later replaces it.
+    let mut cfg = Config::default();
+    cfg.writers.merge_file(
+        [("spawn".to_string(), vec!["w".to_string()])]
+            .into_iter()
+            .collect(),
+    );
+    assert!(!Config::default().writers.permits("w", "spawn"));
+
+    let events = synth(&[
+        r#"{"seq":1,"ts":"2026-09-06T00:00:00Z","type":"spawn","agent":"x"}"#,
+        r#"{"seq":2,"ts":"2026-09-06T00:00:01Z","type":"decision","key":"log-writers","value":"controller-plus-reactors"}"#,
+    ]);
+    let before = query::fold_at(&events, &cfg, 1);
+    assert!(before.allowlist.permits("w", "spawn"));
+    assert_eq!(before.allowlist, cfg.writers);
+
+    let after = query::fold(&events, &cfg);
+    assert!(!after.allowlist.permits("w", "spawn"));
+}
