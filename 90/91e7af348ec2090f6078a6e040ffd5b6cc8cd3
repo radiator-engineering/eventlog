@@ -1,0 +1,20 @@
+.context/DECISIONS.md
+  h_63f2916b00d585 303-310
+AGENTS.md
+  h_63f2916b00d585 40-50
+CHANGELOG.md
+  h_63f2916b00d585 1-143
+cliff.toml
+  h_63f2916b00d585 1-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "9091e7af348ec2090f6078a6e040ffd5b6cc8cd3",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
