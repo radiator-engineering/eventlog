@@ -94,5 +94,40 @@ output: `/tmp/eventlog-consumer-tests.out`, `/tmp/eventlog-consumer-clippy.out`.
 The independent `configured-probe2` rerun produced docs results 533 and 537
 without outside-log errors. Commit acknowledgment 539 contains both docs
 updates; acknowledgment 543 correctly skips the later clean scope. Its
-initial oracle required two commits, so the Drove controller is adjusting
-that expectation and verifying committed content and loop termination.
+initial oracle required two commits. The corrected fresh probes 3 and 4
+passed content, exact committed-or-clean-skipped accounting, unrelated
+staging, own-doc suppression and lock cleanup. Probe 4 used the installed
+accepted binary and also passed no-edit docs with a concurrent CLI append:
+`skipped`, no result, unrelated staging intact.
+
+## Accepted installation and live recovery
+
+Upstream result 719 was acknowledged committed at 721, with commits
+`3da83ed` (configured author), `1647934` (docs fixes), `e14c2ec` (skill), and
+`c582632` (handoff). Reference docs followed in `9c3a1bc`. The tested release
+was reinstalled and both Codex and Claude skills refreshed. Installed
+`/Users/jjmartin/.cargo/bin/eventlog` and `target/release/eventlog` have SHA-256
+`7bc864c0654b6a2dd3f35f888dbde90b4e49a9062cd5d665eae43b967aa7baca`.
+
+Drove production result 530 was committed by real Composer and acknowledged
+at 535 with full OIDs:
+
+- `7213e44ec6029764840cbc14bc9f9ae21ad302cf`
+- `f73659f04d995c424d213d93640711ee20d0afa5`
+- `7170bcb247eff480cdf7d2f26ff9939d4f271a02`
+
+The changed-path union exactly equals the 56 authorized paths; the source
+tree and index were clean afterward. Recovered acknowledgment 531 maps to
+471 with the 16 audited historical refs, and replacement acknowledgment 532
+maps to 528. Only the audited existing layout IDs were imported. Native
+Composer was verified before the remaining three existing panes were
+reconciled, with zero creates/failures/focus changes.
+
+Final Drove convergence remains under its controller: backend command restart
+was found to type into running programs, and is being repaired separately.
+Creating its worktree inside Drove during a live docs snapshot correctly
+failed the outside-root guard (ack 538); Sonnet itself reported no historical
+docs changes needed. The controller is keeping the tree static through the
+next docs pass, then moving it outside the repo and reissuing the unchanged
+audited recovery refs for a truthful native docs acknowledgment. This is not
+an exemption from the outside-root policy or a reason to rewrite history.
