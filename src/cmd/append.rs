@@ -65,6 +65,7 @@ Vocabulary (required / optional fields):
   note: required=msg optional=agent,ref
   intent: required= optional=agent,paths,msg,for,ref
   veto: required=for optional=role,reason,ref
+  observed: required=paths optional=for,ref,detail
 ";
 
 pub fn vocab_epilogue(cfg: &Config) -> String {

@@ -19,7 +19,7 @@ Every line has `seq` (monotonic), `ts` (UTC), `type`, plus type-specific fields:
 
 | type       | fields (besides seq/ts/type)                    | meaning                          |
 |------------|--------------------------------------------------|----------------------------------|
-| `spawn`    | agent, model, tab, role                          | a worker was launched            |
+| `spawn`    | agent, model, runtime, tab, pane, workspace, role, kind | a worker was launched     |
 | `prompt`   | agent, ref                                        | a delegation packet was sent     |
 | `message`  | from, to, subject, ref                            | inter-agent routing              |
 | `drain`    | agent                                             | inbox/turn processed             |
@@ -41,6 +41,7 @@ Parallel-work events:
 | `note`      | msg                                              | reactor or operator note                       |
 | `intent`    | by, for, paths                                     | reactor declared intent before acting          |
 | `veto`      | by, for, reason                                    | reactor blocked an action                      |
+| `observed`  | by, for, paths                                     | unclaimed files turned dirty while a reactor acted (no blame) |
 
 Any line not written by the controller carries `by=<writer>`. Reactors resume
 from their own `ack` lines, never a side file.
