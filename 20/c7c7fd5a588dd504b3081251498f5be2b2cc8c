@@ -1,0 +1,21 @@
+.context/handoffs/infra-setup-round5.md
+  s_64cd7810333b01::t_219e47588cd958 1-29
+.context/handoffs/infra-registry.md
+  s_64cd7810333b01::t_219e47588cd958 8,10,57-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "20c7c7fd5a588dd504b3081251498f5be2b2cc8c",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
