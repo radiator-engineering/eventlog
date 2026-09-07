@@ -1,0 +1,19 @@
+drove/reactors.star
+  s_d0fafb0b788ce6::t_b50454604dbea8 1,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bf6a82713ac8ee0e5a27fa8ed87fd98a343553e5",
+  "prompts": {},
+  "sessions": {
+    "s_d0fafb0b788ce6": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6b71733b-0990-4978-9b68-b9806288e30d",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
