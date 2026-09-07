@@ -7,11 +7,14 @@ This repo runs on the tool it ships. Its own log, decisions, and worker briefs l
 ## Install
 
 ```sh
-cargo install --path .        # puts `eventlog` in ~/.cargo/bin
+cargo install eventlog-cli --locked  # puts `eventlog` in ~/.cargo/bin
 eventlog init                 # .context/events.jsonl, EVENTLOG.md, eventlog.toml, gitignore lines
 eventlog doctor --fix         # installs the tool-call guard for Claude, Cursor, and Codex
 eventlog protect              # optional: OS-level append-only on the log
 ```
+
+To build a local checkout instead, run `cargo install --path . --locked`.
+The crate is named `eventlog-cli`; the executable is `eventlog`.
 
 `init` is safe to rerun. It never overwrites a file that already exists. The guard hook loads in a new agent session.
 
