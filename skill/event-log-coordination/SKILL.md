@@ -95,8 +95,11 @@ surface any protection gap the doctor names. Then, per repo:
 
 ```bash
 cd /path/to/the/repo
-eventlog init   # creates .context/events.jsonl + EVENTLOG.md, gitignores the log
+eventlog init   # creates .context/events.jsonl + EVENTLOG.md + eventlog.toml, gitignores the log
 ```
+
+`init` is safe to rerun: it never overwrites an `EVENTLOG.md` or `eventlog.toml`
+that already exists, edited or not.
 
 `eventlog init` creates the log and an `EVENTLOG.md` cheat-sheet, but not the
 handoff/`DECISIONS.md` files your events will `ref=` — write those yourself (use
@@ -121,7 +124,7 @@ for. Read the log with `eventlog view`, or plain tools: `tail -f`,
 
 The default event vocabulary (`spawn`, `prompt`, `message`, `drain`, `result`,
 `decision`, `escalate`, `approval`, `retire`, plus the parallel-work set
-`claim`, `progress`, `seam`, `violation`) lives in `.context/EVENTLOG.md`
+`claim`, `progress`, `seam`, `violation`, and the reactor-written `observed`) lives in `.context/EVENTLOG.md`
 after init. Add new `type`s freely; keep fields flat and small. Run
 `eventlog vocab` to list required and optional fields per type.
 
@@ -213,8 +216,13 @@ learned from a committer that recommitted the same cutoff three times:
    `EVENTLOG_OUTCOME_FILE`. Write `outcome=<o>` and other fields as `k=v` lines
    to the outcome file; the runtime reads them for the ack.
 6. With `--git`, snapshots `HEAD` and `git status --porcelain` before and after.
-   Files the action touched outside the authorized set are appended as
-   `violation by=<name> for=<seq> paths=<outside>`.
+   Files the action **committed** outside the authorized set (`git diff
+   --name-only` between the two `HEAD`s) are appended as
+   `violation by=<name> for=<seq> paths=<outside>`. Files that merely became
+   dirty while the action ran are never a violation: the tree is shared, so
+   they are another agent's work in progress. Under an open claim they are
+   silent; unclaimed, they are appended as `observed by=<name> for=<seq>
+   paths=<list>` so the controller sees them, with no blame attached.
 7. Appends `ack seq_done=<seq> outcome=<o> ...` from the outcome file.
 
 Launch a committer:

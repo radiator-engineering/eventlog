@@ -87,8 +87,8 @@ describes something else, and the "never amend" rule means it stays that way.
 The runtime computes an **authorized set** from the driving event's `paths=` and
 the writer's live claims. Put `paths=` on the decision (the same globs as the
 worker's `claim`), and stage only those via `EVENTLOG_PATHS`. Without `paths=`
-the runtime falls back to everything dirty and records `paths=ALL-DIRTY` in the
-ack, so the sweep is at least visible in the log.
+the authorized set is empty: `EVENTLOG_PATHS` is blank, and anything the action
+commits is a `violation`.
 
 ## What `eventlog react` does per event
 
@@ -104,8 +104,10 @@ The runtime handles steps that every reactor duplicated in shell:
    after restart between intent and action.
 5. **Action** — run your command with JSON on stdin and `EVENTLOG_*` env vars.
    Write `outcome=<o>` and other fields to `EVENTLOG_OUTCOME_FILE`.
-6. **Violation detection** — with `--git`, compare before/after porcelain;
-   append `violation` for paths outside the authorized set.
+6. **Violation detection** — with `--git`, diff the two `HEAD`s; append
+   `violation` for files the action committed outside the authorized set.
+   Paths that only became dirty meanwhile are other agents' work in progress:
+   silent under an open claim, otherwise appended as `observed` (no blame).
 7. **Ack** — append `ack seq_done=<seq> outcome=<o> ...` from the outcome file.
 
 Dry-run one seq without writing: `eventlog react test <seq> --as <name> -- cmd...`
