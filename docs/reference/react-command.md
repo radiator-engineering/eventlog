@@ -31,9 +31,11 @@ environment variable) or a number suffixed `s`, `m`, or `h` — for example
 ## `eventlog react` — the live loop
 
 Builds a `ReactorConfig` from the flags above and calls `supervise` (see
-Reactor loop), which restarts the reactor on a panic or
-an error and never returns on its own. It exits the process only after 5
-restarts inside a 10-minute window.
+Reactor loop), which restarts the reactor on a panic or an
+error. SIGINT, SIGTERM, and SIGHUP stop it cleanly instead: the loop
+returns, the lock directory is released, and the process exits 0 without
+counting as a restart. Absent a stop signal, it exits the process only
+after 5 restarts inside a 10-minute window.
 
 ## `eventlog react test <seq>` — the dry run
 
