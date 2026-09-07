@@ -1,0 +1,19 @@
+docs/reference/setup.md
+  s_3164bf27b65423::t_375998f73836be 1-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "f0f5bca94259d8f3a12071c73076018e715f3ffb",
+  "prompts": {},
+  "sessions": {
+    "s_3164bf27b65423": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "824ecdf6-0999-4410-b130-c3d76ebf7158",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
