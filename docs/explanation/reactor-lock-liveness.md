@@ -70,6 +70,43 @@ the lock exists to provide, that only one reactor acts on the log at a
 time. The same reasoning governs the plain pid lock's `pid_alive`,
 documented in [Why "dead" errs toward "alive"](lock-reclaim.md#why-dead-errs-toward-alive).
 
+## Why reclaim re-checks the token after the rename, not just before
+
+`reclaim` (`src/react/lock.rs`) reads the token twice: once before the
+rename, the same pre-check [the log lock's reclaim](lock-reclaim.md)
+relies on, and once more on the renamed path, before removing it.
+
+The pre-rename check alone is not enough here. Renaming `dir` to `stale` is
+atomic, but the check that reads the token and the syscall that renames it
+are two separate steps, with a gap between them. In that gap, a different
+reclaimer can win the rename first, and a genuinely fresh caller can then
+`mkdir` a brand-new, live lock at the now-vacant `dir` path — before this
+caller's own rename runs. `rename` does not know or care what it is moving;
+it acts on whatever currently sits at `dir`, so this caller can end up
+renaming away a live lock it never actually looked at:
+
+```rust
+if fs::rename(dir, &stale).is_ok() {
+    match read_token(&stale) {
+        Some(now) if now == *dead && !now.is_live(me) => {
+            let _ = fs::remove_dir_all(&stale);
+        }
+        _ => {
+            let _ = fs::rename(&stale, dir);
+        }
+    }
+}
+```
+
+Reading the token again, now on `stale`, tells the two cases apart: still
+the same dead token means the rename really did catch the lock this caller
+meant to reclaim, and it is safe to delete. Anything else — a live token, or
+a different dead one — means a fresh holder took the name in the gap, and
+this caller restores it by renaming `stale` back to `dir`. If a third party already reclaimed the name again by the time the restore
+runs, the restore simply fails and this caller retries `acquire` from the
+top — the same fallback this function uses everywhere else it loses a
+rename race.
+
 ## See also
 
 - Reactor lock — `Token` and `ReactorLock` reference.
