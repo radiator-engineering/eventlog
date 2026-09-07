@@ -1,13 +1,13 @@
 # Upstream infrastructure work registry
 
-Controller: handed to the event-log coordinator (Claude, Herdr session event-log, w6:p6) on 2026-09-07 after the round-1 review. Workers stay in Herdr session drove.
+Controller: handed to the event-log coordinator (Claude, Herdr session event-log, w6:p6) on 2026-09-07 after the round-1 review. Workers moved into Herdr session event-log at the user's request; current addresses are below.
 Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
 | --- | --- | --- | --- | --- |
-| infra-setup | gpt-5.6-terra high | w7G / w7G:t1 / w7G:p1 | .worktrees/infra-setup / feat/reusable-setup | running |
-| infra-runtime | gpt-5.6-terra high | w7H / w7H:t1 / w7H:p1 | .worktrees/infra-runtime / fix/action-runtime | running |
-| infra-review | gpt-5.6-sol high | w7J / w7J:t1 / w7J:p1 | .worktrees/infra-review / review/reusable-infra | running |
+| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | running |
+| infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | running |
+| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | running |
 
 All three interactive Codex TUIs were visually verified on the assigned model and worktree, with their initial assignment submitted and work underway. Initial Herdr start calls returned agent_not_ready due to repository/hook trust menus; the controller accepted trust for this authorized repository and the Herdr hooks just installed, then verified that all agents began working. No model downgrade or headless fallback.
 
@@ -32,3 +32,11 @@ Two findings remain. Routed: customized setup values must drive the generated Dr
 Integration order on APPROVE: infra-runtime first (4 files), then infra-setup (12 files); path sets do not overlap.
 
 Round-3 reports (2026-09-07): setup `796745ca…67a6` (untracked set unchanged; helper rendered from TOML in `src/scaffold/mod.rs` with body-hash conflict detection). Runtime `9c9b03f3…34e8` (detail capped at 2 KiB post-decoding, UTF-8-safe front truncation; new live-reactor test). Runtime also edits `src/cmd/react.rs`, outside its claim: violation seq 636, no textual conflict with setup. Reviewer released for the round-3 gate.
+
+## Workspace relocation (2026-09-07)
+
+User explicitly requested moving all three workers from drove to event-log. Herdr has no cross-session workspace-transfer API, so the Drove orchestrator gracefully exited each Codex TUI, recreated its workspace in event-log, and resumed the identical Codex session in the unchanged worktree. Destination screens verified preserved transcripts/models and review continuation. Old drove workspaces w7G, w7H, w7J were closed after verification.
+
+Current targets (all in `herdr --session event-log`): infra-setup w9:p1, infra-runtime wA:p1, infra-review wB:p1. Coordinator remains w6:p6. Update pane-status monitors to these addresses; old drove addresses are retired. Setup/runtime await review follow-up; reviewer continues the interrupted round-three gate. No product diffs were changed by relocation.
+
+Preserved Codex session IDs: setup `01a07c4b-bd41-7623-b0fd-973cd1eda368`; runtime `01a07c4b-cf5a-7513-bdbc-19d5fa66dc02`; review `01a07c67-cc9a-7b91-a602-4acad44ebceb`.
