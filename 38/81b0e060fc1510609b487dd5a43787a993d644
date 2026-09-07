@@ -1,0 +1,19 @@
+src/cmd/react.rs
+  s_1221f4d81bbcdb::t_ee1e637069bbce 11-12,55-57,70-73,83,219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "3881b0e060fc1510609b487dd5a43787a993d644",
+  "prompts": {},
+  "sessions": {
+    "s_1221f4d81bbcdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9a34faa-3c0b-4b2f-af5d-ad08a1ea6c48",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
