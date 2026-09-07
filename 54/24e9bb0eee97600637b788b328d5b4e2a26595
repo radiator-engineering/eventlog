@@ -1,0 +1,25 @@
+src/cmd/react.rs
+  s_64cd7810333b01::t_1ae6383615373a 27-31,321,326-344
+src/react/action.rs
+  s_64cd7810333b01::t_4d0247236c2b07 4,7,15-18,55-56,60-63,79-82,86-98,100-106,109-112,116-121,123-128,130-135,142-149,161,196-198,201,203-244,247-331,374-379,393,396-398,400-402,405-413,419-424,432-442
+tests/cmd_react.rs
+  s_64cd7810333b01::t_d9f5462f73c9ac 194-287
+tests/react_action.rs
+  s_64cd7810333b01::t_935b5c799b6c11 5,72-202,325-354
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "5424e9bb0eee97600637b788b328d5b4e2a26595",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
