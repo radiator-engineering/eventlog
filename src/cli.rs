@@ -261,7 +261,7 @@ pub struct ActionArgs {
 pub enum ActionInner {
     /// Commit exactly EVENTLOG_PATHS without consuming unrelated staging.
     Commit {
-        /// Conventional commit message (required outside a reactor).
+        /// Direct-mode message; also passed as EVENTLOG_COMMIT_MESSAGE to a configured command.
         #[arg(long, default_value = "chore(eventlog): apply reactor result")]
         message: String,
     },

@@ -49,6 +49,40 @@ fn commit(message: &str) -> anyhow::Result<i32> {
         return Ok(1);
     }
 
+    let mut status_args = vec!["--literal-pathspecs", "status", "--porcelain", "-z", "--"];
+    status_args.extend(paths.iter().map(String::as_str));
+    if git_output(&status_args)?.is_empty() {
+        report("skipped", "no changes in EVENTLOG_PATHS", None);
+        return Ok(0);
+    }
+    let policy = match std::fs::read_to_string(crate::scaffold::SETUP_CONFIG) {
+        Ok(text) => toml::from_str::<SetupConfig>(&text).context("parse commit setup config")?,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => SetupConfig::default(),
+        Err(err) => return Err(err).context("read commit setup config"),
+    };
+    if !policy.commit.command.is_empty() {
+        return match super::commit_command::run(
+            &paths,
+            &policy.commit.command,
+            &policy.commit.model,
+            message,
+        ) {
+            Ok(result) => {
+                report_with_ref(
+                    "committed",
+                    &result.detail,
+                    Some(&result.paths.join(",")),
+                    Some(&result.refs.join(",")),
+                );
+                Ok(0)
+            }
+            Err(err) => {
+                report("failed", &format!("{err:#}"), None);
+                Ok(1)
+            }
+        };
+    }
+
     // `git add -- <paths>` admits untracked files and records deletions, while
     // `commit --only` ensures unrelated pre-staged work remains staged rather
     // than being swept into this reactor's commit.
@@ -93,7 +127,30 @@ fn resolve_scope(scopes: &[String]) -> anyhow::Result<Vec<String>> {
 #[derive(Deserialize, Default)]
 struct SetupConfig {
     #[serde(default)]
+    commit: CommitConfig,
+    #[serde(default)]
     docs: DocsConfig,
+}
+
+#[derive(Deserialize)]
+struct CommitConfig {
+    #[serde(default = "default_commit_model")]
+    model: String,
+    #[serde(default)]
+    command: Vec<String>,
+}
+
+impl Default for CommitConfig {
+    fn default() -> Self {
+        Self {
+            model: default_commit_model(),
+            command: Vec::new(),
+        }
+    }
+}
+
+fn default_commit_model() -> String {
+    "composer-2.5-fast".into()
 }
 
 #[derive(Deserialize, Default)]
@@ -286,6 +343,9 @@ fn validate_commit_refs(refs: &str) -> anyhow::Result<()> {
 
 fn action_paths() -> anyhow::Result<Vec<String>> {
     let raw = std::env::var("EVENTLOG_PATHS").unwrap_or_default();
+    if raw.trim().is_empty() {
+        return Ok(Vec::new());
+    }
     let paths = crate::model::paths::validate_paths(&raw)
         .map_err(|err| anyhow::anyhow!("invalid EVENTLOG_PATHS: {err}"))?;
     Ok(paths

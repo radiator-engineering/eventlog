@@ -2,6 +2,7 @@ pub mod action;
 pub mod agents;
 pub mod append;
 pub mod claims;
+mod commit_command;
 pub mod completions;
 pub mod doctor;
 pub mod guard;

@@ -7,6 +7,11 @@ identity = "committer"
 model = "composer-2.5-fast"
 timeout = "600s"
 
+# Optional commit-author argv. An empty list keeps the direct --message mode.
+# Commands run in an isolated checkout with authorized paths already staged.
+# EVENTLOG_MODEL contains the model; a literal {model} argv entry is replaced.
+command = []
+
 [docs]
 identity = "doc-worker"
 model = "claude-sonnet"
