@@ -1,0 +1,25 @@
+.context/handoffs/build-claims.md
+  s_f967523fddc2ab::t_df1c74e64ad25d 1-45
+.context/handoffs/build-query-cmds.md
+  s_f967523fddc2ab::t_9848d0bffa7aa2 1-45
+.context/handoffs/build-tui.md
+  s_f967523fddc2ab::t_a402d83e9abde5 1-47
+.context/handoffs/build-why.md
+  s_f967523fddc2ab::t_8235e52d9f7ece 1-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1875a562b744c0b8f849d0dabd1b9dd883dd618d",
+  "prompts": {},
+  "sessions": {
+    "s_f967523fddc2ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5173f9d-14bb-4043-a781-4c7d4eb28495",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
