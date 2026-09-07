@@ -30,6 +30,26 @@ changed="$(git status --porcelain --untracked-files=all 2>/dev/null \
   | sed -E 's/^.. //; s/^.* -> //')"
 [ -n "$changed" ] || exit 0
 
+# Files under another agent's open claim are that agent's work in progress
+# (a spawned worker, the doc worker). The controller reports them when the
+# worker reports back, not before, so they are not the controller's debt.
+if command -v eventlog >/dev/null && command -v jq >/dev/null; then
+  claimed="$(eventlog state --json 2>/dev/null \
+    | jq -r '.open_claims[]? | select(.agent != "controller") | .path' 2>/dev/null)"
+  if [ -n "$claimed" ]; then
+    changed="$(while IFS= read -r f; do
+      [ -n "$f" ] || continue
+      keep=1
+      while IFS= read -r p; do
+        [ -n "$p" ] || continue
+        case "$f" in "$p"|"$p"/*) keep=0; break ;; esac
+      done <<<"$claimed"
+      [ "$keep" = 1 ] && printf '%s\n' "$f"
+    done <<<"$changed")"
+    [ -n "$changed" ] || exit 0
+  fi
+fi
+
 # newest change vs the controller's last result (controller lines carry no by=, or by=controller)
 now="$(date +%s)"; newest=0
 while IFS= read -r f; do
@@ -45,6 +65,14 @@ fi
 [ "$newest" -gt "$last" ] || exit 0
 
 list="$(tr '\n' ',' <<<"$changed" | sed 's/,$//')"
+
+# Block once per distinct set of unreported files. The same set on the next
+# turn means the controller already answered (work in flight, or explained to
+# the user); repeating the block every turn is noise, not enforcement. A new
+# or different set blocks again. The memo lives under .git/, never in the tree.
+memo="$REPO/.git/eventlog-stop-hook-last"
+if [ -f "$memo" ] && [ "$(cat "$memo" 2>/dev/null)" = "$list" ]; then exit 0; fi
+printf '%s' "$list" > "$memo"
 reason="Changed files have no result event yet: $list. This repo is log-driven: the commit reactor only commits what a result names. Before you finish, run: eventlog append result ref=<main file> paths=$list summary=\"<one line>\" (do not git commit; do not ping the reactors). If you did not make some of these changes, still list them or tell the user they are uncommitted."
 if command -v jq >/dev/null; then jq -nc --arg r "$reason" '{decision:"block",reason:$r}'
 else printf '{"decision":"block","reason":%s}\n' "\"$(sed 's/"/\\"/g' <<<"$reason")\""; fi
