@@ -1,0 +1,31 @@
+.context/EVENTLOG.md
+  s_fe9b2f862f1e0f::t_fae7d43e37a4f0 9
+.context/bin/controller-stop-hook.sh
+  s_fe9b2f862f1e0f::t_12e0095d9feb4e 48
+AGENTS.md
+  s_508497440a5d24::t_1cb17f1fb8c3e8 14,20-23,27,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "0cd16d41bb8f448fde7cda3ea06ecc1d245ff4c3",
+  "prompts": {},
+  "sessions": {
+    "s_508497440a5d24": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ca2e13d-e51a-4e27-a7ba-752b0097173e",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_fe9b2f862f1e0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "91d7d350-b201-48a4-9416-a8738988a736",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
