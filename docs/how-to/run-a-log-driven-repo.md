@@ -1,6 +1,6 @@
 # Run a log-driven repo
 
-This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes `eventlog` is installed (`cargo install --path .` from this repo) and the project is a git repository.
+This guide sets up `eventlog` on a project so that one controller agent coordinates workers through the log and a reactor commits what the log says. It assumes the latest stable `eventlog` is installed (`cargo install eventlog-cli --locked`, or `cargo install --path . --locked` from a local checkout) and the project is a git repository.
 
 ## 1. Create the log
 
@@ -31,20 +31,23 @@ Write the decision into `.context/DECISIONS.md` as well. The log points at that 
 
 ## 3. Start a commit reactor
 
-Write an action script that stages `$EVENTLOG_PATHS`, commits, and writes `outcome=committed` to `$EVENTLOG_OUTCOME_FILE` (the skill's `references/reactor-example.md` is a 15-line version). Run it in a terminal pane that outlives any agent's turn:
+Run `eventlog setup preview` to see what a reusable setup would create, then `eventlog setup apply`. This writes `.context/eventlog-setup.toml` (reactor identities, models, timeouts, documentation roots) and `.context/eventlog-reactors.star`, a Drove helper you load into an existing `Drovefile`:
+
+```python
+load(".context/eventlog-reactors.star", "eventlog_reactors")
+main = workspace("main", panes = eventlog_reactors())
+```
+
+That helper wires `eventlog lifecycle start`/`stop` to each pane's `on_start`/`on_stop`, so a supervisor spawns and retires the reactor and its claims without you hand-appending `spawn`, `claim`, and `retire`, and wires each pane's `serve` command to `eventlog react --as committer --on result --git -- eventlog action commit`, the packaged action that stages and commits exactly `$EVENTLOG_PATHS` and leaves unrelated staged work alone (see [Action](../reference/action.md)).
+
+Writing your own action script is still supported: it must preserve exact `$EVENTLOG_PATHS` boundaries and unrelated staging, commit, and write a truthful outcome with actual commit refs to `$EVENTLOG_OUTCOME_FILE`. The skill's `references/reactor-example.md` shows the packaged alternative. To launch a custom action, start its lifecycle before the blocking reactor command:
 
 ```sh
+eventlog lifecycle start committer --role commit-reactor
 eventlog react --as committer --on result --git -- bash .context/bin/commit-action.sh
 ```
 
-Then tell the log the reactor exists and what it may touch:
-
-```sh
-eventlog append spawn agent=committer role=commit-reactor runtime=eventlog-react
-eventlog append claim agent=committer paths=.context/DECISIONS.md
-```
-
-The runtime holds a lock so a second instance refuses to start, resumes from its own `ack` lines after a restart, and dry-runs one event with `eventlog react test <seq> --as committer -- ...`.
+Either way, the runtime holds a lock so a second instance refuses to start, resumes from its own `ack` lines after a restart, and tests one event with `eventlog react test <seq> --as committer --git -- ...`. Use a disposable repository for this test: the action runs normally, while the runtime prints its coordination events instead of appending them.
 
 ## 4. Spawn a worker
 
@@ -99,4 +102,6 @@ Run any read of the log as its own command. The guard blocks a compound shell co
 
 ## Restarting a reactor
 
-Append `retire agent=<name>` first, stop the process with SIGTERM or Ctrl-C (the runtime releases its lock on the way out), start it again, then append `spawn` and a fresh `claim`. A retire closes the reactor's claims, and its next result is vetoed `unclaimed-paths` without a new one. Never delete a `*.reactor.lock` directory; the runtime reclaims a stale one on start.
+With `eventlog lifecycle stop <name>` and `start <name> --paths <...>` (see [Lifecycle](../reference/lifecycle.md)), this is one idempotent pair: `stop` retires the agent, and `start` re-spawns it and restores exactly the claims you pass, leaving every other agent's claims untouched. `eventlog-reactors.star` already wires these into each pane's `on_start`/`on_stop`.
+
+By hand, the same steps are: append `retire agent=<name>` first, stop the process with SIGTERM or Ctrl-C (the runtime releases its lock on the way out), start it again, then append `spawn` and a fresh `claim`. A retire closes the reactor's claims. Strict append rejects a later result with `open-spawn` until a fresh spawn; a non-strict repair result can instead reach the reactor's `unclaimed-paths` veto. Never delete a `*.reactor.lock` directory; the runtime reclaims a stale one on start.

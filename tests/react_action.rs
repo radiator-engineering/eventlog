@@ -2,7 +2,7 @@ use eventlog::model::paths::validate_paths;
 use eventlog::react::action::{ActionEnv, newly_dirty, outside, run, snapshot, touched};
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 fn test_env(outcome_file: PathBuf) -> ActionEnv {
     ActionEnv {
@@ -67,6 +67,137 @@ fn run_marks_timeout() {
     let outcome = run(&command, "{}", &env, Duration::from_secs(1)).unwrap();
 
     assert!(outcome.timed_out);
+}
+
+#[cfg(unix)]
+#[test]
+fn run_keeps_a_bounded_stderr_tail_for_a_failed_action() {
+    let env = test_env(PathBuf::from("/tmp/eventlog-outcome-missing-for-test"));
+    let command = vec![
+        "sh".into(),
+        "-c".into(),
+        "dd if=/dev/zero bs=1048576 count=4 2>/dev/null | tr '\\000' x >&2; echo unique-stderr-tail >&2; exit 7".into(),
+    ];
+
+    let outcome = run(&command, "{}", &env, Duration::from_secs(3)).unwrap();
+    let stderr = outcome
+        .fields
+        .iter()
+        .find(|(key, _)| key == "stderr")
+        .map(|(_, value)| value)
+        .expect("failed action lost stderr diagnostic");
+
+    assert_eq!(outcome.exit, 7);
+    assert!(stderr.contains("unique-stderr-tail"));
+    assert!(stderr.len() <= 1024, "stderr tail was not bounded");
+}
+
+#[cfg(unix)]
+#[test]
+fn run_timeout_discards_an_early_success_outcome() {
+    let env = test_env(PathBuf::from("/tmp/eventlog-outcome-missing-for-test"));
+    let command = vec![
+        "sh".into(),
+        "-c".into(),
+        "echo outcome=committed; sleep 5".into(),
+    ];
+
+    let outcome = run(&command, "{}", &env, Duration::from_millis(250)).unwrap();
+
+    assert!(outcome.timed_out);
+    assert!(outcome.fields.is_empty());
+}
+
+/// Draining while the child is live prevents a full stdout pipe from blocking
+/// the child before it can write its final outcome line.
+#[cfg(unix)]
+#[test]
+fn run_drains_large_stdout_before_waiting_for_exit() {
+    let env = test_env(PathBuf::from("/tmp/eventlog-outcome-missing-for-test"));
+    let command = vec![
+        "sh".into(),
+        "-c".into(),
+        "dd if=/dev/zero bs=1048576 count=4 2>/dev/null | tr '\\000' x; printf '\\n'; echo outcome=skipped".into(),
+    ];
+
+    let outcome = run(&command, "{}", &env, Duration::from_secs(3)).unwrap();
+
+    assert!(!outcome.timed_out);
+    assert_eq!(outcome.fields, vec![("outcome".into(), "skipped".into())]);
+}
+
+/// A shell may exit while its background child still owns stdout. The action
+/// cannot be considered complete until that pipe closes, and the deadline has
+/// to kill the whole process group rather than waiting for the child forever.
+#[cfg(unix)]
+#[test]
+fn run_timeout_kills_descendant_that_holds_stdout_open() {
+    let dir = tempfile::tempdir().unwrap();
+    let env = test_env(dir.path().join("outcome"));
+    let command = vec![
+        "sh".into(),
+        "-c".into(),
+        "sleep 5 & echo outcome=skipped".into(),
+    ];
+
+    let start = Instant::now();
+    let outcome = run(&command, "{}", &env, Duration::from_millis(250)).unwrap();
+
+    assert!(outcome.timed_out);
+    assert!(
+        start.elapsed() < Duration::from_secs(2),
+        "descendant-held stdout exceeded the outer test guard"
+    );
+}
+
+/// A descendant may retain stderr after its parent exits too. The bounded
+/// diagnostics collector must not turn that into an unbounded timeout wait.
+#[cfg(unix)]
+#[test]
+fn run_timeout_kills_descendant_that_holds_stderr_open() {
+    let dir = tempfile::tempdir().unwrap();
+    let env = test_env(dir.path().join("outcome"));
+    let command = vec![
+        "sh".into(),
+        "-c".into(),
+        "echo timeout-stderr-marker >&2; sleep 5 & echo outcome=skipped".into(),
+    ];
+
+    let start = Instant::now();
+    let outcome = run(&command, "{}", &env, Duration::from_millis(250)).unwrap();
+
+    assert!(outcome.timed_out);
+    assert!(
+        start.elapsed() < Duration::from_secs(2),
+        "descendant-held stderr exceeded the outer test guard"
+    );
+    assert!(
+        outcome
+            .fields
+            .iter()
+            .any(|(key, value)| key == "stderr" && value.contains("timeout-stderr-marker")),
+        "timed-out action lost its available stderr tail: {:?}",
+        outcome.fields
+    );
+}
+
+/// The deadline covers a blocked writer too. A command that never reads stdin
+/// must not keep the reactor stuck in write_all before it starts waiting.
+#[cfg(unix)]
+#[test]
+fn run_timeout_covers_stdin_backpressure() {
+    let env = test_env(PathBuf::from("/tmp/eventlog-outcome-missing-for-test"));
+    let command = vec!["sh".into(), "-c".into(), "sleep 5".into()];
+    let stdin = "x".repeat(4 * 1024 * 1024);
+
+    let start = Instant::now();
+    let outcome = run(&command, &stdin, &env, Duration::from_millis(250)).unwrap();
+
+    assert!(outcome.timed_out);
+    assert!(
+        start.elapsed() < Duration::from_secs(2),
+        "blocked stdin exceeded the outer test guard"
+    );
 }
 
 #[test]
@@ -189,5 +320,59 @@ fn touched_is_committed_files_only_and_newly_dirty_is_the_rest() {
         dirty.into_iter().collect::<Vec<_>>(),
         vec!["stray.rs".to_string()],
         "pre.rs was dirty before the action and must not be reported"
+    );
+}
+
+/// NUL-delimited Git output keeps unusual valid names exact. In particular,
+/// whitespace, quotes, newlines and a literal ` -> ` are not porcelain syntax.
+#[test]
+#[cfg(unix)]
+fn git_accounting_preserves_unusual_and_renamed_paths() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    init_repo(root);
+
+    let old = "old -> name.rs";
+    let new = "new \"quoted\"\nname.rs";
+    std::fs::write(root.join(old), "old\n").unwrap();
+    git(root, &["add", old]);
+    git(root, &["commit", "-q", "-m", "add unusual name"]);
+    let before = snapshot(root).unwrap();
+
+    std::fs::rename(root.join(old), root.join(new)).unwrap();
+    std::fs::write(root.join("space name.rs"), "untracked\n").unwrap();
+    git(root, &["add", "-A"]);
+    let staged = snapshot(root).unwrap();
+    assert!(staged.dirty.contains(old));
+    assert!(staged.dirty.contains(new));
+    assert!(staged.dirty.contains("space name.rs"));
+
+    git(root, &["commit", "-q", "-m", "rename unusual name"]);
+    let after = snapshot(root).unwrap();
+    let changed = touched(&before, &after, root);
+    assert!(changed.contains(old));
+    assert!(changed.contains(new));
+}
+
+#[cfg(unix)]
+#[test]
+fn run_preserves_outcome_when_action_closes_stdin_early() {
+    let file = tempfile::NamedTempFile::new().unwrap();
+    let env = test_env(file.path().to_path_buf());
+    let command = vec!["sh".into(), "-c".into(),
+        "exec 0<&-; printf 'outcome=skipped\\ndetail=no input needed\\n' > \"$EVENTLOG_OUTCOME_FILE\"".into()];
+    let result = run(
+        &command,
+        &"x".repeat(1024 * 1024),
+        &env,
+        Duration::from_secs(3),
+    )
+    .unwrap();
+    assert!(!result.timed_out);
+    assert_eq!(result.exit, 0);
+    assert!(
+        result
+            .fields
+            .contains(&("outcome".into(), "skipped".into()))
     );
 }

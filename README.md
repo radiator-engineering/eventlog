@@ -7,11 +7,14 @@ This repo runs on the tool it ships. Its own log, decisions, and worker briefs l
 ## Install
 
 ```sh
-cargo install --path .        # puts `eventlog` in ~/.cargo/bin
+cargo install eventlog-cli --locked  # puts `eventlog` in ~/.cargo/bin
 eventlog init                 # .context/events.jsonl, EVENTLOG.md, eventlog.toml, gitignore lines
 eventlog doctor --fix         # installs the tool-call guard for Claude, Cursor, and Codex
 eventlog protect              # optional: OS-level append-only on the log
 ```
+
+To build a local checkout instead, run `cargo install --path . --locked`.
+The crate is named `eventlog-cli`; the executable is `eventlog`.
 
 `init` is safe to rerun. It never overwrites a file that already exists. The guard hook loads in a new agent session.
 
@@ -41,6 +44,7 @@ A reactor that commits a file outside the `paths=` it was given appends a `viola
 ## Documentation
 
 - [Run a log-driven repo](docs/how-to/run-a-log-driven-repo.md): the how-to for setting this up on a project.
+- [Cut a release](docs/how-to/cut-a-release.md): generate the changelog with git-cliff, tag, and publish.
 - [Command reference](docs/reference/eventlog-cli-surface.md): every subcommand, with a page per command in `docs/reference/`.
 - [Design notes](docs/explanation/): the invariants worth understanding before you change the code.
 - [Decisions](.context/DECISIONS.md): every design decision this repo has taken, dated, with the log seq that recorded it.

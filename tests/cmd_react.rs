@@ -191,6 +191,100 @@ fn react_acks_a_result_it_watches() {
     assert_eq!(str_field(&ack, "outcome"), "committed");
 }
 
+#[cfg(unix)]
+#[test]
+fn a_failed_action_keeps_stderr_in_its_ack_detail() {
+    let dir = tempfile::tempdir().unwrap();
+    setup_repo(dir.path());
+    append(dir.path(), &["note", "msg=start"]);
+
+    let _reactor = start_reactor(
+        dir.path(),
+        &[
+            "--as",
+            "t",
+            "--on",
+            "result",
+            "--",
+            "sh",
+            "-c",
+            "echo unique-reactor-stderr >&2; exit 7",
+        ],
+    );
+    wait_for(
+        dir.path(),
+        Duration::from_secs(10),
+        "the baseline ack",
+        |e| str_field(e, "type") == "ack" && str_field(e, "by") == "t",
+    );
+
+    let seq = append(
+        dir.path(),
+        &["result", "ref=a.md", "paths=a.md", "summary=landed a.md"],
+    );
+    let want = seq.to_string();
+    let ack = wait_for(dir.path(), Duration::from_secs(3), "the failed ack", |e| {
+        str_field(e, "type") == "ack"
+            && str_field(e, "by") == "t"
+            && str_field(e, "seq_done") == want
+    });
+
+    assert_eq!(str_field(&ack, "outcome"), "failed");
+    assert!(str_field(&ack, "detail").contains("unique-reactor-stderr"));
+    assert!(str_field(&ack, "detail").contains("exit 7"));
+}
+
+/// Invalid stderr bytes expand during lossy UTF-8 decoding. The reactor must
+/// still append its failed ack rather than exceeding the log field limit.
+#[cfg(unix)]
+#[test]
+fn a_failed_action_with_invalid_utf8_stderr_still_acks() {
+    let dir = tempfile::tempdir().unwrap();
+    setup_repo(dir.path());
+    append(dir.path(), &["note", "msg=start"]);
+
+    let _reactor = start_reactor(
+        dir.path(),
+        &[
+            "--as",
+            "binary-diag",
+            "--on",
+            "result",
+            "--",
+            "python3",
+            "-c",
+            "import os; os.write(2, bytes([255]) * 1024 + b'binary-stderr-tail'); raise SystemExit(7)",
+        ],
+    );
+    wait_for(
+        dir.path(),
+        Duration::from_secs(10),
+        "the baseline ack",
+        |e| str_field(e, "type") == "ack" && str_field(e, "by") == "binary-diag",
+    );
+
+    let seq = append(
+        dir.path(),
+        &["result", "ref=a.md", "paths=a.md", "summary=landed a.md"],
+    );
+    let want = seq.to_string();
+    let ack = wait_for(dir.path(), Duration::from_secs(3), "the failed ack", |e| {
+        str_field(e, "type") == "ack"
+            && str_field(e, "by") == "binary-diag"
+            && str_field(e, "seq_done") == want
+    });
+
+    assert_eq!(str_field(&ack, "outcome"), "failed");
+    let detail = str_field(&ack, "detail");
+    assert!(
+        detail.len() <= 2048,
+        "oversized detail: {} bytes",
+        detail.len()
+    );
+    assert!(detail.contains("binary-stderr-tail"), "detail: {detail}");
+    assert!(detail.contains("exit 7"), "detail: {detail}");
+}
+
 #[test]
 fn the_outcome_file_names_the_outcome_and_its_extras_land_in_detail() {
     let dir = tempfile::tempdir().unwrap();

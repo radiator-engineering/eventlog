@@ -129,3 +129,41 @@ fn append_contention_from_two_processes() {
         .collect();
     assert_eq!(seqs, (1..=50).collect::<Vec<_>>());
 }
+
+#[test]
+fn strict_claim_accepts_a_glob_that_matches_under_the_repo_root() {
+    let dir = tempfile::tempdir().unwrap();
+    setup_repo(dir.path());
+    std::fs::create_dir_all(dir.path().join("src/api")).unwrap();
+    std::fs::write(dir.path().join("src/api/ping.rs"), "").unwrap();
+
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["append", "spawn", "agent=w1"])
+        .assert()
+        .success();
+
+    // A directory glob matches a file under it, judged relative to the root.
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args([
+            "append",
+            "--dry-run",
+            "claim",
+            "agent=w1",
+            "paths=src/api/**",
+        ])
+        .assert()
+        .success();
+
+    // A glob under a directory that does not exist is still rejected.
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path())
+        .args(["append", "--dry-run", "claim", "agent=w1", "paths=nope/**"])
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains("claim-path-missing"));
+}

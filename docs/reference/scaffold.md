@@ -130,3 +130,4 @@ cargo test
 
 - [eventlog CLI surface](eventlog-cli-surface.md) — where `init`, `doctor`, and `protect` sit among the other commands.
 - [Reactor lock liveness](../explanation/reactor-lock-liveness.md) — what the `reactor lock` check in `doctor` is verifying.
+- [Setup](setup.md) — `eventlog setup`, which runs `init` non-destructively before scaffolding reactor policy.

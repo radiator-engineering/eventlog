@@ -285,3 +285,30 @@ The commit action runs a Cursor agent, which stayed alive past 300s on a
 was archived; deletion is pending a `delete_repo` token scope. The skill's
 only home is `skill/` in this repo. Drove bugs filed upstream as
 radiator-engineering/Drove issues 20, 21, 22.
+
+## repo-visibility = public (2026-09-07)
+The GitHub repo went public so the cargo-dist installer script and the
+Homebrew formula can download release assets without a token, matching
+radiator-engineering/Drove. The tap is `radiator-engineering/homebrew-tap`;
+its formula publish job needs a `HOMEBREW_TAP_TOKEN` secret (contents write
+on the tap), which neither repo has yet.
+
+## crate-name = eventlog-cli (2026-09-07)
+crates.io already has an unrelated `eventlog` crate (a Windows Event Log
+library, since 2020), so the package is `eventlog-cli`. The binary, the lib
+crate and the Homebrew formula stay `eventlog` (`[package.metadata.dist]
+formula = "eventlog"`); the cargo-dist archives and installer scripts take
+the `eventlog-cli-` prefix. Install paths: `cargo install eventlog-cli`,
+`brew install radiator-engineering/tap/eventlog`, or the release installer.
+
+## changelog = git-cliff-generated (2026-09-07)
+`CHANGELOG.md` is generated from conventional commit messages with git-cliff
+(`cliff.toml`), never hand-edited. Parallel workers therefore never touch it
+and it cannot conflict on merge. The commit reactor's message, derived from
+the `result` summary, is the changelog entry, so summaries should read as
+user-facing lines. Alternative kept in reserve: per-change fragment files in
+`changelog.d/` if curated wording ever diverges from commit messages.
+
+## 2026-09-07 reusable infrastructure across repositories
+
+The user authorized the Drove orchestrator to coordinate upstream eventlog implementation in separate workspaces. Contract: `.context/handoffs/infra-contract.md`; baseline `5679da4`. infra-setup owns reusable setup, packaged actions and skill; infra-runtime owns native action supervision and Git accounting; infra-review independently validates disposable fresh and Drove consumer repositories. Existing react CLI/environment/public signatures remain the shared contract. Product edits stay in isolated worktrees, with no worker commits or live reactor cutover. Drove migration/recovery follows accepted upstream changes.

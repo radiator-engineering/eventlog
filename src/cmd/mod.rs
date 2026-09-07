@@ -1,14 +1,18 @@
+pub mod action;
 pub mod agents;
 pub mod append;
 pub mod claims;
+mod commit_command;
 pub mod completions;
 pub mod doctor;
 pub mod guard;
 pub mod init;
+pub mod lifecycle;
 pub mod open;
 pub mod protect;
 pub mod react;
 pub mod schema;
+pub mod setup;
 pub mod skill;
 pub mod state;
 pub mod tui;

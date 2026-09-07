@@ -65,6 +65,7 @@ Vocabulary (required / optional fields):
   note: required=msg optional=agent,ref
   intent: required= optional=agent,paths,msg,for,ref
   veto: required=for optional=role,reason,ref
+  observed: required=paths optional=for,ref,detail
 ";
 
 pub fn vocab_epilogue(cfg: &Config) -> String {
@@ -87,7 +88,13 @@ fn format_fields(spec: &crate::model::vocab::TypeSpec) -> String {
     format!("required={}{opt}", spec.fields.join(","))
 }
 
-struct FoldContext<'a>(&'a State);
+pub(crate) struct FoldContext<'a>(&'a State);
+
+impl<'a> FoldContext<'a> {
+    pub(crate) fn new(state: &'a State) -> Self {
+        Self(state)
+    }
+}
 
 impl StrictContext for FoldContext<'_> {
     fn allowlist(&self) -> &crate::model::allow::Allowlist {

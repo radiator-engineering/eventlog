@@ -1,9 +1,11 @@
 [package]
-name = "eventlog"
-version = "0.1.0"
+name = "eventlog-cli"
+version = "0.2.0"
+description = "Append-only JSONL coordination log for multi-agent repos: one controller writes, reactors act on events"
 edition = "2024"
 rust-version = "1.88"
 license = "Apache-2.0"
+homepage = "https://github.com/radiator-engineering/eventlog"
 repository = "https://github.com/radiator-engineering/eventlog"
 
 [[bin]]
@@ -33,13 +35,17 @@ include_dir = "0.7"
 schemars = "0.8"
 anyhow = "1"
 ctrlc = { version = "3.5.2", features = ["termination"] }
+tempfile = "3"
 
 [dev-dependencies]
 assert_cmd = "2"
 predicates = "3"
-tempfile = "3"
 
 # The profile cargo-dist builds release artifacts with (release.yml).
 [profile.dist]
 inherits = "release"
 lto = "fat"
+
+[package.metadata.dist]
+# Keep the Homebrew formula named `eventlog` (brew install radiator-engineering/tap/eventlog)
+formula = "eventlog"
