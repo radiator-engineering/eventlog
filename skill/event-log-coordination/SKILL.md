@@ -30,6 +30,9 @@ Flags go **before** the type. Fields are `key=value`.
 
 ```sh
 eventlog init                                   # log, EVENTLOG.md, eventlog.toml, gitignore lines; never overwrites
+eventlog setup preview                          # show reusable-owned configuration changes, writes nothing
+eventlog setup apply                            # init non-destructively and create .context/eventlog-setup.toml
+eventlog setup upgrade                          # same validation; refuses a customized owned setup file
 eventlog append spawn agent=t2 model=sonnet role=impl
 eventlog append claim agent=t2 paths=src/api,docs/index.md
 eventlog append prompt agent=t2 ref=.context/handoffs/t2.md
@@ -88,6 +91,47 @@ action script. Drive a committer on `result`, which carries `paths=`
 eventlog react --as committer --on result --git -- bash .context/bin/commit-action.sh
 eventlog react test <seq> --as committer --git -- bash .context/bin/commit-action.sh   # dry run
 ```
+
+## Reusable setup, actions, and lifecycle
+
+For a new repository, run `eventlog setup preview`, inspect the output, then
+run `eventlog setup apply`. The project-managed `.context/eventlog-setup.toml` declares
+the committer/doc-worker identities, default models (`composer-2.5-fast` and
+`claude-sonnet`), timeouts, documentation roots, and an argv-form docs command.
+`setup` never rewrites an existing `Drovefile`, restarts a reactor, removes a
+lock/history file, or advances a checkpoint. `upgrade` is intentionally
+conservative: it preserves valid project edits and fails before writing when
+the configuration is malformed.
+
+Use argv directly in a Drove hook; do not concatenate shell strings:
+
+```python
+on_start = ["eventlog", "lifecycle", "start", agent, "--model", model,
+            "--paths", paths]
+on_stop = ["eventlog", "lifecycle", "stop", agent]
+```
+
+`lifecycle start` is idempotent and restores its own claims after a prior
+`stop`; it leaves every other agent's claims intact. The supervisor invokes it
+as the controller, so do not run it from a worker brief.
+
+Package reactor actions as direct argv too:
+
+```sh
+eventlog react --as committer --on result --git -- eventlog action commit
+eventlog react --as doc-worker --on ack --filter by=committer --filter outcome=committed --git -- eventlog action docs
+```
+
+`action commit` stages and commits only validated `EVENTLOG_PATHS`; it rejects
+target paths that were already staged and keeps unrelated staged work intact.
+`action docs` executes `[docs].command` as argv (no shell interpolation) and
+reports the added, deleted, or modified files below `[docs].roots`, including
+files already dirty before the command. Set `docs.command` to a local stub in
+tests. An empty command or a failing model command is a failed action, never a
+successful no-op. Under a reactor (when `EVENTLOG_LOG` and `EVENTLOG_REF` are
+set), it appends one `result` attributed to `[docs].identity`; when that result
+comes back through the doc worker it is skipped, preventing the doc-result
+loop. Native `react` still owns intent/ack/resume handling.
 
 Sanction it once: `decision key=log-writers value=controller-plus-reactors`.
 Run it in a terminal pane that outlives any agent's turn, and record its

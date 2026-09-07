@@ -44,6 +44,12 @@ pub enum Command {
     Guard(GuardArgs),
     /// Create a new coordination log and scaffold.
     Init(InitArgs),
+    /// Preview or apply the reusable reactor configuration.
+    Setup(SetupArgs),
+    /// Run a packaged reactor action.
+    Action(ActionArgs),
+    /// Record idempotent reactor/worker lifecycle claims.
+    Lifecycle(LifecycleArgs),
     /// Diagnose common setup problems.
     Doctor(DoctorArgs),
     /// Toggle or report OS-level append-only protection.
@@ -230,6 +236,62 @@ pub enum GuardInner {
 pub struct InitArgs {}
 
 #[derive(ClapArgs, Debug)]
+pub struct SetupArgs {
+    #[command(subcommand)]
+    pub inner: SetupInner,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum SetupInner {
+    /// Show the exact project configuration setup would create or upgrade.
+    Preview,
+    /// Create missing project setup configuration.
+    Apply,
+    /// Validate and preserve project configuration before upgrading assets.
+    Upgrade,
+}
+
+#[derive(ClapArgs, Debug)]
+pub struct ActionArgs {
+    #[command(subcommand)]
+    pub inner: ActionInner,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum ActionInner {
+    /// Commit exactly EVENTLOG_PATHS without consuming unrelated staging.
+    Commit {
+        /// Conventional commit message (required outside a reactor).
+        #[arg(long, default_value = "chore(eventlog): apply reactor result")]
+        message: String,
+    },
+    /// Run the configured documentation command and report changed doc paths.
+    Docs,
+}
+
+#[derive(ClapArgs, Debug)]
+pub struct LifecycleArgs {
+    #[command(subcommand)]
+    pub inner: LifecycleInner,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum LifecycleInner {
+    /// Ensure an agent is spawned and owns its declared paths.
+    Start {
+        agent: String,
+        #[arg(long)]
+        model: Option<String>,
+        #[arg(long, default_value = "reactor")]
+        role: String,
+        #[arg(long, value_delimiter = ',')]
+        paths: Vec<String>,
+    },
+    /// Retire an active lifecycle, preserving all other claims.
+    Stop { agent: String },
+}
+
+#[derive(ClapArgs, Debug)]
 pub struct DoctorArgs {
     /// Install guards, remove old script symlinks, install the skill.
     #[arg(long)]
@@ -302,6 +364,9 @@ pub fn run() -> i32 {
         Command::React(_) => crate::cmd::react::run(&args),
         Command::Guard(_) => crate::cmd::guard::run(&args),
         Command::Init(_) => crate::cmd::init::run(&args),
+        Command::Setup(_) => crate::cmd::setup::run(&args),
+        Command::Action(_) => crate::cmd::action::run(&args),
+        Command::Lifecycle(_) => crate::cmd::lifecycle::run(&args),
         Command::Doctor(_) => crate::cmd::doctor::run(&args),
         Command::Protect(_) => crate::cmd::protect::run(&args),
         Command::Schema(_) => crate::cmd::schema::run(&args),
