@@ -40,3 +40,9 @@ User explicitly requested moving all three workers from drove to event-log. Herd
 Current targets (all in `herdr --session event-log`): infra-setup w9:p1, infra-runtime wA:p1, infra-review wB:p1. Coordinator remains w6:p6. Update pane-status monitors to these addresses; old drove addresses are retired. Setup/runtime await review follow-up; reviewer continues the interrupted round-three gate. No product diffs were changed by relocation.
 
 Preserved Codex session IDs: setup `01a07c4b-bd41-7623-b0fd-973cd1eda368`; runtime `01a07c4b-cf5a-7513-bdbc-19d5fa66dc02`; review `01a07c67-cc9a-7b91-a602-4acad44ebceb`.
+
+## Round 4 (2026-09-07)
+
+Round-3 verdict: CHANGES_REQUESTED, one finding. Runtime `9c9b03f3…34e8` passes every gate (invalid UTF-8 ack, closed loop, resume, clippy, fmt, full tests); the `src/cmd/react.rs` placement is accepted as an explicit scope exception (note after violation seq 636). Setup `796745ca…67a6` propagates identities, models, timeouts and executable, and the body-hash guard works, but `docs.roots` is not rendered into the docs lifecycle `--paths` (hard-coded `docs/**,README.md`), so a docs result under custom roots could be rejected as unclaimed.
+Routed: → infra-setup (`infra-setup-round4.md`). infra-runtime idle, no further work requested. Integration on the combined APPROVE: runtime first (5 files incl. `src/cmd/react.rs`), then setup.
+Panes now in `herdr --session event-log`: setup w9:p1, runtime wA:p1, review wB:p1.
