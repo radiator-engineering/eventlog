@@ -308,3 +308,7 @@ and it cannot conflict on merge. The commit reactor's message, derived from
 the `result` summary, is the changelog entry, so summaries should read as
 user-facing lines. Alternative kept in reserve: per-change fragment files in
 `changelog.d/` if curated wording ever diverges from commit messages.
+
+## 2026-09-07 reusable infrastructure across repositories
+
+The user authorized the Drove orchestrator to coordinate upstream eventlog implementation in separate workspaces. Contract: `.context/handoffs/infra-contract.md`; baseline `5679da4`. infra-setup owns reusable setup, packaged actions and skill; infra-runtime owns native action supervision and Git accounting; infra-review independently validates disposable fresh and Drove consumer repositories. Existing react CLI/environment/public signatures remain the shared contract. Product edits stay in isolated worktrees, with no worker commits or live reactor cutover. Drove migration/recovery follows accepted upstream changes.

@@ -1,0 +1,20 @@
+# Reusable eventlog infrastructure contract — 2026-09-07
+
+User authorized the Drove orchestrator to implement missing infrastructure across repositories and launch agents in separate workspaces. Work belongs in event-log and its distributed skill. Drove is an acceptance consumer. Baseline: 5679da4. This supersedes the archived Drove implementation assignments, not their findings.
+
+## Frozen ownership and interface
+- infra-setup owns src/scaffold/, src/cmd/, src/cli.rs, src/skill/, skill/, tests/scaffold.rs, tests/cli_surface.rs, tests/skill.rs. It adds reusable setup/maintenance, packaged actions and lifecycle entry points. It does not edit src/cmd/react.rs or existing other commands except targeted wiring needed for its new commands.
+- infra-runtime owns src/react/, tests/react_action.rs, tests/react_loop.rs, tests/cmd_react.rs, Cargo.toml and Cargo.lock (dependencies only; no version bump). It repairs process supervision and Git accounting. Preserve existing public Rust signatures and eventlog react CLI/action environment/outcome protocol; raise a seam if a signature must change.
+- infra-review is read-only on product sources; owns its report at .context/reports/infra-review.md in its worktree. Reviews both workers and proves integration on disposable copies.
+- No worker commits, pushes, appends to a production log, operates production reactors, edits production Drove, or starts another agent. Report via Herdr transcript and brief-specified report. Controller integrates reviewed diffs and records results; commit reactors retain commit ownership.
+
+## Required product behavior
+Provide one upstream setup/maintenance workflow: preview concrete changes, apply repeatably, upgrade owned assets while preserving customization and detecting conflicts. Settings must cover reactor identity/model/timeout/doc roots and invocation suitable for arbitrary existing Drovefiles. Preserve an existing Drovefile; provide composable integration with an exact runnable example and instructions. No bespoke framework engineered per consuming repo. Setup must not restart live reactors, erase history/locks, or silently advance checkpoints. Existing init remains compatible and non-overwriting. Lifecycle registration is idempotent and restores required claims after retirement/restart without discarding other claims.
+
+Reusable actions must enforce exact commit scope and protect unrelated pre-staged work; report actual effects and meaningful failures; identify exact doc changes including modifications to already-dirty files, additions/deletions and unusual valid names; reject out-of-scope edits; prevent doc-result -> commit-ack -> doc loops using current seq_done and legacy origin evidence. Models remain Composer 2.5 Fast and Claude Sonnet by default, configurable. Never suppress model failures as successful no-ops. Do not require paid services for tests: inject stub executables.
+
+Native runtime must drain output without pipe deadlock, enforce deadlines over stdin/stdout/descendants, terminate and reap process groups where supported, and preserve useful failure diagnostics and existing outcome normalization/resume semantics. Git accounting must handle untracked files and quoted/renamed paths correctly, without attributing preexisting work to an action.
+
+Acceptance: setup on a fresh temporary repo and a disposable Drove snapshot; repeat setup is a no-op; customized assets survive or produce an explicit conflict before mutation; upgrades are previewable; full result -> commit -> docs -> result -> commit loop invokes docs once; unrelated staging survives; model failure and timeout descendant cases are bounded; resume does not duplicate accepted work; lifecycle claim renewal works. Run focused tests and fmt/clippy/all tests for integration. Do not run react test against production: its action executes.
+
+Evidence: /Users/jjmartin/Development/Drove/.context/reports/eventlog-handoff.md and eventlog-cutover.md; archived drafts /Users/jjmartin/Development/Drove-archives/eventlog-drafts-20260907T142525Z are read-only research, not accepted code. Production Drove recovery remains controller-owned after acceptance.
