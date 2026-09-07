@@ -1,0 +1,14 @@
+.context/eventlog.toml
+  h_63f2916b00d585 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bb6d6b9f0d78235aeea732d728326d7482d56e31",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
