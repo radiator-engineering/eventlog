@@ -280,27 +280,27 @@ fn check_claim_paths_exist(repo_root: &Path, paths_val: &str) -> Result<(), Stri
 }
 
 fn glob_matches_under(repo_root: &Path, set: &globset::GlobSet) -> Result<bool, String> {
-    fn walk(dir: &Path, set: &globset::GlobSet) -> Result<bool, String> {
+    // Match every file against its path relative to the repo root, so a
+    // claim like `src/api/**` matches `src/api/ping.rs` the way the fold does.
+    fn walk(root: &Path, dir: &Path, set: &globset::GlobSet) -> Result<bool, String> {
         let read = std::fs::read_dir(dir).map_err(|e| e.to_string())?;
         for entry in read {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
             if path.is_dir() {
-                if walk(&path, set)? {
+                if walk(root, &path, set)? {
                     return Ok(true);
                 }
             } else {
-                let rel = path.strip_prefix(dir).unwrap_or(&path);
-                if set.is_match(path.to_string_lossy().as_ref())
-                    || set.is_match(rel.to_string_lossy().as_ref())
-                {
+                let rel = path.strip_prefix(root).unwrap_or(&path);
+                if set.is_match(rel) {
                     return Ok(true);
                 }
             }
         }
         Ok(false)
     }
-    walk(repo_root, set)
+    walk(repo_root, repo_root, set)
 }
 
 fn finalize_event(log: &Log, tail: &Tail, mut event: Event) -> Event {
