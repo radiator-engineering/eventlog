@@ -20,6 +20,9 @@ the commit reactor writes from each `result` event. Do not edit it by hand.
 - **react:** Verify lock token after reclaim rename
 - **react:** Bound action execution and preserve failure diagnostics
 - **action:** Exclude coordination log from docs snapshot
+- **action:** Run commit and docs actions from repository root
+- **append:** Support bracket globs and safe claim-path walks
+- **react:** Preserve action outcome when stdin closes early
 
 ### Changed
 
@@ -52,6 +55,8 @@ the commit reactor writes from each `result` event. Do not edit it by hand.
 - Wire setup, lifecycle, and action into CLI surface and guides
 - **skill:** Document commit command and docs snapshot policy
 - **reference:** Document configured commit author and docs snapshot policy
+- **how-to:** Document published-crate install for eventlog 0.2.0
+- Clarify lifecycle restart, retire, and committer semantics
 
 ## [0.1.0] - 2026-09-07
 
