@@ -24,6 +24,11 @@ use crate::react::action::{self, ActionEnv};
 use crate::react::voter::{self, Authorized};
 use crate::react::{GitSnapshot, Outcome, Reactor, ReactorConfig, Steps, supervise};
 
+// Keep this in sync with log::append's field validator. Diagnostics are
+// assembled here, after lossy stderr decoding and spillover formatting, so
+// this is the only point at which their encoded size is known.
+const ACK_DETAIL_CAP: usize = 2048;
+
 pub fn run(args: &CliArgs) -> anyhow::Result<i32> {
     let Command::React(react_args) = &args.command else {
         anyhow::bail!("react::run called with wrong subcommand");
@@ -313,9 +318,28 @@ fn to_outcome(
         (None, true) => None,
     };
     if let Some(detail) = detail {
-        fields.push(("detail".to_string(), detail));
+        fields.push(("detail".to_string(), bounded_detail(detail)));
     }
     Outcome { outcome, fields }
+}
+
+/// The log accepts field values up to 2 KiB, measured after UTF-8 encoding.
+/// Keep the end of a diagnostic: action stderr is already a tail, and the
+/// failure reason (`exit N` or timeout) is appended after action-supplied
+/// detail and spillover. Advancing to a character boundary keeps invalid-byte
+/// replacement characters intact after `from_utf8_lossy` expands them.
+fn bounded_detail(mut detail: String) -> String {
+    if detail.len() <= ACK_DETAIL_CAP {
+        return detail;
+    }
+
+    const ELISION: &str = "...";
+    let mut start = detail.len() - (ACK_DETAIL_CAP - ELISION.len());
+    while !detail.is_char_boundary(start) {
+        start += 1;
+    }
+    detail.replace_range(..start, ELISION);
+    detail
 }
 
 /// Paths the loop carries as strings, back as validated [`RelPath`]s. The
