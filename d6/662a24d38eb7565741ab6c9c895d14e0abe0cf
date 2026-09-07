@@ -1,0 +1,23 @@
+docs/explanation/controller-caller-pane.md
+  s_eb6d89d063ab75::t_ed15e591e93c1c 28-30
+  s_eb6d89d063ab75::t_a0e0168ad24053 1-13,18-27,31-39
+  s_eb6d89d063ab75::t_87936a64c66a66 14-17
+README.md
+  s_eb6d89d063ab75::t_232c978e7669ce 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "d6662a24d38eb7565741ab6c9c895d14e0abe0cf",
+  "prompts": {},
+  "sessions": {
+    "s_eb6d89d063ab75": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9a25ccf-ecc2-4cc3-881d-84e4754f3291",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
