@@ -7,6 +7,10 @@ packaged actions meant to run as the command after `--` in
 use argv throughout — no shell, so a reactor's configuration is never
 interpolated into one.
 
+Before either command runs, `action` changes to the repository's Git
+toplevel, so `EVENTLOG_PATHS` and `docs.roots` resolve correctly even when
+the reactor invokes `eventlog action` from a subdirectory.
+
 ```sh
 eventlog action commit [--message <msg>]
 eventlog action docs

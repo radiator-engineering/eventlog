@@ -55,6 +55,10 @@ loop) both commands use:
   paths and calls `action::run` (reference).
 - `snapshot` calls `action::snapshot` (reference).
 
+`action::run` writes the driving event as JSON to the action's stdin. An
+action may close stdin without reading it; that no longer fails the pass —
+the action's exit status and outcome file still reach the `ack`.
+
 ### Reading the action's outcome
 
 `action::run` returns raw `key=value` fields from the outcome file (or the
