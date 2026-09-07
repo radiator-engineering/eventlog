@@ -1,0 +1,16 @@
+skill/event-log-coordination/SKILL.md
+  h_63f2916b00d585 98,101-103,127,219-225
+skill/event-log-coordination/references/log-reactors.md
+  h_63f2916b00d585 90-91,107-110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "617c489269c88fb060b1d214d0f518e085d24678",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
