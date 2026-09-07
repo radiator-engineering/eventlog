@@ -88,7 +88,13 @@ fn format_fields(spec: &crate::model::vocab::TypeSpec) -> String {
     format!("required={}{opt}", spec.fields.join(","))
 }
 
-struct FoldContext<'a>(&'a State);
+pub(crate) struct FoldContext<'a>(&'a State);
+
+impl<'a> FoldContext<'a> {
+    pub(crate) fn new(state: &'a State) -> Self {
+        Self(state)
+    }
+}
 
 impl StrictContext for FoldContext<'_> {
     fn allowlist(&self) -> &crate::model::allow::Allowlist {
