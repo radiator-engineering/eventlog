@@ -187,7 +187,9 @@ learned from a committer that recommitted the same cutoff three times:
    log safely.
 2. **One instance, enforced by a lock.** The runtime holds
    `<log>.<name>.reactor.lock/` with pid, start time, hostname, and boot id.
-   Refuse to start while that lock is live.
+   Refuse to start while that lock is live. SIGINT, SIGTERM and SIGHUP stop
+   the loop cleanly and release the lock; a stale lock from a crash is
+   reclaimed on the next start.
 3. **Run it foregrounded in a real terminal**, a dedicated herdr pane. A
    reactor started with `nohup … &` from an agent's tool-call shell dies when
    the turn ends, and the agent's next "restart" is the second instance that
@@ -204,8 +206,10 @@ learned from a committer that recommitted the same cutoff three times:
    paths trigger a `veto` with reason `unclaimed-paths`.
 2. Appends `intent by=<name> for=<seq> action=<label> paths=<authorized>`.
 3. Runs the **voter** against the fold at that moment. Rules: no path is the log
-   file or a lock dir; no path is claimed by a different open agent; no open
-   `escalate` names this reactor. On failure append `veto by=<name> role=voter
+   file or a lock dir; no path is claimed by a different open agent (a
+   controller-written event may cross a reactor's claim while that reactor has
+   no open intent; a worker's claim always binds); no open `escalate` names
+   this reactor. On failure append `veto by=<name> role=voter
    for=<seq> intent=<intent seq> reason=<rule>` and `ack seq_done=<seq>
    outcome=vetoed`.
 4. Opens the **veto window** (`--window`, default 0). A `veto` whose `for=`

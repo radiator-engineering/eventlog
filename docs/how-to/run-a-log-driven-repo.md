@@ -92,11 +92,11 @@ Run any read of the log as its own command. The guard blocks a compound shell co
 ## What the reactor's lines mean
 
 - `intent`: the reactor is about to act on event `for=` with these `paths=`.
-- `veto ... reason=<rule>`: the voter refused. `unclaimed-paths` means the writer named files outside its claim; `claimed-by-other` means another open agent owns one of them.
+- `veto ... reason=<rule>`: the voter refused. `unclaimed-paths` means the writer named files outside its claim; `claimed-by-other` means another open agent owns one of them. A controller event may cross a reactor's claim while that reactor is idle (no open intent); a worker's claim always binds.
 - `ack seq_done=<seq> outcome=<o>`: the action ran and this is its result. Resume uses these lines.
 - `violation paths=<list>`: the action committed files outside what the event authorized. The commit stands; this is detection.
 - `observed paths=<list>`: unclaimed files turned dirty while the action ran. Someone's work in progress, no blame.
 
 ## Restarting a reactor
 
-Append `retire agent=<name>` first, stop the process, start it again, then append `spawn` and a fresh `claim`. A retire closes the reactor's claims, and its next result is vetoed `unclaimed-paths` without a new one. Never delete a `*.reactor.lock` directory; the runtime reclaims a stale one on start.
+Append `retire agent=<name>` first, stop the process with SIGTERM or Ctrl-C (the runtime releases its lock on the way out), start it again, then append `spawn` and a fresh `claim`. A retire closes the reactor's claims, and its next result is vetoed `unclaimed-paths` without a new one. Never delete a `*.reactor.lock` directory; the runtime reclaims a stale one on start.

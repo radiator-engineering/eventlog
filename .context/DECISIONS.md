@@ -253,3 +253,35 @@ git history keeps them. The doc worker's prompt carries these rules.
 The controller's Stop hook ignores files under another agent's open claim and
 blocks once per distinct set of unreported files (memo in
 `.git/eventlog-stop-hook-last`), so work in flight is not nagged every turn.
+
+## claimed-by-other-scope = binds unless the owner is an idle reactor (2026-09-07)
+The voter's `claimed-by-other` rule vetoed every controller `result` that named
+`README.md` or `docs/` while the doc worker held its claim, even when the doc
+worker was idle (seqs 535, 536). The controller grants every claim, and with
+workers in their own worktrees (`agent-topology`) the only claims left in the
+main checkout belong to the reactors. So a controller-written event now passes
+over a reactor's claim when that reactor has acked at least once and has no
+open intent. While an intent is open, a pass is in flight and the claim binds
+again. A worker's claim always binds; a worker's files reach the log through
+`result agent=<worker>`, the existing subject exemption.
+
+## reactor-stop = signal releases the lock (2026-09-07)
+`eventlog react` handles SIGINT, SIGTERM and SIGHUP (`ctrlc` crate): the loop
+returns, the lock directory is removed, the process exits 0 with no restart
+note. Before this, a stopped reactor left its lock behind and the next start
+had to reclaim it.
+
+## view-since = seq or timestamp (2026-09-07)
+`eventlog view --since` accepts a bare sequence number as well as an RFC 3339
+timestamp. It used to reject the seq form that its own error message implied.
+
+## commit-action-timeout = 900s (2026-09-07)
+The commit action runs a Cursor agent, which stayed alive past 300s on a
+28-file change (ack seq 540 `failed: timed out`, commit landed anyway). The
+`reactor()` helper in `drove/reactors.star` now defaults `timeout` to 900s.
+
+## old-skill-repo = deleted (2026-09-07)
+`radiator-engineering/event-log-coordination` got a final pointer commit and
+was archived; deletion is pending a `delete_repo` token scope. The skill's
+only home is `skill/` in this repo. Drove bugs filed upstream as
+radiator-engineering/Drove issues 20, 21, 22.

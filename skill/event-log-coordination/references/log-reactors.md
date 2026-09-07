@@ -99,7 +99,9 @@ The runtime handles steps that every reactor duplicated in shell:
 2. **Intent** — append `intent by=<name> for=<seq> action=<label> paths=<authorized>`.
 3. **Voter** — block if a path is the log, a lock dir, claimed by another open
    agent, or named in an open `escalate` for this reactor. On failure: `veto`
-   and `ack outcome=vetoed`.
+   and `ack outcome=vetoed`. A controller-written event is not blocked by a
+   reactor's claim while that reactor is idle (no open intent), since the
+   controller grants every claim and nothing of the reactor's is in flight.
 4. **Veto window** — `--window` (default 0). A `veto for=<seq>` binds even
    after restart between intent and action.
 5. **Action** — run your command with JSON on stdin and `EVENTLOG_*` env vars.
