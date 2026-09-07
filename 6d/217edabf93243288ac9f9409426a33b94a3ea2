@@ -1,0 +1,14 @@
+.context/bin/controller-stop-hook.sh
+  h_63f2916b00d585 33-52,68-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6d217edabf93243288ac9f9409426a33b94a3ea2",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
