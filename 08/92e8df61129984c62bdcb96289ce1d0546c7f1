@@ -1,0 +1,16 @@
+Cargo.lock
+  h_63f2916b00d585 439
+Cargo.toml
+  h_63f2916b00d585 2,4,8,48-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "0892e8df61129984c62bdcb96289ce1d0546c7f1",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
