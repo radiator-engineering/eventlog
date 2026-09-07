@@ -1,0 +1,29 @@
+docs/reference/react-command.md
+  s_0cd6e5fa6baf67::t_38f6c4088a94d4 23-24
+  s_0cd6e5fa6baf67::t_26b8f38e6bc843 75-83
+  s_71c782376bb034::t_f319bf08c172aa 84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "691bdf26f90efafb204ead3f287a1f93350cfb13",
+  "prompts": {},
+  "sessions": {
+    "s_0cd6e5fa6baf67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2469ded3-ccf9-49db-b7cd-34840e9bf514",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_71c782376bb034": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07ca6-4aa8-7440-8d6c-74957ac6b7ac",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
