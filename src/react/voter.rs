@@ -21,6 +21,8 @@ pub struct Authorized {
     /// Whose work the driving event is about: its `agent`, else its writer.
     /// A claim this subject holds never vetoes the action.
     pub subject: String,
+    /// The driving event was written by the controller (no `by=`).
+    pub from_controller: bool,
 }
 
 /// Why the voter stopped the action. The `reason=` word of the `veto` line.
@@ -97,6 +99,7 @@ pub fn authorize(driving: &Event, state: &State) -> Authorized {
             paths: named,
             excess: Vec::new(),
             subject,
+            from_controller: true,
         };
     }
 
@@ -132,9 +135,15 @@ pub fn check(reactor: &str, auth: &Authorized, state: &State, cfg: &Config) -> R
         // A claim held by the driving event's own subject is what authorized
         // the path in the first place: a worker's result on its claimed
         // files, or the controller's `result agent=<worker>`, is not "other".
+        // The controller grants every claim. Its own event may cross a
+        // reactor's claim as long as that reactor is idle (no open intent):
+        // there is no pass in flight whose files the commit could sweep up.
+        // A worker's claim still binds; its edits live in its own worktree
+        // and reach the log through the controller's `result agent=<worker>`.
         if let Some(owner) = state.claim_owner(path.as_str())
             && owner != reactor
             && owner != auth.subject
+            && !(auth.from_controller && idle_reactor(owner, state))
         {
             return Err(Veto::ClaimedByOther {
                 path: path.clone(),
@@ -150,6 +159,14 @@ pub fn check(reactor: &str, auth: &Authorized, state: &State, cfg: &Config) -> R
 
 /// The seq of the first open `escalate` that names `reactor`, either as its
 /// subject or as its writer.
+/// Is `name` a reactor (it has acked at least once) with no open intent?
+fn idle_reactor(name: &str, state: &State) -> bool {
+    state
+        .reactors
+        .get(name)
+        .is_some_and(|r| r.last_ack_seq.is_some() && r.open_intents.is_empty())
+}
+
 fn open_escalation(reactor: &str, state: &State) -> Option<u64> {
     state
         .escalations

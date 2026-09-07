@@ -330,3 +330,69 @@ fn a_workers_own_result_on_its_claimed_paths_is_not_claimed_by_other() {
         Ok(())
     );
 }
+
+// --- 4.3: the controller may cross an idle reactor's claim ---------------------
+
+/// WORLD plus a doc-worker that has acked once, so the fold knows it as a
+/// reactor. `extra` lines follow.
+fn world_with_doc_reactor(extra: &[&str]) -> State {
+    let mut lines = WORLD.to_vec();
+    lines.push(
+        r#"{"seq":5,"ts":"2026-09-06T10:00:05Z","type":"ack","by":"doc-worker","seq_done":"4","outcome":"skipped"}"#,
+    );
+    lines.extend_from_slice(extra);
+    state_of(&lines)
+}
+
+/// The controller grants every claim, and the docs are not in any worker's
+/// worktree: a controller `result` naming README.md must not be stopped by
+/// the doc worker's claim while the doc worker is idle.
+#[test]
+fn a_controller_event_passes_over_an_idle_reactors_claim() {
+    let state = world_with_doc_reactor(&[]);
+    let driving = event(
+        r#"{"seq":9,"ts":"2026-09-06T10:01:00Z","type":"result","agent":"controller","paths":"README.md"}"#,
+    );
+    let auth = voter::authorize(&driving, &state);
+    assert!(auth.from_controller);
+    assert_eq!(
+        voter::check("commit", &auth, &state, &Config::default()),
+        Ok(())
+    );
+}
+
+/// While the doc worker has an intent open, a pass is in flight and a commit
+/// could sweep up its half-written files: the claim binds again.
+#[test]
+fn a_reactor_with_an_open_intent_still_holds_its_claim_against_the_controller() {
+    let state = world_with_doc_reactor(&[
+        r#"{"seq":6,"ts":"2026-09-06T10:00:06Z","type":"intent","by":"doc-worker","for":"5","action":"doc","paths":"docs"}"#,
+    ]);
+    let driving = event(
+        r#"{"seq":9,"ts":"2026-09-06T10:01:00Z","type":"result","agent":"controller","paths":"README.md"}"#,
+    );
+    let auth = voter::authorize(&driving, &state);
+    match voter::check("commit", &auth, &state, &Config::default()) {
+        Err(Veto::ClaimedByOther { path, owner }) => {
+            assert_eq!(path.as_str(), "README.md");
+            assert_eq!(owner, "doc-worker");
+        }
+        other => panic!("expected claimed-by-other, got {other:?}"),
+    }
+}
+
+/// A worker is not a reactor: its claim binds the controller's own events
+/// whether or not anything is in flight. Its files reach the log through
+/// `result agent=<worker>`, which is the subject exemption, not this one.
+#[test]
+fn a_workers_claim_still_binds_a_controller_event() {
+    let state = world_with_doc_reactor(&[]);
+    let driving = event(
+        r#"{"seq":9,"ts":"2026-09-06T10:01:00Z","type":"result","agent":"controller","paths":"src/x.rs"}"#,
+    );
+    let auth = voter::authorize(&driving, &state);
+    assert!(matches!(
+        voter::check("commit", &auth, &state, &Config::default()),
+        Err(Veto::ClaimedByOther { .. })
+    ));
+}
