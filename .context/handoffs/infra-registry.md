@@ -1,6 +1,6 @@
 # Upstream infrastructure work registry
 
-Controller: Drove orchestrator, Herdr session drove, w1:p1.
+Controller: handed to the event-log coordinator (Claude, Herdr session event-log, w6:p6) on 2026-09-07 after the round-1 review. Workers stay in Herdr session drove.
 Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
@@ -16,3 +16,10 @@ The user requested dispatch in other workspaces. Tabs remain open because their 
 Controller installed missing Herdr Codex/Claude status integrations as required for native worker tracking. No live reactor was restarted or contacted. Drove production files and its coordination log were untouched by this dispatch; upstream event-log owns the new lifecycle events and briefs.
 
 User-requested Sol context refresh (2026-09-07): reviewer saved its findings, pinned diffs, disposable reproduction paths, completed checks, and next steps in its claimed report. Controller archived the handoff as `.context/handoffs/infra-review-refresh.md`, issued `/new` in the same w7J:p1 pane, and verified gpt-5.6-sol high with Context 0% used. Original review scope and worktree persist; fresh session resumes from the handoff. Open tab remains justified for ongoing review. Findings remain worker-reported and implementation is not accepted.
+
+## Round 2 (2026-09-07)
+
+Round-1 verdict: CHANGES_REQUESTED (`.worktrees/infra-review/.context/reports/infra-review.md`).
+Reviewed hashes, not accepted: setup `043784be…51db5`, runtime `36980d23…9b082`.
+Routed: findings 1–6 → infra-setup (`infra-setup-fixes.md`, seq 617); finding 7 → infra-runtime (`infra-runtime-fixes.md`, seq 618); re-review gate → infra-review (`infra-review-round2.md`, seq 619).
+Integration waits for an `APPROVE` against refreshed hashes after the mandatory closed-loop gate.
