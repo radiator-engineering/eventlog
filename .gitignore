@@ -8,3 +8,6 @@ target/
 
 # cargo-mutants output
 mutants.out*/
+
+# Obsidian vault state (per-machine editor settings)
+.obsidian/
