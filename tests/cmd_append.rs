@@ -148,7 +148,13 @@ fn strict_claim_accepts_a_glob_that_matches_under_the_repo_root() {
     Command::cargo_bin("eventlog")
         .unwrap()
         .current_dir(dir.path())
-        .args(["append", "--dry-run", "claim", "agent=w1", "paths=src/api/**"])
+        .args([
+            "append",
+            "--dry-run",
+            "claim",
+            "agent=w1",
+            "paths=src/api/**",
+        ])
         .assert()
         .success();
 
