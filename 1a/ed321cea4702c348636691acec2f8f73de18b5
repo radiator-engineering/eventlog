@@ -1,0 +1,19 @@
+.context/handoffs/infra-registry.md
+  s_1cd7a712b2d932::t_30518a580be57f 33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1aed321cea4702c348636691acec2f8f73de18b5",
+  "prompts": {},
+  "sessions": {
+    "s_1cd7a712b2d932": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07c4b-cf5a-7513-bdbc-19d5fa66dc02",
+        "model": "unknown"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
