@@ -1,0 +1,19 @@
+Cargo.toml
+  s_1c75f68621ada9::t_3f77e2f24c1f26 41-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "83894629c5d068328389d0820b93b4d2a06fe9d2",
+  "prompts": {},
+  "sessions": {
+    "s_1c75f68621ada9": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ed7bc760-5052-4b71-b2f8-cc2739a226df",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
