@@ -199,3 +199,22 @@ This also fixed the porcelain parse that dropped each path's first letter.
 The frozen model contract (seq 85) gains one reactor-written type:
 `observed` (required `paths`; optional `for`, `ref`, `detail`), listed in
 `REACTOR_TYPES` and the default vocabulary. No existing type changed.
+
+## log-scope = local-untracked (2026-09-07)
+The live log (the JSONL file under `.context/`), its writer lock, the reactor
+lock dirs and `layout.json` stay out of git. Everything the log points at is
+tracked, one file per artifact: `DECISIONS.md`, `EVENTLOG.md`, the briefs, the
+action scripts, `eventlog.toml`. Branches therefore merge per file with no
+log merge step; `DECISIONS.md` merges with `merge=union` since its sections
+are independent. This is what the research recommends: one writer, no
+branchable log (neuroarxiv report, "Avoid"), small `ref=` events (survey
+rank 1), and archiving or snapshots deferred until a log outgrows full
+replay (event-sourcing survey rows 11 and 17). Preserving history across
+clones, if ever needed, is a frozen archive copy, never a merge.
+
+## eventlog.toml = defaults, fsync off (2026-09-07)
+`eventlog init` scaffolded `.context/eventlog.toml` (it also overwrote the
+hand-maintained `EVENTLOG.md`, restored from git; init is not idempotent for
+that file, follow-up). `fsync = false` is kept: the event-sourcing survey
+(row 8) makes fsync an optional strict mode, and this log is local
+coordination state, not the durable record.
