@@ -1,0 +1,25 @@
+docs/how-to/run-a-log-driven-repo.md
+  s_d0fafb0b788ce6::t_b50454604dbea8 95,102
+skill/event-log-coordination/references/log-reactors.md
+  s_d0fafb0b788ce6::t_b50454604dbea8 102-104
+.context/DECISIONS.md
+  s_d0fafb0b788ce6::t_b50454604dbea8 256-287
+skill/event-log-coordination/SKILL.md
+  s_d0fafb0b788ce6::t_b50454604dbea8 190-192,209-212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "10f7dd8da262c642eac034aa3c587d5439addd6e",
+  "prompts": {},
+  "sessions": {
+    "s_d0fafb0b788ce6": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6b71733b-0990-4978-9b68-b9806288e30d",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
