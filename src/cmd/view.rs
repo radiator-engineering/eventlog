@@ -29,7 +29,7 @@ struct ViewContext {
     json: bool,
     use_color: bool,
     palette: BTreeMap<String, String>,
-    since: Option<DateTime<Utc>>,
+    since: Option<Since>,
     types: Option<Vec<String>>,
 }
 
@@ -96,10 +96,20 @@ fn run_with_paths(
     Ok(0)
 }
 
-fn parse_since(raw: &str) -> anyhow::Result<DateTime<Utc>> {
+/// `--since` names a point in the log: a sequence number, or a moment in time.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Since {
+    Seq(u64),
+    Ts(DateTime<Utc>),
+}
+
+fn parse_since(raw: &str) -> anyhow::Result<Since> {
+    if let Ok(seq) = raw.parse::<u64>() {
+        return Ok(Since::Seq(seq));
+    }
     DateTime::parse_from_rfc3339(raw)
-        .map(|dt| dt.with_timezone(&Utc))
-        .with_context(|| format!("invalid RFC 3339 timestamp: {raw}"))
+        .map(|dt| Since::Ts(dt.with_timezone(&Utc)))
+        .with_context(|| format!("expected a seq or an RFC 3339 timestamp: {raw}"))
 }
 
 fn build_palette(cfg: &Config) -> BTreeMap<String, String> {
@@ -154,11 +164,16 @@ fn matches_filters(ctx: &ViewContext, event: &Event) -> bool {
     {
         return false;
     }
-    if let Some(since) = ctx.since
-        && let Ok(ts) = DateTime::parse_from_rfc3339(&event.ts)
-        && ts.with_timezone(&Utc) < since
-    {
-        return false;
+    match ctx.since {
+        Some(Since::Seq(seq)) if event.seq < seq => return false,
+        Some(Since::Ts(since)) => {
+            if let Ok(ts) = DateTime::parse_from_rfc3339(&event.ts)
+                && ts.with_timezone(&Utc) < since
+            {
+                return false;
+            }
+        }
+        _ => {}
     }
     if let Some(grep) = &ctx.opts.grep {
         let formatted = format_event(ctx, event);
@@ -366,5 +381,13 @@ mod tests {
         )
         .unwrap();
         assert!(agent_matches(&event, "doc-worker"));
+    }
+
+    #[test]
+    fn since_accepts_a_seq_or_a_timestamp() {
+        assert_eq!(parse_since("388").unwrap(), Since::Seq(388));
+        let ts = parse_since("2026-09-06T14:21:52Z").unwrap();
+        assert!(matches!(ts, Since::Ts(t) if t.to_rfc3339() == "2026-09-06T14:21:52+00:00"));
+        assert!(parse_since("yesterday").is_err());
     }
 }

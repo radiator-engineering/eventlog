@@ -7,7 +7,7 @@ log for new lines.
 ```sh
 eventlog view [--log <name|path>] [--json] [--follow]
               [--type <t1,t2,...>] [--agent <name>] [--by <name>]
-              [--since <rfc3339>] [--last <n>] [--grep <text>]
+              [--since <seq|rfc3339>] [--last <n>] [--grep <text>]
               [--color auto|always|never]
 ```
 
@@ -17,7 +17,7 @@ eventlog view [--log <name|path>] [--json] [--follow]
 | `--type <t1,t2,...>` | Only events whose `type` is in this comma-separated list. |
 | `--agent <name>` | Only events where `name` matches the event's `agent`, `by`, `from`, or `to` field. |
 | `--by <name>` | Only events whose writer (`by`, or `"controller"` when absent) equals `name`. |
-| `--since <rfc3339>` | Only events with `ts` at or after this RFC 3339 timestamp. |
+| `--since <seq\|rfc3339>` | Only events from this `seq` on, or with `ts` at or after this RFC 3339 timestamp. A bare integer is a seq. |
 | `--last <n>` | Keep only the last `n` events after the other filters are applied. |
 | `--grep <text>` | Only events where the formatted line, or the raw JSON line, contains `text`. |
 | `--color auto\|always\|never` | Color the type and agent columns. `auto` (default) colors only when stdout is a terminal. |
