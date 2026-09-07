@@ -91,6 +91,7 @@ printf after > docs/page.md
 printf unrelated > .context/unrelated.txt
 wait"#,
     );
+    fs::write(dir.path().join(".gitignore"), ".context/unrelated.txt\n").unwrap();
     action(&dir, &log)
         .assert()
         .failure()
@@ -143,4 +144,19 @@ printf after > docs/page.md"#,
         .success()
         .stdout(predicates::str::contains("outcome=updated"));
     assert!(fs::read_to_string(log).unwrap().contains("concurrent"));
+}
+
+#[test]
+fn docs_action_loads_root_policy_from_subdirectory() {
+    let (dir, log) = fixture("printf after > docs/page.md");
+    fs::create_dir(dir.path().join("nested")).unwrap();
+    action(&dir, &log)
+        .current_dir(dir.path().join("nested"))
+        .assert()
+        .success()
+        .stdout(predicates::str::contains("outcome=updated"));
+    assert_eq!(
+        fs::read_to_string(dir.path().join("docs/page.md")).unwrap(),
+        "after"
+    );
 }

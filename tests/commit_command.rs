@@ -288,3 +288,25 @@ fn configured_commit_syncs_deletions_without_consuming_other_staging() {
         ""
     );
 }
+
+#[test]
+fn configured_commit_uses_repo_relative_paths_from_a_subdirectory() {
+    let dir = fixture("git commit -qm 'feat: root policy from subdirectory'");
+    fs::create_dir(dir.path().join("nested")).unwrap();
+    Command::cargo_bin("eventlog")
+        .unwrap()
+        .current_dir(dir.path().join("nested"))
+        .env("EVENTLOG_PATHS", "target.txt")
+        .args(["action", "commit"])
+        .assert()
+        .success()
+        .stdout(predicates::str::contains("outcome=committed"));
+    assert_eq!(
+        git(&dir, &["log", "-1", "--format=%s"]),
+        "feat: root policy from subdirectory"
+    );
+    assert_eq!(
+        git(&dir, &["diff", "--cached", "--name-only"]),
+        "unrelated.txt"
+    );
+}

@@ -16,6 +16,11 @@ pub fn run(args: &Args) -> anyhow::Result<i32> {
     let Command::Action(action) = &args.command else {
         anyhow::bail!("action::run called with wrong subcommand");
     };
+    // Scope, policy and relative commands all use repository-relative paths.
+    let root = git_output(&["rev-parse", "--show-toplevel"])?;
+    let root = String::from_utf8(root).context("repository root is not UTF-8")?;
+    std::env::set_current_dir(root.strip_suffix('\n').unwrap_or(&root))
+        .context("enter repository root")?;
     match &action.inner {
         ActionInner::Commit { message } => commit(message),
         ActionInner::Docs => docs(),
