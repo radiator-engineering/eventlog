@@ -5,9 +5,9 @@ Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
 | --- | --- | --- | --- | --- |
-| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-4 reported; awaiting review |
+| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-5 root-policy fixes |
 | infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | approved; awaiting integration |
-| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | round-4 acceptance gate |
+| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | round-4 changes requested; awaiting setup |
 
 All three interactive Codex TUIs were visually verified on the assigned model and worktree, with their initial assignment submitted and work underway. Initial Herdr start calls returned agent_not_ready due to repository/hook trust menus; the controller accepted trust for this authorized repository and the Herdr hooks just installed, then verified that all agents began working. No model downgrade or headless fallback.
 
@@ -54,3 +54,14 @@ remains `9c9b03f3c04aaa3b4cb2995cc50d508e1f01ecd9937b53e80acb9081a9cf34e8`.
 Both implementation workers finished; review had been idle awaiting routing.
 Reviewer released for the combined gate via `infra-review-round4.md`, including
 verification of extensionless file and dotted directory root semantics.
+
+## Round 5 (2026-09-07)
+
+Round-four verdict: CHANGES_REQUESTED. Runtime remains acceptable and the
+combined full tests, changed-file formatting, strict Clippy, default native
+closed loop and resume pass. Two setup defects remain: extension-based root
+classification breaks extensionless files and empty directories; invalid
+root policy panics during preview. Both are routed in `infra-setup-round5.md`.
+The reviewer requires literal root claims and real lifecycle/action tests,
+plus controlled invalid-policy errors with no mutation. Integration still
+waits for combined APPROVE; unchanged runtime/loop evidence can be preserved.
