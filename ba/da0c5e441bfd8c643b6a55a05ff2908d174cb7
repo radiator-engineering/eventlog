@@ -1,0 +1,16 @@
+src/react/voter.rs
+  h_63f2916b00d585 24-25,102,138-142,146,162-169
+tests/react_voter.rs
+  h_63f2916b00d585 333-398
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bada0c5e441bfd8c643b6a55a05ff2908d174cb7",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
