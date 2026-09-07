@@ -1,0 +1,14 @@
+tests/guard.rs
+  h_63f2916b00d585 204-414
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "7c1a08f0af11c8c04ba66201cd31a115e1c06615",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
