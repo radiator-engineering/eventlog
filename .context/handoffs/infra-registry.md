@@ -1,17 +1,17 @@
 # Upstream infrastructure work registry
 
-Controller: handed to the event-log coordinator (Claude, Herdr session event-log, w6:p6) on 2026-09-07 after the round-1 review. Workers moved into Herdr session event-log at the user's request; current addresses are below.
+Controller: event-log coordinator (Codex, Herdr session event-log, w6:p6), succeeding the Claude coordinator on 2026-09-07. Workers moved into Herdr session event-log at the user's request; preserved session addresses are below.
 Contract: .context/handoffs/infra-contract.md. Baseline: 5679da4.
 
 | Agent | Model | Workspace / tab / pane | Worktree / branch | Status |
 | --- | --- | --- | --- | --- |
-| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | round-5 reported; awaiting review |
-| infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | approved; awaiting integration |
-| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | final root-policy acceptance gate |
+| infra-setup | gpt-5.6-terra high | w9 / w9:t1 / w9:p1 | .worktrees/infra-setup / feat/reusable-setup | accepted, integrated into main, retired seq 681 |
+| infra-runtime | gpt-5.6-terra high | wA / wA:t1 / wA:p1 | .worktrees/infra-runtime / fix/action-runtime | accepted, integrated into main, retired seq 689 |
+| infra-review | gpt-5.6-sol high | wB / wB:t1 / wB:p1 | .worktrees/infra-review / review/reusable-infra | APPROVE, report committed, retired seq 679 |
 
 All three interactive Codex TUIs were visually verified on the assigned model and worktree, with their initial assignment submitted and work underway. Initial Herdr start calls returned agent_not_ready due to repository/hook trust menus; the controller accepted trust for this authorized repository and the Herdr hooks just installed, then verified that all agents began working. No model downgrade or headless fallback.
 
-The user requested dispatch in other workspaces. Tabs remain open because their assignments are in progress, not because their results were accepted. No implementation is yet accepted, committed or deployed. Read agents by their pane IDs; inspect reports and route seams, then integrate/verify before recording final results and retiring them. Worker diffs are uncommitted by policy. Independent reviewer report lives in infra-review/.context/reports/infra-review.md (under the worktree).
+Implementation and review are complete and committed on main. Worker worktrees retain their uncommitted source snapshots by policy; their sessions remain available, but their log lifecycles are retired. The final independent report is committed at `.context/reports/infra-review.md`. See `infra-integration.md` for exact commits and validation. Production Drove cutover and release were not part of this integration.
 
 Controller installed missing Herdr Codex/Claude status integrations as required for native worker tracking. No live reactor was restarted or contacted. Drove production files and its coordination log were untouched by this dispatch; upstream event-log owns the new lifecycle events and briefs.
 
@@ -72,3 +72,16 @@ all five untracked hashes unchanged, runtime unchanged. Literal root lifecycle
 and docs-action tests and invalid-policy nonmutation tests pass with focused
 tests, formatting, Clippy and whitespace checks. Reviewer released via
 `infra-review-round5.md` for the final combined gate.
+
+## Accepted and integrated (2026-09-07)
+
+Final verdict APPROVE recorded at seq 677; report committed as `c0e9b59`.
+Setup acceptance was recorded before retirement to release its broad `src/cmd`
+claim, allowing the already-approved runtime scope exception to integrate.
+Runtime result seq 688 landed as `446938c` and `5424e9b`. Setup result seq 693
+landed as `4974600`, `861a389`, `15b8596`, and `1b30158`.
+All 17 integrated product files match the approved candidate byte-for-byte.
+Main passed changed-file rustfmt, strict all-target/all-feature Clippy,
+and the full test suite: 204 passed, 0 failed, 1 intentional protection skip.
+All three worker lifecycles are retired. Reactors continue normal documentation
+and commit processing without a restart or manual prompt.
