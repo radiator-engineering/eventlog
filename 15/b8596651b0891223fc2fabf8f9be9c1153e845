@@ -1,0 +1,19 @@
+src/cmd/action.rs
+  s_64cd7810333b01::t_c641f667c47316 1-404
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "15b8596651b0891223fc2fabf8f9be9c1153e845",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
