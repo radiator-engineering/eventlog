@@ -23,3 +23,10 @@ Round-1 verdict: CHANGES_REQUESTED (`.worktrees/infra-review/.context/reports/in
 Reviewed hashes, not accepted: setup `043784be…51db5`, runtime `36980d23…9b082`.
 Routed: findings 1–6 → infra-setup (`infra-setup-fixes.md`, seq 617); finding 7 → infra-runtime (`infra-runtime-fixes.md`, seq 618); re-review gate → infra-review (`infra-review-round2.md`, seq 619).
 Integration waits for an `APPROVE` against refreshed hashes after the mandatory closed-loop gate.
+
+## Round 3 (2026-09-07)
+
+Round-2 verdict: CHANGES_REQUESTED. Round-1 findings 1–7 all pass, including the mandatory native closed loop (source commit → ack with OID → one docs call → docs result → docs commit → final ack; unrelated staging preserved; no locks left) and the lock-reclaim race fix (30/30).
+Reviewed hashes, not accepted: setup `d2fcc938…30b49`, runtime `1999e944…53050`.
+Two findings remain. Routed: customized setup values must drive the generated Drove reactors → infra-setup (`infra-setup-round3.md`, seq 628); invalid UTF-8 stderr overflows the ack detail limit → infra-runtime (`infra-runtime-round3.md`, seq 629). Seam seq 625 is now round-2 finding 1.
+Integration order on APPROVE: infra-runtime first (4 files), then infra-setup (12 files); path sets do not overlap.
