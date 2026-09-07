@@ -157,7 +157,9 @@ fn read_token(dir: &Path) -> Option<Token> {
 ///
 /// The token is read again first: between reading a dead token and acting on
 /// it, another process may have reclaimed the lock and taken it, and renaming
-/// then would tear a live lock away from its holder.
+/// then would tear a live lock away from its holder. The second check must be
+/// *after* the rename too: another caller can replace the dead directory in
+/// the small interval between our check and rename.
 fn reclaim(dir: &Path, dead: &Token, me: &Token) {
     match read_token(dir) {
         Some(now) if &now == dead && !now.is_live(me) => {}
@@ -171,7 +173,19 @@ fn reclaim(dir: &Path, dead: &Token, me: &Token) {
     stale.push(format!(".stale.{}-{}", std::process::id(), nanos));
     let stale = PathBuf::from(stale);
     if fs::rename(dir, &stale).is_ok() {
-        let _ = fs::remove_dir_all(&stale);
+        // Do not delete merely because the directory was dead when we first
+        // looked. A fresh holder may have created the directory between that
+        // read and our atomic rename. Restore anything other than the same,
+        // still-dead token; if another holder won the vacant name first, the
+        // restore safely fails and this caller retries against that holder.
+        match read_token(&stale) {
+            Some(now) if now == *dead && !now.is_live(me) => {
+                let _ = fs::remove_dir_all(&stale);
+            }
+            _ => {
+                let _ = fs::rename(&stale, dir);
+            }
+        }
     }
 }
 
