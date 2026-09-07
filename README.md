@@ -41,6 +41,7 @@ A reactor that commits a file outside the `paths=` it was given appends a `viola
 ## Documentation
 
 - [Run a log-driven repo](docs/how-to/run-a-log-driven-repo.md): the how-to for setting this up on a project.
+- [Cut a release](docs/how-to/cut-a-release.md): generate the changelog with git-cliff, tag, and publish.
 - [Command reference](docs/reference/eventlog-cli-surface.md): every subcommand, with a page per command in `docs/reference/`.
 - [Design notes](docs/explanation/): the invariants worth understanding before you change the code.
 - [Decisions](.context/DECISIONS.md): every design decision this repo has taken, dated, with the log seq that recorded it.
