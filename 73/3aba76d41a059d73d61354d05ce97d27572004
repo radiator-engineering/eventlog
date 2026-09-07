@@ -1,0 +1,40 @@
+tests/react_loop.rs
+  s_1221f4d81bbcdb::t_5d154915cfdb74 449-465
+src/cmd/react.rs
+  s_1221f4d81bbcdb::t_ee1e637069bbce 11-12,55-57,70-73,83,219
+Cargo.lock
+  s_d0fafb0b788ce6::t_0cf245043a1b06 127-135,184-189,337-347,398-409,448,825-836,871-885
+Cargo.toml
+  s_d0fafb0b788ce6::t_00d8555c342890 35
+src/react/mod.rs
+  s_d0fafb0b788ce6::t_95b3137987af63 20,36-37,199-205,208,210-214,216,632,644-651
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "733aba76d41a059d73d61354d05ce97d27572004",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1221f4d81bbcdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9a34faa-3c0b-4b2f-af5d-ad08a1ea6c48",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_d0fafb0b788ce6": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6b71733b-0990-4978-9b68-b9806288e30d",
+        "model": "composer-2.5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
