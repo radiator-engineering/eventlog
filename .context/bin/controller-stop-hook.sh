@@ -54,7 +54,9 @@ fi
 now="$(date +%s)"; newest=0
 while IFS= read -r f; do
   [ -n "$f" ] || continue
-  if [ -e "$f" ]; then m="$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo "$now")"; else m="$now"; fi
+  # A deleted file has no mtime. Treating it as "now" would nag forever after a
+  # result already named it, so it does not move `newest` on its own.
+  if [ -e "$f" ]; then m="$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo "$now")"; else m=0; fi
   [ "$m" -gt "$newest" ] && newest="$m"
 done <<<"$changed"
 last_ts="$(jq -r 'select(.type=="result" and ((.by==null) or (.by=="controller"))) | .ts' "$LOG" 2>/dev/null | tail -1)"
