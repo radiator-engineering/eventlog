@@ -124,9 +124,32 @@ eventlog react --as doc-worker --on ack --filter by=committer --filter outcome=c
 
 `action commit` stages and commits only validated `EVENTLOG_PATHS`; it rejects
 target paths that were already staged and keeps unrelated staged work intact.
+An optional `[commit].command` argv invokes the project's commit-author model
+in a disposable clone, after authorized additions, edits and deletions have
+been copied and staged. The command must create commits there. It receives
+`EVENTLOG_MODEL`, the concrete `EVENTLOG_PATHS`, the driving event on stdin,
+and `EVENTLOG_COMMIT_MESSAGE`; an argv entry exactly `{model}` is replaced
+with `[commit].model`. Model labels alone do not invoke a model. For example,
+configure `command = ["python3", ".context/bin/model-command.py", "commit"]`
+and have that thin command invoke Cursor with `EVENTLOG_MODEL`.
+
+Every produced commit is checked against the authorized paths before its
+history is published to the source branch. Unrelated staging is preserved;
+changed source HEAD/index/files abort publication. Multiple accepted commits
+are reported with all their OIDs. A command that commits successfully and
+then exits nonzero still reports the verified commits, with its exit status
+in the detail. No commit after a command failure is a failed action. A clean
+authorized scope skips without invoking the command. Without a configured
+command, direct `--message` behavior is retained. Commands are trusted local
+programs; the disposable clone is file/commit isolation, not an OS sandbox.
+
 `action docs` executes `[docs].command` as argv (no shell interpolation) and
 reports the added, deleted, or modified files below `[docs].roots`, including
-files already dirty before the command. Set `docs.command` to a local stub in
+files already dirty before the command. The active log and its reserved
+sidecars are excluded from content snapshots so concurrent reactor writes
+do not fail the docs action; other files outside the roots remain checked.
+No documentation changes returns `skipped` without appending a result.
+Set `docs.command` to a local stub in
 tests. An empty command or a failing model command is a failed action, never a
 successful no-op. Under a reactor (when `EVENTLOG_LOG` and `EVENTLOG_REF` are
 set), it appends one `result` attributed to `[docs].identity`; when that result
