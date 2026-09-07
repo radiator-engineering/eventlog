@@ -1,0 +1,29 @@
+.context/handoffs/mutants-guard-deny.md
+  s_fe9b2f862f1e0f::t_4952049addbe33 1-48
+.context/handoffs/mutants-query-fold.md
+  s_1221f4d81bbcdb::t_477e8df8933a71 1-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "756f7fb508f20c521bbbb21600d69502a1b38e3c",
+  "prompts": {},
+  "sessions": {
+    "s_1221f4d81bbcdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9a34faa-3c0b-4b2f-af5d-ad08a1ea6c48",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    },
+    "s_fe9b2f862f1e0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "91d7d350-b201-48a4-9416-a8738988a736",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
