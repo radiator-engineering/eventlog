@@ -201,3 +201,214 @@ fn a_pipe_inside_a_quoted_jq_filter_is_a_read_not_a_compound_command() {
     let dec = eventlog::guard::deny::decide(&action, std::path::Path::new(".context/events.jsonl"));
     assert!(matches!(dec, eventlog::guard::deny::Decision::Deny(_)));
 }
+
+// ---------------------------------------------------------------------------
+// Mutation-killing tests for src/guard/deny.rs. Each test pins one branch that
+// `cargo mutants` found unobserved. Decisions are taken in-process through
+// `decide`, except where a mutant would hang (then the binary runs under a
+// timeout) or where the behaviour depends on the environment.
+// ---------------------------------------------------------------------------
+
+use eventlog::guard::{Action, Decision, decide, is_simple_sanctioned_writer};
+use std::time::Duration;
+
+fn decision(command: &str) -> Decision {
+    decide(
+        &Action::Shell {
+            command: command.to_string(),
+        },
+        Path::new(".context/events.jsonl"),
+    )
+}
+
+fn assert_allowed_cmd(command: &str) {
+    assert_eq!(decision(command), Decision::Allow, "{command} should be allowed");
+}
+
+fn assert_denied_cmd(command: &str, reason_fragment: &str) {
+    match decision(command) {
+        Decision::Deny(reason) => assert!(
+            reason.contains(reason_fragment),
+            "{command}: denied, but reason {reason:?} does not mention {reason_fragment:?}"
+        ),
+        Decision::Allow => panic!("{command} should be denied"),
+    }
+}
+
+/// `eventlog guard` in a scratch repo with `env` set, killed after `timeout`.
+fn guard_cmd_with(
+    dir: &Path,
+    payload: &str,
+    env: &[(&str, &str)],
+    timeout: Duration,
+) -> std::process::Output {
+    let mut cmd = Command::cargo_bin("eventlog").unwrap();
+    cmd.current_dir(dir)
+        .args(["guard", "--log", ".context/events.jsonl"])
+        .write_stdin(payload.to_string())
+        .timeout(timeout);
+    for (k, v) in env {
+        cmd.env(k, v);
+    }
+    cmd.output().unwrap()
+}
+
+// protected_basename: EVENTLOG_GUARD_BASENAME wins when set and non-empty.
+
+#[test]
+fn guard_basename_env_var_overrides_the_log_path() {
+    let dir = scratch();
+    let env = [("EVENTLOG_GUARD_BASENAME", "custom.jsonl")];
+    let out = guard_cmd_with(
+        dir.path(),
+        &bash_payload("rm custom.jsonl"),
+        &env,
+        Duration::from_secs(30),
+    );
+    assert_denied(&out, "rm custom.jsonl with EVENTLOG_GUARD_BASENAME=custom.jsonl");
+    let out = guard_cmd_with(
+        dir.path(),
+        &bash_payload("rm .context/events.jsonl"),
+        &env,
+        Duration::from_secs(30),
+    );
+    assert_eq!(
+        out.status.code(),
+        Some(0),
+        "with the basename overridden, events.jsonl is no longer protected"
+    );
+}
+
+#[test]
+fn an_empty_guard_basename_env_var_falls_back_to_the_log_path() {
+    let dir = scratch();
+    let env = [("EVENTLOG_GUARD_BASENAME", "")];
+    let out = guard_cmd_with(
+        dir.path(),
+        &bash_payload("rm .context/events.jsonl"),
+        &env,
+        Duration::from_secs(30),
+    );
+    assert_denied(&out, "rm events.jsonl with EVENTLOG_GUARD_BASENAME empty");
+}
+
+// is_simple_sanctioned_writer: each redirect and background character alone
+// disqualifies the writer.
+
+#[test]
+fn a_sanctioned_writer_with_any_redirect_or_background_is_not_simple() {
+    assert!(is_simple_sanctioned_writer("eventlog append note x=1"));
+    assert!(!is_simple_sanctioned_writer("eventlog append note x=1 > out.txt"));
+    assert!(!is_simple_sanctioned_writer("eventlog append note x=1 < seed.txt"));
+    assert!(!is_simple_sanctioned_writer("eventlog append note x=1 &"));
+    assert!(!is_simple_sanctioned_writer("append-event.sh note x=1 & rm y"));
+}
+
+#[test]
+fn a_sanctioned_writer_redirected_into_the_log_is_denied() {
+    assert_denied_cmd(
+        "eventlog append note x=1 > .context/events.jsonl",
+        "truncating redirect",
+    );
+}
+
+#[test]
+fn a_backgrounded_sanctioned_writer_does_not_launder_a_following_rm() {
+    assert_denied_cmd("eventlog append note x=1 & rm .context/events.jsonl", "'rm'");
+}
+
+// truncating_redirect_into_log: a `>` inside quotes is text, not a redirect.
+
+#[test]
+fn a_redirect_inside_single_quotes_is_not_a_redirect() {
+    assert_allowed_cmd(
+        r#"jq -c 'select(.ref == "> .context/events.jsonl")' .context/events.jsonl"#,
+    );
+}
+
+#[test]
+fn a_redirect_inside_double_quotes_is_not_a_redirect() {
+    assert_allowed_cmd(r#"grep -F "> .context/events.jsonl" .context/events.jsonl"#);
+}
+
+#[test]
+fn an_unquoted_truncating_redirect_into_the_log_is_denied() {
+    assert_denied_cmd("echo x > .context/events.jsonl", "truncating redirect");
+    // `>|` is caught earlier by the compound-command rule (the `|`), so only
+    // the decision is pinned here, not the reason.
+    assert!(matches!(
+        decision("echo x >| .context/events.jsonl"),
+        Decision::Deny(_)
+    ));
+    assert_allowed_cmd("echo x >> .context/events.jsonl");
+}
+
+// opens_for_writing: a read-only open() must be allowed, and scanning must
+// move past each match (a stuck scan would hang the guard).
+
+#[test]
+fn an_interpreter_opening_the_log_for_reading_is_allowed() {
+    let dir = scratch();
+    let out = guard_cmd_with(
+        dir.path(),
+        &bash_payload(r#"python3 -c "print(open('.context/events.jsonl').read())""#),
+        &[],
+        Duration::from_secs(20),
+    );
+    assert_eq!(
+        out.status.code(),
+        Some(0),
+        "read-only open() should be allowed; stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let out = guard_cmd_with(
+        dir.path(),
+        &bash_payload(r#"python3 -c "open('x').read(); open('.context/events.jsonl','w')""#),
+        &[],
+        Duration::from_secs(20),
+    );
+    assert_denied(&out, "a later open(...,'w') after a read-only open()");
+}
+
+// mutation_reason: the in-place edit check per interpreter.
+
+#[test]
+fn perl_flag_clusters_containing_i_are_in_place_edits() {
+    assert_denied_cmd(
+        "perl -pi -e s/a/b/ .context/events.jsonl",
+        "in-place 'perl -i'",
+    );
+}
+
+#[test]
+fn only_perl_treats_an_i_anywhere_in_a_flag_as_in_place() {
+    // `--quiet` carries an `i` but is not `sed -i`.
+    assert_allowed_cmd("sed --quiet 1p .context/events.jsonl");
+    assert_denied_cmd("sed -i.bak d .context/events.jsonl", "in-place 'sed -i'");
+}
+
+#[test]
+fn a_quoted_perl_switch_word_is_judged_whole() {
+    // The quoted argument is one word starting with `-` that carries an `i`,
+    // so it is judged as a perl flag cluster.
+    assert_denied_cmd("perl '-e print' .context/events.jsonl", "in-place 'perl -i'");
+}
+
+// mutation_reason: the tee append check, clause by clause.
+
+#[test]
+fn tee_without_append_into_the_log_is_denied() {
+    assert_denied_cmd("tee .context/events.jsonl", "non-append 'tee'");
+}
+
+#[test]
+fn tee_with_append_into_the_log_is_allowed() {
+    assert_allowed_cmd("tee -a .context/events.jsonl");
+    assert_allowed_cmd("tee --append .context/events.jsonl");
+    assert_allowed_cmd("tee -ai .context/events.jsonl");
+}
+
+#[test]
+fn a_tee_flag_without_a_is_not_append() {
+    assert_denied_cmd("tee -i .context/events.jsonl", "non-append 'tee'");
+}
