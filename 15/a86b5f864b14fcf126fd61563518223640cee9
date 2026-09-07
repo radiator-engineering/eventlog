@@ -1,0 +1,19 @@
+.context/handoffs/drove-consumer-cutover.md
+  s_64cd7810333b01::t_fdce1f93cdecf5 126-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "15a86b5f864b14fcf126fd61563518223640cee9",
+  "prompts": {},
+  "sessions": {
+    "s_64cd7810333b01": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07cab-5ff2-7480-8fa3-13a8d2be093e",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
