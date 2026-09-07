@@ -37,3 +37,4 @@ how the pane starts changed, not who counts as the controller.
 ## See also
 
 - [Why the reactor panes hand their loop to `eventlog react`](reactor-runtime-switch.md) — the equivalent story for the `maintenance` workspace's reactor panes, which are still spawned agents, not `caller_pane`.
+- [Why the Drovefile pins the herdr session](drovefile-session-pin.md) — another Drovefile change that makes `drove up` behave the same regardless of where you run it from.
