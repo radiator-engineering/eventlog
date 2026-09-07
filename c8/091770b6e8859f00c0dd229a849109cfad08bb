@@ -1,0 +1,28 @@
+src/cmd/react.rs
+  s_1221f4d81bbcdb::t_ee1e637069bbce 11-12,55-57,70-73,83,219
+docs/reference/view.md
+  h_63f2916b00d585 10,20
+src/cmd/view.rs
+  h_63f2916b00d585 32,99-109,111-112,167-176,385-392
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c8091770b6e8859f00c0dd229a849109cfad08bb",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1221f4d81bbcdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9a34faa-3c0b-4b2f-af5d-ad08a1ea6c48",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
