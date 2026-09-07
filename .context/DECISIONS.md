@@ -150,3 +150,25 @@ or the controller's `result agent=<worker>`, is not "other". A controller
 result with no `agent` naming a path an open agent claims is still vetoed.
 The fold now keys escalations by subject and seq, defaults a worker
 escalation's subject to its `by=`, and `approval for=<seq>` closes exactly one.
+
+## layout-owner = Drovefile via drove up (2026-09-06)
+`layout.sh` is retired. The `Drovefile` (drove 0.1.0, v3 form) owns the herdr
+layout: the controller is the `caller_pane`, the log view runs `eventlog view -f`,
+the monitor tab adds `eventlog tui`, and each reactor pane runs `eventlog react`
+directly against its `.context/bin/*-action.sh`. Drove does not yet run pane
+`on_start` hooks, so the controller appends the reactors' `spawn` by hand after
+`drove up` (seqs 400, 401).
+
+## controller-writer = eventlog append (2026-09-06)
+The controller's own commands moved from `append-event.sh` to `eventlog append`;
+`eventlog doctor --fix` removed the `~/.local/bin` shell-script symlinks. Reads
+use `eventlog view` / `eventlog state`.
+
+## log-protected = chflags uappnd (2026-09-06)
+`eventlog protect` ran on the coordination log. `>>` appends still work;
+truncate, overwrite and `rm` are refused by the kernel. Lift with
+`eventlog protect --off` before any intentional removal.
+
+## handoff-briefs = committed (2026-09-06)
+The `.context/handoffs/*.md` briefs are tracked. The log names them by `ref=`,
+so a replay needs them in history.
