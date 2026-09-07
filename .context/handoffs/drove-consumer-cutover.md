@@ -5,13 +5,13 @@ mediate with the Drove controller to finish the original setup/reset repair
 in `/Users/jjmartin/Development/Drove` (`../Drove`). This is coordination
 between the existing controllers, not a new worker lifecycle.
 
-## Installed upstream
+## Initial installed upstream (historical)
 
 `cargo install --path . --locked --force` completed from event-log source
 `e685252f7dd81bf9deabb364dc3f905b8584016d`. Installed executable:
 `/Users/jjmartin/.cargo/bin/eventlog`. SHA-256 matches target/release/eventlog:
 `14c65b1764eae1882581417e549588bb90be0de50aba4d1951676ce13a56bc45`.
-The version string remains 0.1.0; the verified help now includes setup,
+This initial development snapshot reported 0.1.0; the verified help now includes setup,
 action and lifecycle. The Codex and Claude embedded skill copies were refreshed.
 
 Upstream implementation is accepted and committed. Read
@@ -158,3 +158,7 @@ docs trigger was suppressed at 567. Independent final verification found:
   events; no open intents or escalations.
 
 The requested upstream reinstall and Drove setup/recovery repair are complete.
+
+Both installation hashes recorded here predate publication and reported
+0.1.0 development snapshots. The public capability baseline is the pending
+0.2.0 release, tracked in GitHub PR #1; these hashes are historical evidence.

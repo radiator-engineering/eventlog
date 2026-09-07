@@ -15,7 +15,7 @@ Implementation and review are complete and committed on main. Worker worktrees r
 
 Controller installed missing Herdr Codex/Claude status integrations as required for native worker tracking. No live reactor was restarted or contacted. Drove production files and its coordination log were untouched by this dispatch; upstream event-log owns the new lifecycle events and briefs.
 
-User-requested Sol context refresh (2026-09-07): reviewer saved its findings, pinned diffs, disposable reproduction paths, completed checks, and next steps in its claimed report. Controller archived the handoff as `.context/handoffs/infra-review-refresh.md`, issued `/new` in the same w7J:p1 pane, and verified gpt-5.6-sol high with Context 0% used. Original review scope and worktree persist; fresh session resumes from the handoff. Open tab remains justified for ongoing review. Findings remain worker-reported and implementation is not accepted.
+Historical, superseded by acceptance below — user-requested Sol context refresh (2026-09-07): reviewer saved its findings, pinned diffs, disposable reproduction paths, completed checks, and next steps in its claimed report. Controller archived the handoff as `.context/handoffs/infra-review-refresh.md`, issued `/new` in the same w7J:p1 pane, and verified gpt-5.6-sol high with Context 0% used. Original review scope and worktree persist; fresh session resumes from the handoff. Open tab remains justified for ongoing review. Findings remain worker-reported and implementation is not accepted.
 
 ## Round 2 (2026-09-07)
 
