@@ -1,0 +1,20 @@
+docs/explanation/reactor-lock-liveness.md
+  s_0cd6e5fa6baf67::t_f50d082c9526a1 73-104,109
+  s_0cd6e5fa6baf67::t_458b873ee76021 105-108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "11fb6012d5d62d3ca7066a38bf482161568deb13",
+  "prompts": {},
+  "sessions": {
+    "s_0cd6e5fa6baf67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2469ded3-ccf9-49db-b7cd-34840e9bf514",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
