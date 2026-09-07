@@ -1,0 +1,21 @@
+.context/handoffs/infra-registry.md
+  s_f865b873253a42::t_d46f0bb20156a5 43-48
+.context/handoffs/infra-setup-round4.md
+  s_f865b873253a42::t_60f1f54a1871ef 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "31f98cbe1395ca209f1040d58ead76538f107cb6",
+  "prompts": {},
+  "sessions": {
+    "s_f865b873253a42": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07c4b-bd41-7623-b0fd-973cd1eda368",
+        "model": "unknown"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
