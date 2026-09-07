@@ -121,10 +121,16 @@ pub fn run(
         Some(join_pipe(stderr_reader, "read action stderr")?)
     };
     if !timed_out {
-        stdin_writer
+        let written = stdin_writer
             .join()
-            .map_err(|_| anyhow::anyhow!("action stdin writer panicked"))?
-            .context("write action stdin")?;
+            .map_err(|_| anyhow::anyhow!("action stdin writer panicked"))?;
+        // An action may deliberately close stdin without consuming its event.
+        // Keep its exit status and outcome; only other write errors are fatal.
+        if let Err(err) = written
+            && err.kind() != std::io::ErrorKind::BrokenPipe
+        {
+            return Err(err).context("write action stdin");
+        }
     }
 
     // A deadline is authoritative. An action can write an optimistic outcome

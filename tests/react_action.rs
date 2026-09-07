@@ -326,6 +326,7 @@ fn touched_is_committed_files_only_and_newly_dirty_is_the_rest() {
 /// NUL-delimited Git output keeps unusual valid names exact. In particular,
 /// whitespace, quotes, newlines and a literal ` -> ` are not porcelain syntax.
 #[test]
+#[cfg(unix)]
 fn git_accounting_preserves_unusual_and_renamed_paths() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
@@ -351,4 +352,27 @@ fn git_accounting_preserves_unusual_and_renamed_paths() {
     let changed = touched(&before, &after, root);
     assert!(changed.contains(old));
     assert!(changed.contains(new));
+}
+
+#[cfg(unix)]
+#[test]
+fn run_preserves_outcome_when_action_closes_stdin_early() {
+    let file = tempfile::NamedTempFile::new().unwrap();
+    let env = test_env(file.path().to_path_buf());
+    let command = vec!["sh".into(), "-c".into(),
+        "exec 0<&-; printf 'outcome=skipped\\ndetail=no input needed\\n' > \"$EVENTLOG_OUTCOME_FILE\"".into()];
+    let result = run(
+        &command,
+        &"x".repeat(1024 * 1024),
+        &env,
+        Duration::from_secs(3),
+    )
+    .unwrap();
+    assert!(!result.timed_out);
+    assert_eq!(result.exit, 0);
+    assert!(
+        result
+            .fields
+            .contains(&("outcome".into(), "skipped".into()))
+    );
 }
