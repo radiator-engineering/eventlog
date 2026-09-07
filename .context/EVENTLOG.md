@@ -6,7 +6,7 @@ coordination facts, and points at bigger artifacts by path.
 
 ## Rules
 - **Single writer.** Only the controller/driver appends, and only via
-  `append-event.sh`. Workers report back; the controller records.
+  `eventlog append`. Workers report back; the controller records.
 - **Append-only.** Lines are never edited or deleted. "The log up to event N"
   is exactly what the system knew at event N — that is what makes it replayable
   and auditable.

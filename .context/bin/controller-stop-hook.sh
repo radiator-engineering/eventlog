@@ -45,7 +45,7 @@ fi
 [ "$newest" -gt "$last" ] || exit 0
 
 list="$(tr '\n' ',' <<<"$changed" | sed 's/,$//')"
-reason="Changed files have no result event yet: $list. This repo is log-driven: the commit reactor only commits what a result names. Before you finish, run: append-event.sh result ref=<main file> paths=$list summary=\"<one line>\" (do not git commit; do not ping the reactors). If you did not make some of these changes, still list them or tell the user they are uncommitted."
+reason="Changed files have no result event yet: $list. This repo is log-driven: the commit reactor only commits what a result names. Before you finish, run: eventlog append result ref=<main file> paths=$list summary=\"<one line>\" (do not git commit; do not ping the reactors). If you did not make some of these changes, still list them or tell the user they are uncommitted."
 if command -v jq >/dev/null; then jq -nc --arg r "$reason" '{decision:"block",reason:$r}'
 else printf '{"decision":"block","reason":%s}\n' "\"$(sed 's/"/\\"/g' <<<"$reason")\""; fi
 exit 0
