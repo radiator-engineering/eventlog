@@ -1,0 +1,26 @@
+src/cmd/react.rs
+  h_63f2916b00d585 250-263
+src/model/allow.rs
+  h_63f2916b00d585 22
+src/model/vocab.rs
+  h_63f2916b00d585 79
+src/react/action.rs
+  h_63f2916b00d585 120-124,126-132,215-218
+src/react/mod.rs
+  h_63f2916b00d585 113-122,341-346,349-354,366-379,556,567-573,590-591
+tests/react_action.rs
+  h_63f2916b00d585 2,125-193
+tests/react_loop.rs
+  h_63f2916b00d585 24-27,62-74,114-117,122,372-448
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "49adf4e7aca48053919c40b2524a8caf5d7426da",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
