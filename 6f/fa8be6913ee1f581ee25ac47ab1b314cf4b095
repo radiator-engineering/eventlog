@@ -1,0 +1,19 @@
+tests/react_loop.rs
+  s_1221f4d81bbcdb::t_5d154915cfdb74 449-465
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6ffa8be6913ee1f581ee25ac47ab1b314cf4b095",
+  "prompts": {},
+  "sessions": {
+    "s_1221f4d81bbcdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9a34faa-3c0b-4b2f-af5d-ad08a1ea6c48",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
