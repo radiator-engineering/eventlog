@@ -1,0 +1,26 @@
+docs/reference/scaffold.md
+  s_3164bf27b65423::t_536d8e9883514b 133
+docs/how-to/run-a-log-driven-repo.md
+  s_3164bf27b65423::t_c5506fd8429400 106-108
+  s_3164bf27b65423::t_528196c5aaf14b 34,36-38,41-43,46,51
+docs/reference/eventlog-cli-surface.md
+  s_3164bf27b65423::t_414b2782818535 44-46
+  s_3164bf27b65423::t_c997f0cd4320fa 9-14
+  s_3164bf27b65423::t_7b678ba1467aa9 79-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "e685252f7dd81bf9deabb364dc3f905b8584016d",
+  "prompts": {},
+  "sessions": {
+    "s_3164bf27b65423": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "824ecdf6-0999-4410-b130-c3d76ebf7158",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
