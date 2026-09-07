@@ -222,7 +222,11 @@ fn decision(command: &str) -> Decision {
 }
 
 fn assert_allowed_cmd(command: &str) {
-    assert_eq!(decision(command), Decision::Allow, "{command} should be allowed");
+    assert_eq!(
+        decision(command),
+        Decision::Allow,
+        "{command} should be allowed"
+    );
 }
 
 fn assert_denied_cmd(command: &str, reason_fragment: &str) {
@@ -265,7 +269,10 @@ fn guard_basename_env_var_overrides_the_log_path() {
         &env,
         Duration::from_secs(30),
     );
-    assert_denied(&out, "rm custom.jsonl with EVENTLOG_GUARD_BASENAME=custom.jsonl");
+    assert_denied(
+        &out,
+        "rm custom.jsonl with EVENTLOG_GUARD_BASENAME=custom.jsonl",
+    );
     let out = guard_cmd_with(
         dir.path(),
         &bash_payload("rm .context/events.jsonl"),
@@ -298,10 +305,16 @@ fn an_empty_guard_basename_env_var_falls_back_to_the_log_path() {
 #[test]
 fn a_sanctioned_writer_with_any_redirect_or_background_is_not_simple() {
     assert!(is_simple_sanctioned_writer("eventlog append note x=1"));
-    assert!(!is_simple_sanctioned_writer("eventlog append note x=1 > out.txt"));
-    assert!(!is_simple_sanctioned_writer("eventlog append note x=1 < seed.txt"));
+    assert!(!is_simple_sanctioned_writer(
+        "eventlog append note x=1 > out.txt"
+    ));
+    assert!(!is_simple_sanctioned_writer(
+        "eventlog append note x=1 < seed.txt"
+    ));
     assert!(!is_simple_sanctioned_writer("eventlog append note x=1 &"));
-    assert!(!is_simple_sanctioned_writer("append-event.sh note x=1 & rm y"));
+    assert!(!is_simple_sanctioned_writer(
+        "append-event.sh note x=1 & rm y"
+    ));
 }
 
 #[test]
@@ -314,7 +327,10 @@ fn a_sanctioned_writer_redirected_into_the_log_is_denied() {
 
 #[test]
 fn a_backgrounded_sanctioned_writer_does_not_launder_a_following_rm() {
-    assert_denied_cmd("eventlog append note x=1 & rm .context/events.jsonl", "'rm'");
+    assert_denied_cmd(
+        "eventlog append note x=1 & rm .context/events.jsonl",
+        "'rm'",
+    );
 }
 
 // truncating_redirect_into_log: a `>` inside quotes is text, not a redirect.
@@ -391,7 +407,10 @@ fn only_perl_treats_an_i_anywhere_in_a_flag_as_in_place() {
 fn a_quoted_perl_switch_word_is_judged_whole() {
     // The quoted argument is one word starting with `-` that carries an `i`,
     // so it is judged as a perl flag cluster.
-    assert_denied_cmd("perl '-e print' .context/events.jsonl", "in-place 'perl -i'");
+    assert_denied_cmd(
+        "perl '-e print' .context/events.jsonl",
+        "in-place 'perl -i'",
+    );
 }
 
 // mutation_reason: the tee append check, clause by clause.
