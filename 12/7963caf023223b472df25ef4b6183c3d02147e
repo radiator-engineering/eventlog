@@ -1,0 +1,21 @@
+README.md
+  s_14b89959c4bf4a::t_5f4ac7728a8966 40
+docs/explanation/agents-md-ownership.md
+  s_14b89959c4bf4a::t_4313fd25701383 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "127963caf023223b472df25ef4b6183c3d02147e",
+  "prompts": {},
+  "sessions": {
+    "s_14b89959c4bf4a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "59e14933-3877-4ce2-a5d3-a73f4ffc0786",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
