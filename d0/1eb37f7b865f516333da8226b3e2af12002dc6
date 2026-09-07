@@ -1,0 +1,14 @@
+Drovefile
+  h_63f2916b00d585 15-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "d01eb37f7b865f516333da8226b3e2af12002dc6",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
