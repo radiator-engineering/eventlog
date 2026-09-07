@@ -1,0 +1,16 @@
+docs/reference/view.md
+  h_63f2916b00d585 10,20
+src/cmd/view.rs
+  h_63f2916b00d585 32,99-109,111-112,167-176,385-392
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "dfe3b7c8e05fdac99e230b77b62ed3764dd3785c",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
