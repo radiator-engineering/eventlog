@@ -12,10 +12,8 @@ protect_log = task(
 
 control = workspace("control", panes = [
     herdr.tab("coordinator", split = herdr.DOWN, ratios = [0.5], panes = [
-        pane("controller", agent = agent(
-            kind = "claude",
-            prompt = "You are the controller for this repo. Read .context/handoffs/bootstrap.md and follow it.",
-        )),
+        # The pane that runs `drove up` becomes the controller; no second agent is started.
+        caller_pane("controller"),
         pane("eventlog", serve = ["eventlog", "view", "-f"]),
     ]),
     herdr.tab("monitor: system + agents", split = herdr.RIGHT, ratios = [0.5], panes = [
