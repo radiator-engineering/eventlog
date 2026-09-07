@@ -20,8 +20,10 @@ pub fn init(repo_root: &Path) -> anyhow::Result<()>;
 - Creates `.context/events.jsonl` if it does not already exist. An existing
   log is left alone.
 - Writes `.context/EVENTLOG.md` and `.context/eventlog.toml` from templates
-  embedded in the binary, only if the file's content differs from the
-  template (so a hand-edited file is not silently reverted on a second run).
+  embedded in the binary, only if the file does not already exist. Once a
+  file exists, `init` never rewrites it, even if its content no longer
+  matches the template — so a hand-edited copy is never reverted on a later
+  run (decision [`init-templates`](../../.context/DECISIONS.md)).
 - Appends any missing line from a fixed set to `.gitignore`:
   `.context/events.jsonl`, `.context/events.jsonl.lock`,
   `.context/*.reactor.lock/`, `.context/layout.json`.
@@ -96,6 +98,11 @@ or overwrite it. This is the same protection the `protect-log.sh`
 predecessor script offered, now built into the binary.
 
 ## Tests
+
+`src/scaffold/mod.rs` has a unit test, `init_keeps_a_hand_edited_template` —
+it runs `init`, overwrites `EVENTLOG.md` and `eventlog.toml` with arbitrary
+content, runs `init` again, and asserts both files still hold the
+overwritten content, not the template.
 
 `tests/scaffold.rs` covers:
 

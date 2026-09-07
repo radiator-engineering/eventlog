@@ -44,11 +44,11 @@ scaffolded defaults, including `fsync = false`. The
 optional strict mode, not a requirement — appropriate here because this log
 is local coordination state, not a durable system of record.
 
-One scaffolding gap: running `eventlog init` also overwrites a
-hand-maintained `EVENTLOG.md` with the template version, because `init` only
-compares `eventlog.toml`'s content against its template, not `EVENTLOG.md`'s.
-If that happens, restore `EVENTLOG.md` from git. This repo's own `init` is
-not yet idempotent for that one file — see
+`eventlog init` used to overwrite a hand-maintained `EVENTLOG.md` or
+`eventlog.toml` whenever its content no longer matched the embedded
+template — which is every hand-edited copy. `init` now writes each template
+only if the file does not already exist (decision `init-templates`), so a
+rerun leaves a hand-edited `EVENTLOG.md` or `eventlog.toml` alone; see
 [`eventlog init`](../reference/scaffold.md#eventlog-init--create-the-coordination-scaffold).
 
 ## See also
