@@ -1,0 +1,16 @@
+src/cmd/append.rs
+  h_63f2916b00d585 68
+src/scaffold/templates/EVENTLOG.md
+  h_63f2916b00d585 22,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "ab40573b755a8f600627b32e0bb9b1d0a02ba7fc",
+  "prompts": {},
+  "humans": {
+    "h_63f2916b00d585": {
+      "author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
