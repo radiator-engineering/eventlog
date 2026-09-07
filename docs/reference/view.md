@@ -74,6 +74,6 @@ cargo test
 
 ## See also
 
-- [Log module](log-module.md) — `Log::read`, which `view` reads the log with.
+- Log module — `Log::read`, which `view` reads the log with.
 - [Schema](schema.md) — the `--json` row shape.
 - [`eventlog` command list](eventlog-cli-surface.md)

@@ -1,6 +1,6 @@
 # TUI: `src/tui` and `eventlog tui`
 
-Status: implemented. A live terminal UI over [`query::State`](query-module.md):
+Status: implemented. A live terminal UI over `query::State`:
 a follow pane of log events on top, and a bottom pane that toggles between an
 agents table, a full state snapshot, and a `why` explanation of the selected
 event.
@@ -55,7 +55,7 @@ Toggles between three views ([`BottomView`](../../src/tui/mod.rs)):
 ## Keys
 
 Keys come from the `[keys]` table in config (see
-[Model contract](model-contract.md)); the defaults are:
+Model contract); the defaults are:
 
 | Key | Action |
 |---|---|
@@ -94,7 +94,7 @@ cargo test
 
 ## See also
 
-- [Query module](query-module.md) — `State`, `fold`, and the `Phase` values
+- Query module — `State`, `fold`, and the `Phase` values
   the agents pane prints.
 - [Query commands](query-commands.md) — the non-interactive `agents`,
   `state`, and `why` commands this TUI mirrors.

@@ -1,8 +1,8 @@
 # Why the model layer is frozen as a contract
 
 `src/model` shipped before any `eventlog` command works, the same way the CLI
-surface shipped before any command was implemented ([why the CLI surface
-shipped first](frozen-cli-surface.md)). Later tasks — `log`, `query`,
+surface shipped before any command was implemented (why the CLI surface
+shipped first). Later tasks — `log`, `query`,
 `react`, `guard`, `scaffold`, `tui` — all read and write `Event`, `Config`,
 `Vocabulary`, and `Allowlist`. If two of those tasks could each change a
 model signature to suit itself, one could add a field to `Event` that another
@@ -11,7 +11,7 @@ for an untested case. Freezing the model first, as its own task with its own
 tests, means every later task builds against one definition instead of
 guessing at each other's.
 
-The [reference page](../reference/model-contract.md) is the resulting
+The reference page is the resulting
 contract. This page explains the one piece of it that is easy to get wrong:
 how the write allowlist is built up from three sources.
 

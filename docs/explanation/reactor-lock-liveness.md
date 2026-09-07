@@ -4,7 +4,7 @@ The log's own writer lock (`src/log/lock.rs`, see
 [Why a reclaimed lock is renamed aside before removal](lock-reclaim.md))
 stores just a pid and treats any process with that pid as the live holder.
 That is enough for a lock held for the length of one append. The reactor
-lock in `src/react/lock.rs` ([reference](../reference/react-lock.md)) is
+lock in `src/react/lock.rs` (reference) is
 held for as long as the reactor runs — hours or days — so a pid alone is
 not enough to tell a live holder from a dead one.
 
@@ -72,6 +72,6 @@ documented in [Why "dead" errs toward "alive"](lock-reclaim.md#why-dead-errs-tow
 
 ## See also
 
-- [Reactor lock](../reference/react-lock.md) — `Token` and `ReactorLock` reference.
+- Reactor lock — `Token` and `ReactorLock` reference.
 - [Why a reclaimed lock is renamed aside before removal](lock-reclaim.md) — the rename-then-remove technique both locks share.
-- [Reactor loop](../reference/react-loop.md) — `Reactor::run`, which takes this lock before polling.
+- Reactor loop — `Reactor::run`, which takes this lock before polling.

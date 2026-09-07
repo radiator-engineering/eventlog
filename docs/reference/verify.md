@@ -14,7 +14,7 @@ pub struct VerifyReport {
 pub fn verify(log: &Log) -> anyhow::Result<VerifyReport>;
 ```
 
-`verify` reads the whole file with [`Log::open`](log-module.md) and parses
+`verify` reads the whole file with `Log::open` and parses
 each line with `Event::parse_line`. It stops at the first problem and
 returns a report rather than an error; `anyhow::Result` only wraps I/O
 failures reading the file.
@@ -66,6 +66,6 @@ cargo test
 
 ## See also
 
-- [Log module](log-module.md) — `Log::open` and `Log::hash_line`, which `verify` builds on.
+- Log module — `Log::open` and `Log::hash_line`, which `verify` builds on.
 - [Why the chain can start partway through a log](../explanation/hash-chain-verification.md)
 - [`eventlog` command list](eventlog-cli-surface.md)

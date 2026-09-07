@@ -3,8 +3,8 @@
 Status: `eventlog react` and `eventlog react test` are implemented. This page
 covers the CLI wiring: turning flags into a `ReactorConfig` and running the
 live loop or a single dry-run pass. The loop itself is documented in
-[Reactor loop](react-loop.md); the two steps this command wires in are
-[the rule voter](react-voter.md) and [the action runner](react-action.md).
+Reactor loop; the two steps this command wires in are
+the rule voter and the action runner.
 
 ```sh
 eventlog react --as <name> --on <t1,t2> [--filter k=v]... [--window <dur>] \
@@ -31,27 +31,27 @@ environment variable) or a number suffixed `s`, `m`, or `h` — for example
 ## `eventlog react` — the live loop
 
 Builds a `ReactorConfig` from the flags above and calls `supervise` (see
-[Reactor loop](react-loop.md)), which restarts the reactor on a panic or
+Reactor loop), which restarts the reactor on a panic or
 an error and never returns on its own. It exits the process only after 5
 restarts inside a 10-minute window.
 
 ## `eventlog react test <seq>` — the dry run
 
 Reads the event at `<seq>` from the log, runs one pass of `Reactor::handle`
-(see [Reactor loop](react-loop.md)) with `dry = true`, and prints each event
+(see Reactor loop) with `dry = true`, and prints each event
 the pass would append — typically an `intent` line and the closing `ack` —
 as JSON, one per line. It writes nothing to the log.
 
 ## Wiring `Steps` to the voter and the action runner
 
-`RealSteps` is the one implementation of the `Steps` trait (see [Reactor
-loop](react-loop.md)) both commands use:
+`RealSteps` is the one implementation of the `Steps` trait (see Reactor
+loop) both commands use:
 
 - `authorize` and `check` call `voter::authorize` and `voter::check`
-  ([reference](react-voter.md)) directly.
+  (reference) directly.
 - `run` builds an `ActionEnv` from the driving event and the authorized
-  paths and calls `action::run` ([reference](react-action.md)).
-- `snapshot` calls `action::snapshot` ([reference](react-action.md)).
+  paths and calls `action::run` (reference).
+- `snapshot` calls `action::snapshot` (reference).
 
 ### Reading the action's outcome
 
@@ -93,7 +93,7 @@ cargo test
 
 ## See also
 
-- [Reactor loop](react-loop.md) — `ReactorConfig`, `Reactor`, the `Steps` trait, and `supervise`.
-- [Rule voter](react-voter.md) — `authorize` and `check`, the first half of `RealSteps`.
-- [Action runner](react-action.md) — `run` and `snapshot`, the second half of `RealSteps`.
+- Reactor loop — `ReactorConfig`, `Reactor`, the `Steps` trait, and `supervise`.
+- Rule voter — `authorize` and `check`, the first half of `RealSteps`.
+- Action runner — `run` and `snapshot`, the second half of `RealSteps`.
 - [`eventlog` command list](eventlog-cli-surface.md)

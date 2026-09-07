@@ -1,6 +1,6 @@
 # Why a reclaimed lock is renamed aside before removal
 
-`Lock::acquire` ([reference](../reference/log-module.md)) uses a lock
+`Lock::acquire` (reference) uses a lock
 directory, not a lock file: `mkdir` is atomic, so exactly one racing caller
 ever creates it. The holder's process ID goes in `dir/pid`. A second caller
 that finds the directory already there has two cases to tell apart: the

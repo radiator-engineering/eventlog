@@ -39,8 +39,8 @@ pub trait StrictContext {
 
 `append` reads folded state only through this trait, so `src/log` does not
 depend on `src/query`. `src/cmd/append.rs` implements it as `FoldContext`, a
-thin wrapper over a folded `query::State` (see [Query
-module](query-module.md)).
+thin wrapper over a folded `query::State` (see Query
+module).
 
 ## Validation order
 
@@ -56,7 +56,7 @@ module](query-module.md)).
 | No field exceeds 2048 bytes | `FieldTooLarge(field)` |
 | `writer` may write `type` under the allowlist (`ctx.allowlist()`, or `cfg.writers` when `ctx` is `None`) | `NotPermitted { writer, ty }` |
 | When `req.strict` and `ctx` is given: no open escalation for `writer`; a `result`/`progress`/`claim`/`retire` names an agent `ctx.agent_is_open` reports open; a `claim`'s paths exist on disk (literal, or a glob match under the repo root) and are not already claimed by another agent | `Strict(rule)` |
-| The log's tail is not torn (see [Log module](log-module.md)) | `TornTail(line)` |
+| The log's tail is not torn (see Log module) | `TornTail(line)` |
 
 `resolve_agent` moves an `agent` field out of `fields` and into the event's
 top-level `agent`, so it is not written twice. If no `agent` field was given
@@ -65,14 +65,14 @@ and `writer` is `"controller"` and the type is `result`, it sets `agent` to
 written today.
 
 The controller always passes the allowlist check (see
-[`Allowlist::permits`](model-contract.md)), whatever type it appends, so a
+`Allowlist::permits`), whatever type it appends, so a
 `decision key=log-writers` line can restrict other writers without ever
 locking the controller out of a type such as `result`.
 
 ## Sequencing and the hash chain
 
-A successful, non-`dry_run` append acquires a `Lock` (see [Log
-module](log-module.md)) on `<log path>.log.lock`, rereads the tail under the
+A successful, non-`dry_run` append acquires a `Lock` (see Log
+module) on `<log path>.log.lock`, rereads the tail under the
 lock, sets `seq = tail.last_seq + 1` and `ts` to the current UTC time, and
 sets `prev` to `Log::hash_line` of the previous line's raw bytes, or
 `"genesis"` if the log is empty or has no chain yet. It then writes the line
@@ -147,7 +147,7 @@ with 50 lines and `seq` `1..=50` with no gaps or duplicates.
 
 ## See also
 
-- [Log module](log-module.md) — `Log`, `Tail`, and `Lock`, which `append` builds on.
-- [Model contract](model-contract.md) — `Event`, `Config`, and `Allowlist`.
-- [Query module](query-module.md) — `query::State`, the `StrictContext` implementation `eventlog append` uses.
+- Log module — `Log`, `Tail`, and `Lock`, which `append` builds on.
+- Model contract — `Event`, `Config`, and `Allowlist`.
+- Query module — `query::State`, the `StrictContext` implementation `eventlog append` uses.
 - [`eventlog` command list](eventlog-cli-surface.md)

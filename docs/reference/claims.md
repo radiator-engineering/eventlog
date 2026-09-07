@@ -70,5 +70,5 @@ cargo test
 
 ## See also
 
-- [Query module](query-module.md) — `State::claims_for`, which `claims` reads.
+- Query module — `State::claims_for`, which `claims` reads.
 - [`eventlog` command list](eventlog-cli-surface.md)

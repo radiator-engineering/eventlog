@@ -1,43 +1,56 @@
-# event-log
+# eventlog
 
-Append-only coordination event log: Rust CLI + TUI, with the `event-log-coordination` skill versioned alongside.
+`eventlog` is a Rust CLI for coordinating several coding agents in one repo through an append-only event log. One controller writes small events to `.context/events.jsonl` (`spawn`, `claim`, `result`, `decision`, `retire`); every agent and every human reads the same file. Reactors watch the log and act on it, so a commit or a doc pass happens because an event says so, not because someone pinged a pane. Walk the log to event N and you know exactly what the system knew at event N.
 
-## What is in this repo
+This repo runs on the tool it ships. Its own log, decisions, and worker briefs live in `.context/`; AGENTS.md says who may write what.
 
-- `skill/event-log-coordination/` — the skill source: the append-only log helpers, the PreToolUse guard, and the reactor references.
-- `.context/` — this repo's own coordination log, decisions, worker briefs and reactor scripts. The repo runs on the tool it ships: `eventlog guard` hooks are installed for Claude (`.claude/settings.json`), Cursor (`.cursor/hooks.json`), and Codex (`.codex/hooks.json`), so every edit and shell command an agent runs here passes through the guard. The log itself, its locks, and `layout.json` stay out of git; `DECISIONS.md` and every other file a log event points at are tracked, and `DECISIONS.md` merges with `merge=union` since its dated sections are independent — see [why](docs/explanation/log-scope-and-decisions-merge.md).
-- `Drovefile` and `drove/reactors.star` — the herdr layout that places the controller, the log view, and the two reactors. The Drovefile pins `herdr.session("event-log")` so `drove up` resolves the same session from any shell — see [why](docs/explanation/drovefile-session-pin.md); an explicit `--session` flag or `HERDR_SESSION` still overrides it. The controller pane is `caller_pane("controller")`: the pane that runs `drove up` becomes the controller directly, instead of `drove` spawning a second Claude agent into it — see [why](docs/explanation/controller-caller-pane.md). Every other pane runs the `eventlog` binary this repo ships (`cargo install --path .`) directly: `eventlog view -f`, `eventlog tui`, `eventlog protect`, and `eventlog react --as <agent> --on <type> ... -- bash .context/bin/<action>.sh` for each reactor. The `reactor()` function in `drove/reactors.star` builds that last command from a name, an agent, a model, the event type and filters to react to, and the action script to run.
-- `research/` — prior-art reports that back the coordination design (event sourcing, multi-agent coordination, the LogAct paper), indexed in `research/README.md`.
-- `docs/superpowers/specs/` — design specs for tools this repo will ship. `2026-09-06-event-log-cli-design.md` is the approved design for `eventlog`, the Rust binary that will replace the shell toolkit above: log format, config, module layout, commands, and the reactor runtime with intent and veto.
-- `docs/superpowers/plans/` — implementation plans built from those specs. `2026-09-06-eventlog-cli.md` breaks the `eventlog` build into 21 tasks across four phases, each scoped as a herdr worker brief with claimed paths and the controller's spawn/claim/result/retire protocol.
-- `docs/reference/eventlog-cli-surface.md` — the frozen `eventlog` command list and global flags.
-- `docs/explanation/frozen-cli-surface.md` — why the CLI surface was locked down before any command works.
-- `docs/reference/model-contract.md` — the frozen `src/model` contract: `Event`, `Config`, `Vocabulary`, `Allowlist`, and path rules.
-- `docs/explanation/model-contract-precedence.md` — why the model layer is frozen, and how the write allowlist combines defaults, config file, and log decisions.
-- `docs/reference/log-module.md` — `src/log`: `Log::open/read/tail/hash_line` and the mkdir-based `Lock`.
-- `docs/explanation/lock-reclaim.md` — why a dead holder's lock is renamed aside before removal, not deleted directly.
-- `docs/reference/verify.md` — `verify` and `eventlog verify`: walking the hash chain and reporting the first break.
-- `docs/explanation/hash-chain-verification.md` — why the chain can start partway through a log, but never stop once started.
-- `docs/reference/schema.md` — `eventlog schema`: JSON Schema for event lines (`--events`) and `--json` view rows (`--output`).
-- `docs/reference/query-module.md` — `src/query`: `State`, `fold`, and `fold_at`, projecting agents, live claims, decisions, reactors, and the allowlist as of a `seq`.
-- `docs/reference/query-commands.md` — `eventlog agents`, `state`, and `why`: the lifecycle table, the folded-state snapshot, and the causes/effects/verdict explanation for one seq.
-- `docs/reference/view.md` — `eventlog view`: filtered, colored log display with type/agent/by/since/last/grep filters and follow mode.
-- `docs/reference/claims.md` — `eventlog claims` (alias `check-claims`): reports changed files an agent's live claims don't cover.
-- `docs/reference/open.md` — `eventlog open`: opens an event's `ref` in `$EDITOR` or `$PAGER`.
-- `docs/reference/append.md` — `append` in `src/log/append.rs`: field and allowlist validation, strict rules, and hash-chained writes; `eventlog append` and `eventlog vocab`, the CLI commands that expose it.
-- `docs/reference/react-voter.md` — `src/react/voter.rs`: `authorize`, `check`, and `veto_binds`, the reactor runtime's rule voter — the authorized set, the four veto rules, and the veto window.
-- `docs/reference/react-action.md` — `src/react/action.rs`: `run`, `snapshot`, `touched`, and `outside`, running a reactor's action command with `EVENTLOG_*` env, parsing its outcome, and flagging git writes outside the authorized set.
-- `docs/reference/react-loop.md` — `src/react/mod.rs`: `Reactor`, `ReactorConfig`, the `Steps` trait, and `supervise` — the poll loop, baseline on first start, resuming from the last ack, closing interrupted intents, and one pass over a driving event.
-- `docs/reference/react-lock.md` — `src/react/lock.rs`: `Token` and `ReactorLock`, the pid/start-time/hostname/boot-id lock a reactor holds for as long as it runs.
-- `docs/explanation/reactor-lock-liveness.md` — why the reactor lock checks more than a pid.
-- `docs/reference/react-command.md` — `src/cmd/react.rs`: `eventlog react` and `eventlog react test`, wiring the reactor loop to the rule voter and the action runner.
-- `docs/explanation/reactor-runtime-switch.md` — why the herdr layout runs each reactor as an `eventlog react` pane directly, why `.context/bin/run-reactor.sh` and its `REACTOR_RUNTIME` shell fallback are now a standalone tool rather than part of the layout, and why the doc worker appends its own `result` and then skips the ack that result's own commit produces.
-- `docs/reference/tui.md` — `eventlog tui`: the live terminal UI, its follow/agents/state/why panes, key bindings, and filtering.
-- `docs/reference/guard.md` — `eventlog guard` and `eventlog guard install`: parsing Claude, Cursor, and Codex hook payloads and judging them against the one denylist.
-- `docs/explanation/guard-fail-modes.md` — why the guard fails open on non-JSON but closed on an unrecognized payload shape, why the sanctioned-writer check parses command shape instead of matching a substring, and why an operator inside quoted text (a piped `jq` filter) is not compound.
-- `docs/reference/skill.md` — `eventlog skill install`: writing the embedded coordination skill to disk with a version stamp; `eventlog completions`: generating shell completion scripts.
-- `docs/reference/scaffold.md` — `eventlog init`, `doctor`, and `protect`: scaffolding `.context/`, diagnosing setup problems, and toggling OS-level append-only protection on the log.
-- `docs/explanation/agents-md-ownership.md` — why `AGENTS.md` is owned by the controller, not the doc worker, and why the doc worker's claim narrowed to `docs,README.md`.
-- `docs/explanation/stop-hook-claims-and-memo.md` — why the controller Stop hook (`.context/bin/controller-stop-hook.sh`) skips changed files under another agent's open claim, and blocks at most once per distinct set of unreported files.
+## Install
 
-The `eventlog` crate is scaffolded (`cargo build` and `cargo test` pass). The model layer (`src/model`) is implemented and frozen as a contract for later tasks. `src/log` can now read a log file (whole-file parse, cheap tail check), serialize writer access with a directory lock, and append a validated event with a hash-chained `prev`. `eventlog verify` walks the hash chain and reports the first break, `eventlog schema` prints the JSON Schema for event lines and `--json` view rows, `eventlog view` prints filtered log rows with optional follow mode, `eventlog claims` reports files outside an agent's live claims, `eventlog open` opens an event's ref, `src/query` folds a read log into one `State` as of any `seq`, and `eventlog agents`, `state`, and `why` print that folded state as a lifecycle table, a full snapshot, and a causes/effects/verdict explanation of one event. `eventlog append` validates and writes one event, folding the log for strict checks, and `eventlog vocab` shows the required and optional fields per event type from the loaded config. `src/react` runs a reactor's loop over one driving event at a time, computing its authorized set (`voter::authorize`), running the veto rules (`voter::check`) and the veto window (`voter::veto_binds`) before acting; `action::run` then runs the action command with `EVENTLOG_*` env vars, reads its outcome from the outcome file (falling back to stdout), and enforces the pass timeout, and `action::snapshot`/`touched`/`outside` diff git state around the action to flag writes outside the authorized set. `Reactor::run` takes a lock keyed by pid, start time, hostname, and boot id (so a stale holder is reclaimed but a live one on another host or from before a reboot never is), then polls the log: on first start it baselines at the log's tip instead of replaying history, on every later start it resumes from its last ack, and it closes any intent left open by a crash as `interrupted` before handling new events. `supervise` restarts a reactor that dies, and stops with an `escalate` after 5 restarts in 10 minutes. `eventlog react` runs the live loop from the command line, and `eventlog react test <seq>` dry-runs one pass against a real sequence number, printing the events it would append and writing none of them; both wire a `RealSteps` that calls `voter::authorize`/`check` and `action::run`/`snapshot`, sorting a command's outcome fields against the `ack` vocabulary and folding anything else into `detail`. `eventlog tui` is a live ratatui app over the folded log: a follow pane with filter and follow toggle, and a bottom pane that switches between an agents table, a full state snapshot, and a `why` explanation of the selected event. `eventlog guard` reads one agent's tool-call payload from stdin, reduces it to an edit, write, or shell action, and judges it against a single denylist shared by Claude, Cursor, and Codex, denying (exit 2) only a command that names the log and either is compound or carries a mutating shape (`rm`, a truncating redirect, `sed -i`, non-append `tee`, and the like); `eventlog guard install` writes the hook entry for one agent, or all three. `eventlog skill install` writes the embedded coordination skill under `~/.claude/skills` (or `--dir`), refusing to overwrite a newer existing install unless `--force` is set, and `eventlog completions` prints a shell completion script for bash, zsh, fish, elvish, or PowerShell. `eventlog init` scaffolds `.context/` (the log file, `EVENTLOG.md`, `eventlog.toml`, and the `.gitignore`/`.gitattributes` lines) and is idempotent; `eventlog doctor` prints an `[ OK ]`/`[WARN]`/`[FAIL]` row per setup check (guard hooks, log protection, malformed lines, unsanctioned writers, strict-history violations, dangling references, open lifecycles, stale reactor locks, the skill stamp, leftover legacy scripts) and exits 1 on any `[FAIL]`, with `--fix` to install guards/skill and remove old script symlinks and `--protect` to also enable log protection; `eventlog protect` turns OS-level append-only protection (`chflags uappnd` on macOS, `chattr +a` on Linux) on or off for the log, or reports its state with `--status`. Every other command still prints `not implemented` and exits 1.
+```sh
+cargo install --path .        # puts `eventlog` in ~/.cargo/bin
+eventlog init                 # .context/events.jsonl, EVENTLOG.md, eventlog.toml, gitignore lines
+eventlog doctor --fix         # installs the tool-call guard for Claude, Cursor, and Codex
+eventlog protect              # optional: OS-level append-only on the log
+```
+
+`init` is safe to rerun. It never overwrites a file that already exists. The guard hook loads in a new agent session.
+
+## Daily commands
+
+| Command | What it does |
+|---|---|
+| `eventlog append <type> k=v ...` | Write one validated, hash-chained event. The only sanctioned writer. |
+| `eventlog view [-f] [--last N]` | Print log rows; `-f` follows. |
+| `eventlog state` | Active agents, open claims, decisions, and open intents as of now. |
+| `eventlog why <seq>` | The chain of events behind one event, and how a reactor handled it. |
+| `eventlog claims <agent> <base>` | Changed files that an agent's claim does not cover. |
+| `eventlog react --as <name> --on <type> -- <cmd>` | Run a reactor: intent, voter, action, ack. |
+| `eventlog tui` | Live terminal view of the folded log. |
+
+Run `eventlog --help` for the full list, and `eventlog vocab` for the fields each event type takes.
+
+## How the log drives work
+
+1. The controller appends `spawn`, `prompt`, and `claim` for a worker, and the worker edits only the paths it claimed.
+2. When the worker reports back, the controller appends `result ... paths=<files>`.
+3. The commit reactor sees the `result`, declares `intent`, runs the rule voter, commits exactly those paths, and appends `ack`.
+4. The doc reactor sees the `ack` and updates the docs the same way.
+
+A reactor that commits a file outside the `paths=` it was given appends a `violation`. A file that another agent dirtied while the reactor ran is an `observed` line, with no blame. Nothing edits or truncates the log: a hook guard blocks the controller's own tool calls, and `eventlog protect` makes the kernel refuse everything else.
+
+## Documentation
+
+- [Run a log-driven repo](docs/how-to/run-a-log-driven-repo.md): the how-to for setting this up on a project.
+- [Command reference](docs/reference/eventlog-cli-surface.md): every subcommand, with a page per command in `docs/reference/`.
+- [Design notes](docs/explanation/): the invariants worth understanding before you change the code.
+- [Decisions](.context/DECISIONS.md): every design decision this repo has taken, dated, with the log seq that recorded it.
+- [Design spec](docs/superpowers/specs/2026-09-06-event-log-cli-design.md) and [build plan](docs/superpowers/plans/2026-09-06-eventlog-cli.md): how the tool was designed and built.
+
+The `event-log-coordination` skill for Claude Code lives in `skill/` and ships inside the binary. `eventlog skill install` writes it to `~/.claude/skills`.
+
+## Layout
+
+- `src/` the crate: `model` (event, config, vocabulary), `log` (read, lock, append), `query` (fold to state), `react` (reactor runtime), `guard` (hook guard), `scaffold`, `tui`, `cmd`.
+- `skill/` the coordination skill, embedded at build time.
+- `.context/` this repo's own log, decisions, briefs, and reactor action scripts.
+- `Drovefile` the herdr layout: controller pane, log view, and the two reactor panes.

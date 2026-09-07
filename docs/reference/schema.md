@@ -59,4 +59,4 @@ cargo test
 ## See also
 
 - [`eventlog` command list](eventlog-cli-surface.md)
-- [Log module](log-module.md) — the on-disk line format `--events` describes.
+- Log module — the on-disk line format `--events` describes.

@@ -60,7 +60,7 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 
 ## See also
 
-- [Why the CLI surface shipped before any command works](../explanation/frozen-cli-surface.md)
+- Why the CLI surface shipped before any command works
 - [Verify](verify.md) — the first implemented command.
 - [Schema](schema.md) — JSON Schema for event lines and `--json` view rows.
 - [View](view.md) — filtered, colored log display with follow mode.

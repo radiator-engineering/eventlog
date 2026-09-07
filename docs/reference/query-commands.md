@@ -1,6 +1,6 @@
 # Query commands: `agents`, `state`, `why`
 
-Status: implemented. All three fold the log with [`src/query`](query-module.md)
+Status: implemented. All three fold the log with `src/query`
 and print a view of the result: `agents` is a per-agent lifecycle table,
 `state` is a full snapshot, and `why` explains one event. Shared loading and
 formatting helpers live in `src/cmd/agents.rs`.
@@ -12,7 +12,7 @@ eventlog why <seq> [--json]
 ```
 
 `--at <seq>` folds the log only up to that sequence number, using
-[`query::fold_at`](query-module.md); without it, `agents` and `state` fold to
+`query::fold_at`; without it, `agents` and `state` fold to
 the tip. `why` always reads the whole log, since causes and effects can fall
 on either side of the seq it explains.
 
@@ -25,7 +25,7 @@ agent  model  pane  phase  claims  spawned  retired
 ```
 
 `phase` is one of `spawned`, `prompted`, `claimed`, `progressing`, `resulted`,
-`retired` (see [`Phase`](query-module.md#agentstate-and-phase)). `claims` is
+`retired` (see `Phase`). `claims` is
 the agent's live claim globs, comma-separated. `retired` is `-` for an agent
 still active.
 
@@ -98,7 +98,7 @@ cargo test
 
 ## See also
 
-- [Query module](query-module.md) — `State`, `fold`, `fold_at`, and the
+- Query module — `State`, `fold`, `fold_at`, and the
   methods these commands read from it.
 - [View](view.md) — the formatted event line shared by `state`'s
   escalations/intents sections and `why`.
