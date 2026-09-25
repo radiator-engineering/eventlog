@@ -40,6 +40,7 @@ identity = "doc-worker"
 model = "claude-sonnet"
 timeout = "600s"
 roots = ["docs", "README.md"]
+exclude = []
 command = []
 
 [invocation]
@@ -48,7 +49,14 @@ eventlog = "eventlog"
 
 `docs.roots` are single, relative, on-disk paths — no glob, no comma list,
 no `..` or absolute path (`invalid_docs_roots_fail_setup_without_mutation_or_panic`
-in `tests/scaffold.rs` checks all four). `docs.command` is an argv list run
+in `tests/scaffold.rs` checks all four). `docs.exclude` lists paths the
+docs action leaves out of its before/after snapshot, so another process
+writing there during a docs run does not fail the action. An entry holding
+`*`, `?`, `[` or `{` is a glob matched against the whole relative path
+(`*` stops at `/`, `**` crosses it); any other entry is a path prefix, so
+`"graft/"` covers everything under `graft`. Entries must be relative, with
+no `.`, `..` or empty segment; the docs action fails on an invalid one. The default is
+empty, which keeps every path outside the log checked. `docs.command` is an argv list run
 directly, never through a shell; leave it empty and set a local stub for
 tests. `commit.command` is the same kind of argv list; an empty list (the
 default) keeps `eventlog action commit` in direct `git commit` mode. Set it

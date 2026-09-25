@@ -98,7 +98,7 @@ fn setup_is_repeatable_preserves_customization_and_rejects_malformed_config() {
 
     fs::write(
         &config,
-        "version = 2\n[commit]\nidentity = \"commit-custom\"\nmodel = \"composer-custom\"\ntimeout = \"12s\"\n[docs]\nidentity = \"docs-custom\"\nmodel = \"sonnet-custom\"\ntimeout = \"34s\"\nroots = [\"manual\", \"GUIDE.md\"]\ncommand = [\"stub\"]\n[invocation]\neventlog = \"eventlog-custom\"\n",
+        "version = 2\n[commit]\nidentity = \"commit-custom\"\nmodel = \"composer-custom\"\ntimeout = \"12s\"\n[docs]\nidentity = \"docs-custom\"\nmodel = \"sonnet-custom\"\ntimeout = \"34s\"\nroots = [\"manual\", \"GUIDE.md\"]\nexclude = [\"graft/\"]\ncommand = [\"stub\"]\n[invocation]\neventlog = \"eventlog-custom\"\n",
     )
     .unwrap();
     Command::cargo_bin("eventlog")
@@ -110,7 +110,7 @@ fn setup_is_repeatable_preserves_customization_and_rejects_malformed_config() {
         .stdout(predicates::str::contains("eventlog-reactors.star"));
     assert_eq!(
         fs::read_to_string(&config).unwrap(),
-        "version = 2\n[commit]\nidentity = \"commit-custom\"\nmodel = \"composer-custom\"\ntimeout = \"12s\"\n[docs]\nidentity = \"docs-custom\"\nmodel = \"sonnet-custom\"\ntimeout = \"34s\"\nroots = [\"manual\", \"GUIDE.md\"]\ncommand = [\"stub\"]\n[invocation]\neventlog = \"eventlog-custom\"\n"
+        "version = 2\n[commit]\nidentity = \"commit-custom\"\nmodel = \"composer-custom\"\ntimeout = \"12s\"\n[docs]\nidentity = \"docs-custom\"\nmodel = \"sonnet-custom\"\ntimeout = \"34s\"\nroots = [\"manual\", \"GUIDE.md\"]\nexclude = [\"graft/\"]\ncommand = [\"stub\"]\n[invocation]\neventlog = \"eventlog-custom\"\n"
     );
     let reactors = fs::read_to_string(dir.path().join(".context/eventlog-reactors.star")).unwrap();
     for expected in [

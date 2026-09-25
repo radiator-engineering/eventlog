@@ -160,3 +160,59 @@ fn docs_action_loads_root_policy_from_subdirectory() {
         "after"
     );
 }
+
+fn set_exclude(dir: &TempDir, script: &str, exclude: &[&str]) {
+    let mut cfg = toml::toml! { [docs] roots = ["docs"] command = ["sh", "-c", script] };
+    cfg["docs"].as_table_mut().unwrap().insert(
+        "exclude".into(),
+        toml::Value::Array(exclude.iter().map(|&e| e.into()).collect()),
+    );
+    fs::write(
+        dir.path().join(".context/eventlog-setup.toml"),
+        toml::to_string(&cfg).unwrap(),
+    )
+    .unwrap();
+}
+
+#[test]
+fn docs_snapshot_skips_excluded_prefix_and_glob_paths() {
+    let script = r#"printf after > docs/page.md
+mkdir -p graft/.cache/session tool
+printf cache > graft/.cache/session/other.json
+printf stats > tool/run.stats"#;
+    let (dir, log) = fixture(script);
+    set_exclude(&dir, script, &["graft/", "tool/*.stats"]);
+    action(&dir, &log)
+        .assert()
+        .success()
+        .stdout(predicates::str::contains("outcome=updated"))
+        .stdout(predicates::str::contains("paths=docs/page.md\n"));
+}
+
+#[test]
+fn docs_snapshot_still_rejects_paths_outside_exclude() {
+    let script = r#"printf after > docs/page.md
+mkdir -p graft/.cache
+printf cache > graft/.cache/stats.json
+printf unrelated > graftless.txt"#;
+    let (dir, log) = fixture(script);
+    set_exclude(&dir, script, &["graft"]);
+    action(&dir, &log)
+        .assert()
+        .failure()
+        .stdout(predicates::str::contains(
+            "outside configured roots: graftless.txt\n",
+        ));
+}
+
+#[test]
+fn docs_snapshot_rejects_invalid_exclude() {
+    for entry in ["../outside", "./graft/", "graft//cache", "/abs", ""] {
+        let (dir, log) = fixture("true");
+        set_exclude(&dir, "true", &[entry]);
+        action(&dir, &log)
+            .assert()
+            .failure()
+            .stderr(predicates::str::contains("invalid docs.exclude"));
+    }
+}
