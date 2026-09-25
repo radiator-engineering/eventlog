@@ -1,0 +1,23 @@
+CHANGELOG.md
+  s_9b8a3bc9f33ffc::t_d7468221fb64d0 7-12
+Cargo.lock
+  s_9b8a3bc9f33ffc::t_70301c46b86235 440
+Cargo.toml
+  s_9b8a3bc9f33ffc::t_b8a9a3f3578779 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b07db8f60b28eb23344577369349a09af811bb13",
+  "prompts": {},
+  "sessions": {
+    "s_9b8a3bc9f33ffc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df5d2752-b3f5-4c7c-8b0f-d9991d09ca06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
