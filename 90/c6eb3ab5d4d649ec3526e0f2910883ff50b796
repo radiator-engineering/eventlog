@@ -1,0 +1,23 @@
+docs/reference/setup.md
+  s_9b8a3bc9f33ffc::t_71bf6908f04db7 57-58
+src/cmd/action.rs
+  s_9b8a3bc9f33ffc::t_f9c75119e3f892 430-434
+tests/docs_snapshot.rs
+  s_9b8a3bc9f33ffc::t_06fb385c87a140 210-217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "90c6eb3ab5d4d649ec3526e0f2910883ff50b796",
+  "prompts": {},
+  "sessions": {
+    "s_9b8a3bc9f33ffc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df5d2752-b3f5-4c7c-8b0f-d9991d09ca06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
