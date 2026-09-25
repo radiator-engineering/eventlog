@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_9b8a3bc9f33ffc::t_aaf5eb9a953e48 13-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9e32924173157a0326c0855aeceacce88a72666d",
+  "prompts": {},
+  "sessions": {
+    "s_9b8a3bc9f33ffc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df5d2752-b3f5-4c7c-8b0f-d9991d09ca06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
