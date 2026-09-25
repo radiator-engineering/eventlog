@@ -149,7 +149,8 @@ programs; the disposable clone is file/commit isolation, not an OS sandbox.
 reports the added, deleted, or modified files below `[docs].roots`, including
 files already dirty before the command. The active log and its reserved
 sidecars are excluded from content snapshots so concurrent reactor writes
-do not fail the docs action; other files outside the roots remain checked.
+do not fail the docs action; other files outside the roots remain checked,
+except paths listed in `[docs].exclude` (prefixes or globs, default empty).
 No documentation changes returns `skipped` without appending a result.
 Set `docs.command` to a local stub in
 tests. An empty command or a failing model command is a failed action, never a

@@ -164,6 +164,10 @@ struct DocsConfig {
     identity: String,
     #[serde(default)]
     roots: Vec<String>,
+    /// Path prefixes or globs left out of the before/after snapshot, for
+    /// files other processes rewrite during a docs run (tool caches).
+    #[serde(default)]
+    exclude: Vec<String>,
     #[serde(default)]
     command: Vec<String>,
 }
@@ -214,7 +218,8 @@ fn docs() -> anyhow::Result<i32> {
             _ => log_path.clone(),
         }
     });
-    let before = repo_snapshot(&log_path)?;
+    let exclude = Exclude::new(&config.docs.exclude)?;
+    let before = repo_snapshot(&log_path, &exclude)?;
     let (program, argv) = config
         .docs
         .command
@@ -232,7 +237,7 @@ fn docs() -> anyhow::Result<i32> {
         );
         return Ok(1);
     }
-    let after = repo_snapshot(&log_path)?;
+    let after = repo_snapshot(&log_path, &exclude)?;
     let changed: Vec<String> = before
         .keys()
         .chain(after.keys())
@@ -410,12 +415,57 @@ fn nul_list(bytes: &[u8]) -> Vec<String> {
         .collect()
 }
 
-fn repo_snapshot(log_path: &std::path::Path) -> anyhow::Result<BTreeMap<String, String>> {
+/// `docs.exclude`: an entry with a glob character is matched against the
+/// whole relative path; any other entry is a path prefix, like `docs.roots`.
+struct Exclude {
+    prefixes: Vec<String>,
+    globs: globset::GlobSet,
+}
+
+impl Exclude {
+    fn new(entries: &[String]) -> anyhow::Result<Self> {
+        let mut prefixes = Vec::new();
+        let mut globs = globset::GlobSetBuilder::new();
+        for entry in entries {
+            let path = std::path::Path::new(entry);
+            if entry.is_empty()
+                || path.is_absolute()
+                || path
+                    .components()
+                    .any(|part| matches!(part, std::path::Component::ParentDir))
+            {
+                anyhow::bail!("invalid docs.exclude {entry:?}: must be a relative path or glob");
+            }
+            if entry.contains(['*', '?', '[', '{']) {
+                let glob = globset::GlobBuilder::new(entry)
+                    .literal_separator(true)
+                    .build()
+                    .with_context(|| format!("invalid docs.exclude glob {entry:?}"))?;
+                globs.add(glob);
+            } else {
+                prefixes.push(entry.trim_end_matches('/').to_string());
+            }
+        }
+        Ok(Self {
+            prefixes,
+            globs: globs.build().context("build docs.exclude globs")?,
+        })
+    }
+
+    fn matches(&self, relative: &str) -> bool {
+        in_doc_roots(relative, &self.prefixes) || self.globs.is_match(relative)
+    }
+}
+
+fn repo_snapshot(
+    log_path: &std::path::Path,
+    exclude: &Exclude,
+) -> anyhow::Result<BTreeMap<String, String>> {
     let root = std::env::current_dir()
         .context("current directory")?
         .canonicalize()?;
     let mut out = BTreeMap::new();
-    snapshot_path(&root, &root, log_path, &mut out)?;
+    snapshot_path(&root, &root, log_path, exclude, &mut out)?;
     Ok(out)
 }
 
@@ -423,12 +473,22 @@ fn snapshot_path(
     root: &std::path::Path,
     path: &std::path::Path,
     log_path: &std::path::Path,
+    exclude: &Exclude,
     out: &mut BTreeMap<String, String>,
 ) -> anyhow::Result<()> {
     // These paths belong to the coordination runtime and may change while
     // another reactor works. All other files, including .context content,
-    // remain subject to the documentation roots check.
+    // remain subject to the documentation roots check unless docs.exclude
+    // names them.
     if crate::model::paths::is_log_or_lock(log_path, path) {
+        return Ok(());
+    }
+    let relative = path
+        .strip_prefix(root)
+        .unwrap_or(path)
+        .to_string_lossy()
+        .into_owned();
+    if !relative.is_empty() && exclude.matches(&relative) {
         return Ok(());
     }
     let meta = match std::fs::symlink_metadata(path) {
@@ -442,7 +502,7 @@ fn snapshot_path(
             if entry.file_name() == ".git" {
                 continue;
             }
-            snapshot_path(root, &entry.path(), log_path, out)?;
+            snapshot_path(root, &entry.path(), log_path, exclude, out)?;
         }
         return Ok(());
     }
@@ -451,11 +511,6 @@ fn snapshot_path(
     }
     use sha2::{Digest, Sha256};
     let bytes = std::fs::read(path).with_context(|| format!("read {}", path.display()))?;
-    let relative = path
-        .strip_prefix(root)
-        .unwrap_or(path)
-        .to_string_lossy()
-        .into_owned();
     out.insert(relative, format!("{:x}", Sha256::digest(bytes)));
     Ok(())
 }

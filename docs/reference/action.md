@@ -98,9 +98,12 @@ changed:
    reserved sidecars (lock and checkpoint files) are excluded from both
    snapshots, so a reactor appending to the log while the docs command runs
    never fails the action; every other path, including the rest of
-   `.context/` and Git-ignored directories, is still snapshotted and checked.
-   Keep build outputs and disposable worktrees outside the repository during
-   a docs pass; ignoring those paths in Git does not exempt their edits.
+   `.context/` and Git-ignored directories, is still snapshotted and checked,
+   unless `docs.exclude` names it (see [Setup](setup.md)). Ignoring a path
+   in Git does not exempt its edits; list a tool cache that other processes
+   rewrite during a docs pass, such as `graft/`, in `docs.exclude` instead.
+   An excluded path is never reported, so the docs command's own edits
+   there are not committed either.
 4. If any changed path falls outside `docs.roots`, fails with
    `outcome=failed` and the exact out-of-scope paths in `detail`; nothing is
    committed. `docs_action_fails_with_the_exact_out_of_scope_paths` covers
@@ -122,7 +125,8 @@ paths without committing; a docs run that emits exactly one `result` and
 then skips its own resulting ack; and validation of every ref on a
 cumulative ack. `tests/commit_command.rs` covers the configured commit
 author described above. `tests/docs_snapshot.rs` covers the log-and-sidecar
-exclusion and the `skipped` no-change outcome. Run them with:
+exclusion, the `docs.exclude` prefix and glob exclusion (and that a path
+outside it still fails), and the `skipped` no-change outcome. Run them with:
 
 ```sh
 cargo test
