@@ -10,6 +10,10 @@ the commit reactor writes from each `result` event. Do not edit it by hand.
 
 - **action:** Docs.exclude leaves tool-cache paths out of the docs snapshot
 
+### Fixed
+
+- **action:** Docs.exclude rejects entries with ., .. or empty segments
+
 ## [0.2.0] - 2026-09-07
 
 ### Added
