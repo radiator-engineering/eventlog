@@ -1,0 +1,29 @@
+docs/reference/action.md
+  s_9b8a3bc9f33ffc::t_ae2dc8b5c24621 101-106,128-129
+docs/reference/setup.md
+  s_9b8a3bc9f33ffc::t_62a5df33906d9b 43,52-59
+skill/event-log-coordination/SKILL.md
+  s_9b8a3bc9f33ffc::t_06ee1f3a627a0f 152-153
+src/cmd/action.rs
+  s_9b8a3bc9f33ffc::t_be83f2b45cec68 167-170,221-222,240,418-463,468,476,481-482,486-493,505
+tests/docs_snapshot.rs
+  s_9b8a3bc9f33ffc::t_d2dcea038bbc75 163-216
+tests/scaffold.rs
+  s_9b8a3bc9f33ffc::t_e19a81c53699c5 101,113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "042bb57acc85a2501e100d7b5324efb6fd26284c",
+  "prompts": {},
+  "sessions": {
+    "s_9b8a3bc9f33ffc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df5d2752-b3f5-4c7c-8b0f-d9991d09ca06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
