@@ -427,12 +427,11 @@ impl Exclude {
         let mut prefixes = Vec::new();
         let mut globs = globset::GlobSetBuilder::new();
         for entry in entries {
-            let path = std::path::Path::new(entry);
-            if entry.is_empty()
-                || path.is_absolute()
-                || path
-                    .components()
-                    .any(|part| matches!(part, std::path::Component::ParentDir))
+            // Snapshot paths carry no `.`, `..` or empty segment, so an entry
+            // with one could never match; reject it rather than ignore it.
+            let segments: Vec<&str> = entry.trim_end_matches('/').split('/').collect();
+            if std::path::Path::new(entry).is_absolute()
+                || segments.iter().any(|seg| matches!(*seg, "" | "." | ".."))
             {
                 anyhow::bail!("invalid docs.exclude {entry:?}: must be a relative path or glob");
             }

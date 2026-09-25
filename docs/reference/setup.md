@@ -54,8 +54,8 @@ docs action leaves out of its before/after snapshot, so another process
 writing there during a docs run does not fail the action. An entry holding
 `*`, `?`, `[` or `{` is a glob matched against the whole relative path
 (`*` stops at `/`, `**` crosses it); any other entry is a path prefix, so
-`"graft/"` covers everything under `graft`. Entries must be relative and
-contain no `..`; the docs action fails on an invalid one. The default is
+`"graft/"` covers everything under `graft`. Entries must be relative, with
+no `.`, `..` or empty segment; the docs action fails on an invalid one. The default is
 empty, which keeps every path outside the log checked. `docs.command` is an argv list run
 directly, never through a shell; leave it empty and set a local stub for
 tests. `commit.command` is the same kind of argv list; an empty list (the

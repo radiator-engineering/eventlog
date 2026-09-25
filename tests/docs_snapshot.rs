@@ -207,10 +207,12 @@ printf unrelated > graftless.txt"#;
 
 #[test]
 fn docs_snapshot_rejects_invalid_exclude() {
-    let (dir, log) = fixture("true");
-    set_exclude(&dir, "true", &["../outside"]);
-    action(&dir, &log)
-        .assert()
-        .failure()
-        .stderr(predicates::str::contains("invalid docs.exclude"));
+    for entry in ["../outside", "./graft/", "graft//cache", "/abs", ""] {
+        let (dir, log) = fixture("true");
+        set_exclude(&dir, "true", &[entry]);
+        action(&dir, &log)
+            .assert()
+            .failure()
+            .stderr(predicates::str::contains("invalid docs.exclude"));
+    }
 }
