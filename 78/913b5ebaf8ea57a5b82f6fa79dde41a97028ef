@@ -1,0 +1,30 @@
+src/context/packet.rs
+  s_bbca6749af64d5::t_24f75db1fb6bdd 15-24,40-41,72,78,84,90,96,105,112,119,123-136,162-167,188-192,195-206,214-218,221-224,228-233,236-249,251-252,267-268,270,274-277,295,386,388,391-393,395
+  s_bbca6749af64d5::t_64ca6fa1924217 387,410
+  s_bbca6749af64d5::t_aba50bda7f2978 7,394,416-441,443-466
+docs/how-to/rebuild-context-from-the-log.md
+  s_bbca6749af64d5::t_387988140bed0f 177-195
+tests/fixtures/context/context.golden.md
+  s_bbca6749af64d5::t_aacdfff6c26386 28
+tests/context_packet.rs
+  s_bbca6749af64d5::t_fa93eead5c15c4 219-228,236-241,243,246-247,251,253-302,311-377
+  s_bbca6749af64d5::t_dabb502f11b60f 303-310
+docs/superpowers/specs/2026-09-28-context-from-log-design.md
+  s_bbca6749af64d5::t_67d46d72648ebe 135-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "78913b5ebaf8ea57a5b82f6fa79dde41a97028ef",
+  "prompts": {},
+  "sessions": {
+    "s_bbca6749af64d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df235a51-21c1-4d4d-aa50-fbcecee9f3f3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
