@@ -23,6 +23,7 @@ fn every_frozen_command_is_recognized() {
         "protect",
         "schema",
         "skill",
+        "context",
         "completions",
     ] {
         Command::cargo_bin("eventlog")

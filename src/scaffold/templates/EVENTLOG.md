@@ -37,11 +37,12 @@ Parallel-work events:
 | `progress`  | agent, msg, ref                                  | short note while a worker runs                 |
 | `seam`      | agents, subject, ref                             | a cross-worker dependency found mid-work       |
 | `violation` | agent, paths                                     | worker changed files outside its claim         |
-| `ack`       | by, seq_done, outcome, ref                       | a reactor acted on event seq_done              |
+| `ack`       | by, seq_done, outcome, ref, for                  | a reactor acted on event seq_done; `for=<seq>` closes the writer's own open `intent` |
 | `note`      | msg                                              | reactor or operator note                       |
 | `intent`    | by, for, paths                                     | reactor declared intent before acting          |
 | `veto`      | by, for, reason                                    | reactor blocked an action                      |
 | `observed`  | by, for, paths                                     | unclaimed files turned dirty while a reactor acted (no blame) |
+| `rebuild`   | trigger, as_of, reason, tokens_before, tokens_after, kept_turns | the controller's context was rebuilt from the log |
 
 Any line not written by the controller carries `by=<writer>`. Reactors resume
 from their own `ack` lines, never a side file.

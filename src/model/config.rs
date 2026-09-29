@@ -20,6 +20,51 @@ pub struct Config {
     pub writers: Allowlist,
     pub view: ViewConfig,
     pub keys: KeysConfig,
+    pub context: ContextConfig,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ContextConfig {
+    pub floor_percent: u8,
+    pub backstop_percent: u8,
+    pub keep_turns: u32,
+    pub tail_chars: usize,
+    pub budget_chars: usize,
+}
+
+impl ContextConfig {
+    /// Checked only by `eventlog context` and `eventlog context check`, not
+    /// by config load: a bad `[context]` table must not break every other
+    /// command (`react`'s reactors included).
+    pub fn validate(&self) -> anyhow::Result<()> {
+        if self.floor_percent > 100 || self.backstop_percent > 100 {
+            anyhow::bail!(
+                "[context] floor_percent and backstop_percent must be 0-100 (floor_percent={}, backstop_percent={})",
+                self.floor_percent,
+                self.backstop_percent
+            );
+        }
+        if self.floor_percent >= self.backstop_percent {
+            anyhow::bail!(
+                "[context] floor_percent ({}) must be below backstop_percent ({})",
+                self.floor_percent,
+                self.backstop_percent
+            );
+        }
+        Ok(())
+    }
+}
+
+impl Default for ContextConfig {
+    fn default() -> Self {
+        ContextConfig {
+            floor_percent: 25,
+            backstop_percent: 60,
+            keep_turns: 3,
+            tail_chars: 40_000,
+            budget_chars: 12_000,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -92,6 +137,8 @@ struct FileConfig {
     view: Option<FileView>,
     #[serde(default)]
     keys: Option<FileKeys>,
+    #[serde(default)]
+    context: Option<FileContext>,
 }
 
 #[derive(Debug, Default, serde::Deserialize)]
@@ -118,6 +165,16 @@ struct FileKeys {
     follow: Option<String>,
     open: Option<String>,
     panes: Option<String>,
+}
+
+#[derive(Debug, Default, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FileContext {
+    floor_percent: Option<u8>,
+    backstop_percent: Option<u8>,
+    keep_turns: Option<u32>,
+    tail_chars: Option<usize>,
+    budget_chars: Option<usize>,
 }
 
 /// Load `<repo_root>/.context/eventlog.toml`, else
@@ -161,6 +218,23 @@ pub fn load(repo_root: &Path) -> anyhow::Result<Config> {
         }
         if let Some(k) = keys.panes {
             cfg.keys.panes = k;
+        }
+    }
+    if let Some(c) = file.context {
+        if let Some(v) = c.floor_percent {
+            cfg.context.floor_percent = v;
+        }
+        if let Some(v) = c.backstop_percent {
+            cfg.context.backstop_percent = v;
+        }
+        if let Some(v) = c.keep_turns {
+            cfg.context.keep_turns = v;
+        }
+        if let Some(v) = c.tail_chars {
+            cfg.context.tail_chars = v;
+        }
+        if let Some(v) = c.budget_chars {
+            cfg.context.budget_chars = v;
         }
     }
     Ok(cfg)

@@ -90,3 +90,22 @@ fn escapes_are_preserved() {
     assert_eq!(e.fields["msg"], "a \"quoted\" line\nwith break");
     assert_eq!(e.to_line(), src);
 }
+
+#[test]
+fn rebuild_type_requires_only_trigger() {
+    let vocab = eventlog::model::vocab::Vocabulary::builtin();
+    let spec = vocab.get("rebuild").expect("rebuild is built in");
+    assert_eq!(spec.fields, vec!["trigger".to_string()]);
+    for f in [
+        "as_of",
+        "reason",
+        "tokens_before",
+        "tokens_after",
+        "kept_turns",
+    ] {
+        assert!(
+            spec.optional.contains(&f.to_string()),
+            "missing optional {f}"
+        );
+    }
+}

@@ -1,5 +1,6 @@
 pub mod cli;
 pub mod cmd;
+pub mod context;
 pub mod guard;
 pub mod log;
 pub mod model;

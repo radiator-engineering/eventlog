@@ -37,7 +37,8 @@ Parallel-work events (append these when workers run side by side):
 | `seam`      | agents, subject, ref                             | a cross-worker dependency found mid-work       |
 | `violation` | agent, paths                                     | worker changed files outside its claim; from a reactor: files its action committed outside the authorized set |
 | `observed`  | by, paths, for                                   | a reactor saw unclaimed files turn dirty while it acted; work in progress, no blame |
-| `ack`       | by, seq_done, outcome, ref                       | a reactor acted on event seq_done              |
+| `ack`       | by, seq_done, outcome, ref, for                  | a reactor acted on event seq_done; `for=<seq>` closes the writer's own open `intent` |
+| `rebuild`   | trigger, as_of, reason, tokens_before, tokens_after, kept_turns | the controller's context was rebuilt from the log |
 
 Any line the controller did not write carries `by=<agent>`; only writers named
 in a `decision key=log-writers` may set it. A reactor (a process that acts on

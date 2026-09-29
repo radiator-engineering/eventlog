@@ -4,6 +4,7 @@ pub mod append;
 pub mod claims;
 mod commit_command;
 pub mod completions;
+pub mod context;
 pub mod doctor;
 pub mod guard;
 pub mod init;

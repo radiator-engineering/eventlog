@@ -1,7 +1,7 @@
 //! The event vocabulary: which fields each `type` carries.
 //!
 //! [`Vocabulary::builtin`] is the table in `.context/EVENTLOG.md` plus `ack`,
-//! `note`, `intent`, `veto` and `violation`. A `[vocabulary.<type>]` table in
+//! `note`, `intent`, `veto`, `violation` and `rebuild`. A `[vocabulary.<type>]` table in
 //! `.context/eventlog.toml` adds types and adds fields to existing ones; it
 //! can never remove a built-in type or a built-in required field.
 //!
@@ -77,10 +77,21 @@ impl Vocabulary {
             ("seam", &["agents"], &["subject", "ref"]),
             ("violation", &["agent", "paths"], &["ref", "detail"]),
             ("observed", &["paths"], &["for", "ref", "detail"]),
-            ("ack", &["seq_done", "outcome"], &["ref", "detail"]),
+            ("ack", &["seq_done", "outcome"], &["ref", "detail", "for"]),
             ("note", &["msg"], &["agent", "ref"]),
             ("intent", &[], &["agent", "paths", "msg", "for", "ref"]),
             ("veto", &["for"], &["role", "reason", "ref"]),
+            (
+                "rebuild",
+                &["trigger"],
+                &[
+                    "as_of",
+                    "reason",
+                    "tokens_before",
+                    "tokens_after",
+                    "kept_turns",
+                ],
+            ),
         ];
         Vocabulary(
             table

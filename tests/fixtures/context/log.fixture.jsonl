@@ -1,0 +1,9 @@
+{"seq":1,"ts":"2026-09-28T09:00:00Z","type":"decision","key":"crate-name","value":"eventlog-cli"}
+{"seq":2,"ts":"2026-09-28T09:05:00Z","type":"spawn","agent":"worker-a","model":"sonnet","tab":"w1","role":"worker"}
+{"seq":3,"ts":"2026-09-28T09:06:00Z","type":"claim","agent":"worker-a","paths":"src/context/check.rs"}
+{"seq":4,"ts":"2026-09-28T09:07:00Z","type":"prompt","agent":"worker-a","ref":".context/handoffs/worker-a.md"}
+{"seq":5,"ts":"2026-09-28T09:20:00Z","type":"result","agent":"worker-a","ref":".context/handoffs/worker-a.md","summary":"Added the fill/growth backstop rule to check::decide"}
+{"seq":6,"ts":"2026-09-28T09:21:00Z","type":"ack","by":"controller","seq_done":"5","outcome":"reviewed","for":"5"}
+{"seq":7,"ts":"2026-09-28T09:25:00Z","type":"retire","agent":"worker-a","disposition":"done"}
+{"seq":8,"ts":"2026-09-28T09:30:00Z","type":"note","msg":"golden fixture frozen for the context command test"}
+{"seq":9,"ts":"2026-09-28T09:31:00Z","type":"intent","msg":"Wire the CLI for eventlog context","ref":".context/handoffs/task.md"}

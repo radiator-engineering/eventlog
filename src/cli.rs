@@ -58,6 +58,8 @@ pub enum Command {
     Schema(SchemaArgs),
     /// Manage the embedded coordination skill.
     Skill(SkillArgs),
+    /// Render the controller's context from the log, or decide when to rebuild it.
+    Context(ContextArgs),
     /// Generate shell completions.
     Completions(CompletionsArgs),
 }
@@ -342,6 +344,38 @@ pub enum SkillInner {
 }
 
 #[derive(ClapArgs, Debug)]
+pub struct ContextArgs {
+    /// Packet budget in characters (default: [context] budget_chars).
+    #[arg(long)]
+    pub budget: Option<usize>,
+
+    #[command(subcommand)]
+    pub inner: Option<ContextInner>,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum ContextInner {
+    /// Print {"rebuild": bool, "reason": text} for the given context fill.
+    Check {
+        /// Context window fill, 0 to 100.
+        #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
+        percent: u8,
+        /// Expected fill growth by the next check, in percentage points.
+        #[arg(long, default_value_t = 0, value_parser = clap::value_parser!(u8).range(0..=100))]
+        growth: u8,
+    },
+    /// Install the eventlog-context mod, or print the classic hook.
+    Install {
+        /// Print the classic SessionStart hook instead of writing the mod.
+        #[arg(long)]
+        classic: bool,
+        /// Write the mod even when settings.json already has the classic hook.
+        #[arg(long)]
+        force: bool,
+    },
+}
+
+#[derive(ClapArgs, Debug)]
 pub struct CompletionsArgs {
     /// Shell to generate completions for.
     #[arg(value_enum)]
@@ -371,6 +405,7 @@ pub fn run() -> i32 {
         Command::Protect(_) => crate::cmd::protect::run(&args),
         Command::Schema(_) => crate::cmd::schema::run(&args),
         Command::Skill(_) => crate::cmd::skill::run(&args),
+        Command::Context(_) => crate::cmd::context::run(&args),
         Command::Completions(_) => crate::cmd::completions::run(&args),
     };
     match result {

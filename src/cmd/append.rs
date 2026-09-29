@@ -61,11 +61,12 @@ Vocabulary (required / optional fields):
   progress: required=msg optional=agent,ref
   seam: required=agents optional=subject,ref
   violation: required=agent,paths optional=ref,detail
-  ack: required=seq_done,outcome optional=ref,detail
+  ack: required=seq_done,outcome optional=ref,detail,for
   note: required=msg optional=agent,ref
   intent: required= optional=agent,paths,msg,for,ref
   veto: required=for optional=role,reason,ref
   observed: required=paths optional=for,ref,detail
+  rebuild: required=trigger optional=as_of,reason,tokens_before,tokens_after,kept_turns
 ";
 
 pub fn vocab_epilogue(cfg: &Config) -> String {
