@@ -216,8 +216,16 @@ fn reactor_health_pins_never_acked_wording() {
     assert!(md.contains("- committer unacked=2 last_ack=never"), "{md}");
 }
 
-#[test]
-fn budget_drops_history_before_artifacts_and_keeps_decisions() {
+fn lines_of(p: &eventlog::context::packet::Packet, key: &str) -> usize {
+    p.sections
+        .iter()
+        .find(|s| s.key == key)
+        .unwrap()
+        .lines
+        .len()
+}
+
+fn many_notes() -> Vec<Event> {
     let mut events = log();
     for i in 0..40u64 {
         events.push(ev(&format!(
@@ -225,37 +233,148 @@ fn budget_drops_history_before_artifacts_and_keeps_decisions() {
             7 + i
         )));
     }
+    events
+}
+
+#[test]
+fn budget_drops_artifacts_first_then_history_and_keeps_decisions() {
+    let events = many_notes();
     let full = render(&events, &clean(), 1_000_000, &[]);
-    // Two history lines are about 150 characters: this forces two or three
-    // of the oldest out and no more.
+    // Shaving 150 characters is covered by the artifact index alone.
     let small = render(&events, &clean(), full.markdown().len() - 150, &[]);
     assert!(!small.over_budget);
-    let hist = |p: &eventlog::context::packet::Packet| {
-        p.sections
-            .iter()
-            .find(|s| s.key == "history")
-            .unwrap()
-            .lines
-            .len()
-    };
-    assert!(hist(&small) < hist(&full));
+    assert!(lines_of(&small, "artifacts") < lines_of(&full, "artifacts"));
+    assert_eq!(lines_of(&small, "history"), lines_of(&full, "history"));
     let md = small.markdown();
     assert!(md.contains("crate-name=eventlog-cli"));
     assert!(md.contains("write the packet"));
-    // History is the last 15 of 42: notes 25..39. The oldest go first.
+    // A tighter budget then takes the oldest history: 25..39 shown at first.
     assert!(full.markdown().contains("note number 25 "));
-    assert!(md.contains("note number 39"));
-    assert!(!md.contains("note number 25 "));
-    // Artifacts are untouched while history still has lines to drop.
-    let arts = |p: &eventlog::context::packet::Packet| {
-        p.sections
-            .iter()
-            .find(|s| s.key == "artifacts")
-            .unwrap()
-            .lines
-            .len()
-    };
-    assert_eq!(arts(&small), arts(&full));
+    let tight = render(&events, &clean(), 1_200, &[]);
+    assert!(
+        !tight.markdown().contains("note number 25 "),
+        "{}",
+        tight.markdown()
+    );
+    assert!(tight.markdown().contains("note number 39"));
+}
+
+#[test]
+fn history_keeps_a_floor_when_other_sections_overflow() {
+    let mut events = many_notes();
+    let n = 300u64;
+    for i in 0..n {
+        events.push(ev(&format!(
+            r#"{{"seq":{},"ts":"2026-09-01T05:00:00Z","type":"decision","key":"k{i:03}","value":"{}"}}"#,
+            100 + i,
+            "v".repeat(150)
+        )));
+    }
+    let p = render(&events, &clean(), 12_000, &[]);
+    assert!(!p.over_budget, "{}", p.markdown().len());
+    assert!(p.markdown().chars().count() <= 12_000);
+    assert!(lines_of(&p, "history") >= 5, "history emptied");
+    assert!(lines_of(&p, "decisions") >= 4);
+}
+
+#[test]
+fn decisions_list_newest_first_and_count_the_older_ones() {
+    let mut events = log();
+    for i in 0..30u64 {
+        events.push(ev(&format!(
+            r#"{{"seq":{},"ts":"2026-09-01T05:00:00Z","type":"decision","key":"d{i:02}","value":"x"}}"#,
+            100 + i
+        )));
+    }
+    let md = render(&events, &clean(), 1_000_000, &[]).markdown();
+    let newest = md.find("d29=x").expect("newest decision shown");
+    let older = md.find("d20=x").expect("d20 shown");
+    assert!(newest < older, "{md}");
+    assert!(!md.contains("d05=x"), "old decision should be cut");
+    assert!(md.contains("older not shown"), "{md}");
+}
+
+#[test]
+fn a_retired_decision_is_not_in_force() {
+    let mut events = log();
+    events.push(ev(
+        r#"{"seq":7,"ts":"2026-09-01T05:00:00Z","type":"decision","key":"crate-name","value":"retired"}"#,
+    ));
+    let p = render(&events, &clean(), 12_000, &[]);
+    let decisions = &p
+        .sections
+        .iter()
+        .find(|s| s.key == "decisions")
+        .unwrap()
+        .lines;
+    assert_eq!(decisions, &vec!["- (none)".to_string()]);
+}
+
+#[test]
+fn an_agent_with_no_name_is_skipped() {
+    let mut events = log();
+    events.push(ev(
+        r#"{"seq":7,"ts":"2026-09-01T05:00:00Z","type":"spawn","agent":""}"#,
+    ));
+    let p = render(&events, &clean(), 12_000, &[]);
+    let agents = &p.sections.iter().find(|s| s.key == "agents").unwrap().lines;
+    assert!(agents.iter().all(|l| !l.starts_with("-  ")), "{agents:?}");
+}
+
+#[test]
+fn many_untracked_files_in_one_directory_collapse() {
+    let changes = (0..50)
+        .map(|i| Change {
+            path: format!("infra/venv/lib/site-packages/pkg{i}.py"),
+            status: "??".into(),
+            stat: "new".into(),
+            mtime: 0,
+            owner: None,
+        })
+        .chain([
+            Change {
+                path: "src/a.rs".into(),
+                status: "M".into(),
+                stat: "+1 -1".into(),
+                mtime: 0,
+                owner: None,
+            },
+            Change {
+                path: "notes/one.md".into(),
+                status: "??".into(),
+                stat: "new".into(),
+                mtime: 0,
+                owner: None,
+            },
+        ])
+        .collect();
+    let md = render(
+        &log(),
+        &WorkTree {
+            available: true,
+            changes,
+        },
+        12_000,
+        &[],
+    )
+    .markdown();
+    assert!(md.contains("- ?? infra/venv/lib/ (50 new files)"), "{md}");
+    assert!(!md.contains("pkg7.py"), "{md}");
+    assert!(md.contains("- M src/a.rs +1 -1"), "{md}");
+    assert!(md.contains("- ?? notes/one.md new"), "{md}");
+}
+
+#[test]
+fn a_long_line_is_cut() {
+    let mut events = log();
+    events.push(ev(&format!(
+        r#"{{"seq":7,"ts":"2026-09-01T05:00:00Z","type":"decision","key":"long","value":"{}"}}"#,
+        "z".repeat(1000)
+    )));
+    let md = render(&events, &clean(), 12_000, &[]).markdown();
+    let line = md.lines().find(|l| l.starts_with("- long=")).unwrap();
+    assert!(line.chars().count() <= 201, "{}", line.chars().count());
+    assert!(line.ends_with('…'));
 }
 
 #[test]

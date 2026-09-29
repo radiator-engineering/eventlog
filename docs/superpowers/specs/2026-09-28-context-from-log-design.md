@@ -132,11 +132,21 @@ and puts the current task last, where the model attends most.
 
 ### Budget
 
-The default budget is 12,000 characters. When the packet is over budget, the
-command removes the oldest history lines first, then the artifact index.
-It never removes decisions, open work, or the current task. If those alone
-exceed the budget, the command prints them in full and writes a warning to
-stderr.
+The default budget is 12,000 characters. Every line is cut to 200 characters.
+Decisions in force and open work show their newest 20 lines and count the
+rest ("+N older not shown"); agents show 10. A decision whose value is
+`retired` is not in force. More than three untracked files in one directory
+collapse to one line. Open work lists working tree changes, then intents,
+then escalations, each newest first.
+
+When the packet is still over budget, the command removes, in order: artifact
+index lines; the oldest lines of the longer of decisions and open work (down
+to four each); the oldest history lines (down to five); agent lines (down to
+four). It never removes the header or the current task. If what remains still
+exceeds the budget, the command prints it in full and writes a warning to
+stderr. The first version kept decisions and open work whole and emptied
+history first; a log with hundreds of decisions produced a packet twelve
+times the budget.
 
 ### `--json`
 

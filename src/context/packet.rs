@@ -4,7 +4,7 @@ use serde_json::{Map, Value, json};
 
 use crate::cmd::agents::{REACTOR_ON, active_agents, phase_label};
 use crate::context::age::age_between;
-use crate::context::worktree::WorkTree;
+use crate::context::worktree::{Change, WorkTree};
 use crate::model::config::ContextConfig;
 use crate::model::event::Event;
 use crate::query::State;
@@ -12,6 +12,16 @@ use crate::query::State;
 const HISTORY_TYPES: &[&str] = &["result", "decision", "violation", "observed", "note"];
 const HISTORY_LEN: usize = 15;
 const STALE_ACK_SECS: i64 = 86_400;
+/// A line longer than this is cut; the packet points at the log for the rest.
+const LINE_MAX: usize = 200;
+/// Lines shown per section before older ones are summarized as a count.
+const CAP_LISTS: usize = 20;
+const CAP_AGENTS: usize = 10;
+/// The budget loop never cuts decisions or open work below this many lines,
+/// nor history below `MIN_HISTORY`, so no section a rebuilt controller needs
+/// is emptied to make room for another.
+const MIN_LINES: usize = 4;
+const MIN_HISTORY: usize = 5;
 
 pub struct PacketInput<'a> {
     pub events: &'a [Event],
@@ -27,6 +37,8 @@ pub struct Section {
     pub key: &'static str,
     pub title: &'static str,
     pub lines: Vec<String>,
+    /// Older lines left out to fit; shown as a count line.
+    pub omitted: usize,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -57,26 +69,31 @@ pub fn build(input: &PacketInput, budget: usize) -> Packet {
             key: "header",
             title: "",
             lines: header(input.log_path, as_of),
+            omitted: 0,
         },
         Section {
             key: "decisions",
             title: "Decisions in force",
             lines: decisions(input),
+            omitted: 0,
         },
         Section {
             key: "agents",
             title: "Agents",
             lines: agents(input),
+            omitted: 0,
         },
         Section {
             key: "history",
             title: "Recent history",
             lines: history.iter().map(|e| history_line(e, &tip_ts)).collect(),
+            omitted: 0,
         },
         Section {
             key: "artifacts",
             title: "Artifact index",
             lines: artifacts(&history, input.exists),
+            omitted: 0,
         },
     ];
     let reactors = reactor_health(input, &tip_ts);
@@ -85,21 +102,38 @@ pub fn build(input: &PacketInput, budget: usize) -> Packet {
             key: "reactors",
             title: "Reactor health",
             lines: reactors,
+            omitted: 0,
         });
     }
     sections.push(Section {
         key: "open_work",
         title: "Open work",
         lines: open_work(input),
+        omitted: 0,
     });
     if let Some(lines) = current_task(input, budget) {
         sections.push(Section {
             key: "current_task",
             title: "Current task",
             lines,
+            omitted: 0,
         });
     }
     for s in &mut sections {
+        if s.key != "current_task" {
+            for l in &mut s.lines {
+                *l = cut_line(l);
+            }
+        }
+        let cap = match s.key {
+            "decisions" | "open_work" => CAP_LISTS,
+            "agents" => CAP_AGENTS,
+            _ => usize::MAX,
+        };
+        if s.lines.len() > cap {
+            s.omitted += s.lines.len() - cap;
+            s.lines.truncate(cap);
+        }
         if s.lines.is_empty() && s.key != "header" {
             s.lines.push("- (none)".into());
         }
@@ -125,6 +159,12 @@ impl Packet {
                 out.push_str(line);
                 out.push('\n');
             }
+            if s.omitted > 0 {
+                out.push_str(&format!(
+                    "- (+{} older not shown; `eventlog state --json` lists them all)\n",
+                    s.omitted
+                ));
+            }
             out.push('\n');
         }
         out
@@ -145,11 +185,25 @@ impl Packet {
         })
     }
 
-    /// Drop the oldest history lines, then the oldest artifact lines, until
-    /// the markdown fits. Nothing else is ever dropped.
+    /// Fit the markdown to the budget. Newest-first lists (decisions, open
+    /// work) lose their oldest lines and history loses its oldest lines, but
+    /// only down to a floor, so every section keeps something. Order: the
+    /// artifact index, then the longer of decisions and open work, then
+    /// history, then agents. Anything left is over budget and printed whole.
     fn fit(&mut self, budget: usize) {
         while self.markdown().chars().count() > budget {
-            if self.drop_first_line("history") || self.drop_last_line("artifacts") {
+            if self.trim("artifacts", false, 0) {
+                continue;
+            }
+            let longer = if self.len_of("decisions") >= self.len_of("open_work") {
+                ["decisions", "open_work"]
+            } else {
+                ["open_work", "decisions"]
+            };
+            if longer.iter().any(|k| self.trim(k, false, MIN_LINES)) {
+                continue;
+            }
+            if self.trim("history", true, MIN_HISTORY) || self.trim("agents", false, MIN_LINES) {
                 continue;
             }
             self.over_budget = true;
@@ -157,33 +211,45 @@ impl Packet {
         }
     }
 
-    fn drop_first_line(&mut self, key: &str) -> bool {
-        let Some(s) = self.sections.iter_mut().find(|s| s.key == key) else {
-            return false;
-        };
-        if s.lines.first().is_some_and(|l| l != "- (none)") {
-            s.lines.remove(0);
-            if s.lines.is_empty() {
-                s.lines.push("- (none)".into());
-            }
-            return true;
-        }
-        false
+    fn len_of(&self, key: &str) -> usize {
+        self.sections
+            .iter()
+            .find(|s| s.key == key)
+            .map_or(0, |s| s.lines.len())
     }
 
-    fn drop_last_line(&mut self, key: &str) -> bool {
+    /// Drop one line from the front (`from_front`, for oldest-first history)
+    /// or the back of a section, keeping at least `min` lines. Every dropped
+    /// line but the artifact index's counts as omitted.
+    fn trim(&mut self, key: &str, from_front: bool, min: usize) -> bool {
         let Some(s) = self.sections.iter_mut().find(|s| s.key == key) else {
             return false;
         };
-        if s.lines.last().is_some_and(|l| l != "- (none)") {
-            s.lines.pop();
-            if s.lines.is_empty() {
-                s.lines.push("- (none)".into());
-            }
-            return true;
+        if s.lines.first().is_some_and(|l| l == "- (none)") || s.lines.len() <= min {
+            return false;
         }
-        false
+        if from_front {
+            s.lines.remove(0);
+        } else {
+            s.lines.pop();
+        }
+        if key != "artifacts" {
+            s.omitted += 1;
+        }
+        if s.lines.is_empty() {
+            s.lines.push("- (none)".into());
+        }
+        true
     }
+}
+
+/// Cut a line to `LINE_MAX` characters, on a character boundary.
+fn cut_line(l: &str) -> String {
+    if l.chars().count() <= LINE_MAX {
+        return l.to_string();
+    }
+    let cut = l.char_indices().nth(LINE_MAX).map_or(l.len(), |(i, _)| i);
+    format!("{}…", &l[..cut])
 }
 
 fn header(log_path: &str, as_of: u64) -> Vec<String> {
@@ -198,11 +264,17 @@ fn field<'a>(e: &'a Event, k: &str) -> Option<&'a str> {
     e.fields.get(k).map(String::as_str)
 }
 
+/// A decision whose value is `retired` is off the list until the key is
+/// decided again. Newest decisions come first.
 fn decisions(input: &PacketInput) -> Vec<String> {
-    input
+    let mut live: Vec<_> = input
         .state
         .decisions
         .iter()
+        .filter(|(_, (v, _))| !v.trim().eq_ignore_ascii_case("retired"))
+        .collect();
+    live.sort_by_key(|(_, (_, seq))| std::cmp::Reverse(*seq));
+    live.into_iter()
         .map(|(k, (v, seq))| {
             let r = input
                 .events
@@ -220,6 +292,7 @@ fn decisions(input: &PacketInput) -> Vec<String> {
 fn agents(input: &PacketInput) -> Vec<String> {
     active_agents(input.state)
         .into_iter()
+        .filter(|a| !a.name.trim().is_empty())
         .map(|a| {
             let brief = input
                 .events
@@ -310,9 +383,16 @@ fn reactor_health(input: &PacketInput, tip_ts: &str) -> Vec<String> {
         .collect()
 }
 
+/// Working tree changes first (they are the live state), then open
+/// intents, then open escalations, each newest first. The oldest lines are
+/// the first to go when the packet is trimmed.
 fn open_work(input: &PacketInput) -> Vec<String> {
     let mut lines = Vec::new();
-    for e in &input.state.intents {
+    if !input.work.available {
+        lines.push("- (working tree unavailable)".into());
+    }
+    lines.extend(change_lines(&input.work.changes));
+    for e in input.state.intents.iter().rev() {
         let mut l = format!(
             "- intent seq {} {}: {}",
             e.seq,
@@ -327,16 +407,63 @@ fn open_work(input: &PacketInput) -> Vec<String> {
         }
         lines.push(l);
     }
-    for e in &input.state.escalations {
+    for e in input.state.escalations.iter().rev() {
         let what = field(e, "subject")
             .or_else(|| field(e, "msg"))
             .unwrap_or("");
         lines.push(format!("- escalation seq {}: {what}", e.seq));
     }
-    if !input.work.available {
-        lines.push("- (working tree unavailable)".into());
+    lines
+}
+
+/// Untracked files under one directory collapse to a single line once there
+/// are more than `COLLAPSE_OVER` of them (a virtualenv or a build folder would
+/// otherwise fill the packet). The directory is the first three path parts,
+/// less the file name. Tracked changes always print one line each.
+const COLLAPSE_OVER: usize = 3;
+
+fn change_lines(changes: &[Change]) -> Vec<String> {
+    let dir_of = |c: &Change| -> Option<String> {
+        if c.status != "??" {
+            return None;
+        }
+        let parts: Vec<&str> = c.path.split('/').collect();
+        let keep = parts.len().saturating_sub(1).min(3);
+        (keep > 0).then(|| parts[..keep].join("/"))
+    };
+    let mut counts: Vec<(String, usize)> = Vec::new();
+    for c in changes {
+        if let Some(d) = dir_of(c) {
+            match counts.iter_mut().find(|(k, _)| *k == d) {
+                Some((_, n)) => *n += 1,
+                None => counts.push((d, 1)),
+            }
+        }
     }
-    for c in &input.work.changes {
+    let mut shown: Vec<String> = Vec::new();
+    let mut lines = Vec::new();
+    for c in changes {
+        if let Some(d) = dir_of(c)
+            && let Some((_, n)) = counts.iter().find(|(k, _)| *k == d)
+            && *n > COLLAPSE_OVER
+        {
+            if !shown.contains(&d) {
+                let owners: Vec<&str> = changes
+                    .iter()
+                    .filter(|x| dir_of(x).as_deref() == Some(d.as_str()))
+                    .filter_map(|x| x.owner.as_deref())
+                    .collect();
+                let mut l = format!("- ?? {d}/ ({n} new files)");
+                if let Some(o) = owners.first()
+                    && owners.len() == *n
+                {
+                    l.push_str(&format!(" [claimed by {o}]"));
+                }
+                lines.push(l);
+                shown.push(d);
+            }
+            continue;
+        }
         let mut l = format!("- {} {} {}", c.status, c.path, c.stat)
             .trim_end()
             .to_string();

@@ -174,7 +174,25 @@ eventlog append ack seq_done=<seq> outcome=done for=<seq>
 `<seq>` is the intent's seq in both places. An open intent also blocks the
 boundary rule, so an intent that is never closed leaves only the backstop.
 
-## 7. Check that it worked
+## 7. Keep old state out of the packet
+
+The packet stays within `budget_chars` on a log of any size. It shows the
+newest 20 decisions and the newest 20 open-work lines, and counts the rest
+("+N older not shown"). It cuts any line over 200 characters. It collapses
+more than three untracked files in one directory to one line. Recent history
+keeps at least five lines and open work at least four, however full the other
+sections are.
+
+Old entries still count until you retire them:
+
+- Retire a decision: `eventlog append decision key=<key> value=retired`. A
+  key whose latest value is `retired` leaves "Decisions in force" until you
+  decide it again.
+- Close an intent: `eventlog append ack seq_done=<seq> outcome=done for=<seq>`.
+- Close an escalation: `eventlog append approval for=<seq> ...` (see
+  `eventlog append --help` for the fields).
+
+## 8. Check that it worked
 
 After a rebuild, the log has a `rebuild` event:
 

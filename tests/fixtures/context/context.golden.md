@@ -24,8 +24,8 @@ Read an event's artifact with `eventlog open <seq>`. Read recent events with `ev
 
 ## Open work
 
-- intent seq 9 controller: Wire the CLI for eventlog context ref=.context/handoffs/task.md
 - (working tree unavailable)
+- intent seq 9 controller: Wire the CLI for eventlog context ref=.context/handoffs/task.md
 
 ## Current task
 
