@@ -1,0 +1,36 @@
+mods/eventlog-context/hooks/policy.ts
+  s_bbca6749af64d5::t_7146ba002af3c3 1-13,15-279
+  s_bbca6749af64d5::t_8e938e5dffc3a7 14
+mods/eventlog-context/tests/policy.test.ts
+  s_bbca6749af64d5::t_8e938e5dffc3a7 1-296
+mods/eventlog-context/tests/register.test.ts
+  s_bbca6749af64d5::t_8e938e5dffc3a7 1-176,178-184,186-192,196-200,204-613
+  s_bbca6749af64d5::t_f9ef5683b6b4c7 177,185,193-195,201-203
+mods/eventlog-context/hooks/register.ts
+  s_bbca6749af64d5::t_7146ba002af3c3 1-3,5-214
+  s_bbca6749af64d5::t_8e938e5dffc3a7 4
+.gitignore
+  s_bbca6749af64d5::t_9fbfe93dd652f2 14-19
+mods/eventlog-context/.claude-plugin/plugin.json
+  s_bbca6749af64d5::t_529b3ac5c7e626 1-6
+mods/eventlog-context/hooks/hooks.json
+  s_bbca6749af64d5::t_c9aa368bd45f4d 1-4
+mods/eventlog-context/tsconfig.json
+  s_bbca6749af64d5::t_7b9f8a2a03aef3 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "69a3962a6bc7997d4aefa6c3e457170a2ad6da50",
+  "prompts": {},
+  "sessions": {
+    "s_bbca6749af64d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df235a51-21c1-4d4d-aa50-fbcecee9f3f3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
