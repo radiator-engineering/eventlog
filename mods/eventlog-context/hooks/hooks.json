@@ -1,0 +1,4 @@
+{
+  "description": "session.compact answers with a packet from `eventlog context --json` plus the last turns; turn.complete asks `eventlog context check` and compacts on yes; command.run handles /rebuild.",
+  "modules": ["./register.ts"]
+}

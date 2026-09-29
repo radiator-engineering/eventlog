@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "lib": ["es2023"],
+    "types": [],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "paths": { "claude-code": ["../../.claude/types/claude-code.d.ts"] }
+  },
+  "include": ["../../.claude/types/claude-code.d.ts", "hooks/**/*.ts", "tests/**/*.ts"]
+}

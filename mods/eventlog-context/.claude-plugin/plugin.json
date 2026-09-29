@@ -1,0 +1,6 @@
+{
+  "name": "eventlog-context",
+  "version": "0.1.0",
+  "description": "Replaces context compaction in the controller's interactive session of a log-driven repo: the conversation is rebuilt from .context/events.jsonl by `eventlog context`, plus the last few turns word for word. Rebuilds at the log's task boundaries and at a fill backstop; /rebuild queues a rebuild for the end of the next turn, and /compact rebuilds from the log at once. Inert in headless sessions, for other EVENTLOG_AS writers, with EVENTLOG_CONTEXT=off, and in a repo without the log. Falls back to the engine's compaction when eventlog fails.",
+  "author": { "name": "radiator-engineering" }
+}
