@@ -146,7 +146,7 @@ default.
 floor_percent = 25       # never rebuild below this fill
 backstop_percent = 60    # always rebuild at this fill plus growth
 keep_turns = 3           # turns kept word for word after the packet
-tail_chars = 40000       # size cap for those turns; the newest turn is always kept
+tail_chars = 40000       # size cap for those turns; an oversized newest turn keeps its prompt and answer only
 budget_chars = 12000     # size cap for the packet
 ```
 

@@ -32,6 +32,18 @@ The crate is named `eventlog-cli`; the executable is `eventlog`.
 
 Run `eventlog --help` for the full list, and `eventlog vocab` for the fields each event type takes.
 
+## Rebuild the controller's context from the log
+
+A long controller session normally ends in an LLM summary of itself. The `eventlog-context` mod for Claude Code replaces that: it builds the new context from the log (decisions, agents, recent history, open work) plus the last turns word for word, in milliseconds, and it fires at task boundaries instead of at a token limit.
+
+```sh
+eventlog context install     # writes .claude/skills/eventlog-context/ (rerun after upgrading eventlog)
+echo '/.claude/skills/eventlog-context/' >> .gitignore   # generated copy; keep it out of git
+CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude               # Claude Code 2.1.278+, in a trusted workspace
+```
+
+Then work as usual. `eventlog view --last 20` shows each `rebuild` event with its trigger. `/rebuild` forces one when the next turn ends; `EVENTLOG_CONTEXT=off` turns the mod off for a session. `eventlog context` prints the packet the mod would use. See [Rebuild context from the log](docs/how-to/rebuild-context-from-the-log.md) and the [reference](docs/reference/context.md).
+
 ## How the log drives work
 
 1. The controller appends `spawn`, `prompt`, and `claim` for a worker, and the worker edits only the paths it claimed.
@@ -44,6 +56,7 @@ A reactor that commits a file outside the `paths=` it was given appends a `viola
 ## Documentation
 
 - [Run a log-driven repo](docs/how-to/run-a-log-driven-repo.md): the how-to for setting this up on a project.
+- [Rebuild context from the log](docs/how-to/rebuild-context-from-the-log.md): install and use the `eventlog-context` mod.
 - [Cut a release](docs/how-to/cut-a-release.md): generate the changelog with git-cliff, tag, and publish.
 - [Command reference](docs/reference/eventlog-cli-surface.md): every subcommand, with a page per command in `docs/reference/`.
 - [Design notes](docs/explanation/): the invariants worth understanding before you change the code.
@@ -56,5 +69,6 @@ The `event-log-coordination` skill for Claude Code lives in `skill/` and ships i
 
 - `src/` the crate: `model` (event, config, vocabulary), `log` (read, lock, append), `query` (fold to state), `react` (reactor runtime), `guard` (hook guard), `scaffold`, `tui`, `cmd`.
 - `skill/` the coordination skill, embedded at build time.
+- `mods/eventlog-context/` the Claude Code mod, embedded at build time and written by `eventlog context install`.
 - `.context/` this repo's own log, decisions, briefs, and reactor action scripts.
 - `Drovefile` the herdr layout: controller pane, log view, and the two reactor panes.
