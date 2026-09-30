@@ -1,6 +1,6 @@
 [package]
 name = "eventlog-cli"
-version = "0.4.1"
+version = "0.5.0"
 description = "Append-only JSONL coordination log for multi-agent repos: one controller writes, reactors act on events"
 edition = "2024"
 rust-version = "1.88"
