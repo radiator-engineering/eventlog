@@ -21,3 +21,4 @@ pub mod verify;
 pub mod view;
 pub mod vocab;
 pub mod why;
+pub mod worktree_facts;

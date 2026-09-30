@@ -29,6 +29,8 @@ pub enum Command {
     Agents(AgentsArgs),
     /// Folded state as of a sequence number.
     State(StateArgs),
+    /// For each worktree path on stdin, say whether the log holds it or is done with it.
+    WorktreeFacts(WorktreeFactsArgs),
     /// Explain how one event was acted on.
     Why(WhyArgs),
     /// Report files a worker's claim does not cover.
@@ -122,6 +124,10 @@ pub struct AgentsArgs {
     #[arg(long)]
     pub at: Option<u64>,
 }
+
+/// `eventlog worktree-facts` reads paths on stdin and takes no flags of its own.
+#[derive(ClapArgs, Debug)]
+pub struct WorktreeFactsArgs {}
 
 #[derive(ClapArgs, Debug)]
 pub struct StateArgs {
@@ -391,6 +397,7 @@ pub fn run() -> i32 {
         Command::View(_) => crate::cmd::view::run(&args),
         Command::Agents(_) => crate::cmd::agents::run(&args),
         Command::State(_) => crate::cmd::state::run(&args),
+        Command::WorktreeFacts(_) => crate::cmd::worktree_facts::run(&args),
         Command::Why(_) => crate::cmd::why::run(&args),
         Command::Claims(_) => crate::cmd::claims::run(&args),
         Command::Open(_) => crate::cmd::open::run(&args),

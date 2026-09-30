@@ -33,6 +33,7 @@ Every command accepts:
 | `agents` | Per-agent lifecycle table ([reference](query-commands.md)). |
 | `state` | Folded state as of a sequence number ([reference](query-commands.md)). |
 | `why` | Explain how one event was acted on ([reference](query-commands.md)). |
+| `worktree-facts` | For each worktree path on stdin, say whether the log holds it or is done with it ([reference](worktree-facts.md)). |
 | `claims` | Report files a worker's claim does not cover ([reference](claims.md)). Hidden alias: `check-claims`. |
 | `open` | Open an event's ref in `$EDITOR` or `$PAGER` ([reference](open.md)). |
 | `tui` | Interactive terminal UI over the log ([reference](tui.md)). |
@@ -40,6 +41,7 @@ Every command accepts:
 | `guard` | Hook guard for agent tool calls ([reference](guard.md)). Subcommand: `install`. |
 | `init` | Create a new coordination log and scaffold ([reference](scaffold.md)). |
 | `doctor` | Diagnose common setup problems ([reference](scaffold.md)). |
+| `context` | Render the controller's context from the log, decide when to rebuild it, install the `eventlog-context` mod ([reference](context.md)). |
 | `protect` | Toggle or report OS-level append-only protection ([reference](scaffold.md)). |
 | `setup` | Preview, apply, or upgrade reusable reactor policy ([reference](setup.md)). Subcommands: `preview`, `apply`, `upgrade`. |
 | `lifecycle` | Idempotently spawn, claim, and retire a reactor or worker ([reference](lifecycle.md)). Subcommands: `start`, `stop`. |
@@ -77,6 +79,8 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Guard](guard.md) — parsing agent hook payloads and the shared denylist.
 - [Scaffold and setup](scaffold.md) — `init`, `doctor`, and `protect`.
 - [Setup](setup.md) — `eventlog setup`, the reusable reactor policy scaffold.
+- [Worktree facts](worktree-facts.md) — `eventlog worktree-facts`, the provider that `offcut` reads.
+- [Context](context.md) — `eventlog context`, `context check`, `context install`, and the `[context]` settings.
 - [Lifecycle](lifecycle.md) — `eventlog lifecycle`, idempotent spawn/claim/retire for a reactor or worker.
 - [Action](action.md) — `eventlog action`, packaged commit and docs reactor actions.
 - [Skill and completions](skill.md) — installing the embedded skill and generating shell completions.
