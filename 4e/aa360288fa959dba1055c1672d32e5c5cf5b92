@@ -1,0 +1,23 @@
+Cargo.toml
+  s_bbca6749af64d5::t_8909d172479142 3
+CHANGELOG.md
+  s_bbca6749af64d5::t_8909d172479142 7-16
+Cargo.lock
+  s_bbca6749af64d5::t_f25262d658fec1 440
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4eaa360288fa959dba1055c1672d32e5c5cf5b92",
+  "prompts": {},
+  "sessions": {
+    "s_bbca6749af64d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df235a51-21c1-4d4d-aa50-fbcecee9f3f3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
