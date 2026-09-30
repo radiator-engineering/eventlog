@@ -1,0 +1,23 @@
+README.md
+  s_bbca6749af64d5::t_e1a92806a66d4a 35-46,59,72
+docs/how-to/rebuild-context-from-the-log.md
+  s_bbca6749af64d5::t_e1a92806a66d4a 149
+docs/reference/context.md
+  s_bbca6749af64d5::t_e1a92806a66d4a 1-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "68f78439637fce6ea6bc5d49b798a25360c4931e",
+  "prompts": {},
+  "sessions": {
+    "s_bbca6749af64d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df235a51-21c1-4d4d-aa50-fbcecee9f3f3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
