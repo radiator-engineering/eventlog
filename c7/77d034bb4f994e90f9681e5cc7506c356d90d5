@@ -1,0 +1,29 @@
+src/cmd/worktree_facts.rs
+  s_bbca6749af64d5::t_ca36dc3c5395b1 75-77,127-130,201-204
+  s_bbca6749af64d5::t_e5aa2cdb45168b 1-74,78-126,131-200,205-223
+docs/reference/eventlog-cli-surface.md
+  s_bbca6749af64d5::t_e1a92806a66d4a 44,83
+  s_bbca6749af64d5::t_0ee2d1cc50acf1 36,82
+docs/reference/worktree-facts.md
+  s_bbca6749af64d5::t_0ee2d1cc50acf1 1-45
+src/cli.rs
+  s_bbca6749af64d5::t_e5aa2cdb45168b 32-33,128-131,400
+src/cmd/mod.rs
+  s_bbca6749af64d5::t_e5aa2cdb45168b 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c777d034bb4f994e90f9681e5cc7506c356d90d5",
+  "prompts": {},
+  "sessions": {
+    "s_bbca6749af64d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df235a51-21c1-4d4d-aa50-fbcecee9f3f3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
