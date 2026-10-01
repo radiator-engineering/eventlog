@@ -6,8 +6,12 @@
 //!
 //! A path belongs to an agent when a `result` names it in `worktree=`, or when
 //! it is `<repo>/.worktrees/<agent>` (the layout the controller's briefs use).
-//! `done`: the agent is retired and its last `result` is on the log.
-//! `hold`: the agent is not retired, or it was retired without a `result`.
+//! `done`: the agent is retired, with or without a `result`.
+//! `hold`: the agent is not retired.
+//!
+//! A retired agent is finished with its worktree either way: no one will
+//! work in it again. The cleanup tool still keeps a worktree with
+//! uncommitted or unpushed work, so retiring without a result loses nothing.
 
 use std::collections::BTreeMap;
 use std::io::{BufRead, Write};
@@ -109,7 +113,7 @@ pub fn facts(events: &[Event], state: &State, root: &Path, paths: &[PathBuf]) ->
         } else {
             out.push(Fact {
                 path: p.clone(),
-                verdict: "hold",
+                verdict: "done",
                 reason: format!("agent {agent} retired with no result on the log"),
             });
         }
@@ -169,14 +173,14 @@ mod tests {
     }
 
     #[test]
-    fn retired_with_no_result_is_held() {
+    fn retired_with_no_result_is_done() {
         let lines = [
             l(1, r#""type":"spawn","agent":"api""#),
             l(2, r#""type":"retire","agent":"api""#),
         ];
         assert_eq!(
             run_facts(&lines, &["/r/.worktrees/api"]),
-            vec![("/r/.worktrees/api".to_string(), "hold")]
+            vec![("/r/.worktrees/api".to_string(), "done")]
         );
     }
 

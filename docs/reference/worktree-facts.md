@@ -1,7 +1,7 @@
 # Worktree facts: `eventlog worktree-facts`
 
 Status: implemented. Tells a cleanup tool which worktrees the log still needs
-and which it is finished with. `offcut`
+and which it is finished with. [offcut](https://github.com/radiator-engineering/offcut)
 calls it on its own when a repo has a log and `eventlog` is on PATH. It reads
 the log and writes nothing.
 
@@ -25,8 +25,8 @@ A path the log cannot place gets no line. That means no opinion.
 
 | Verdict | When |
 |---|---|
-| `done` | The agent is retired and has a `result` on the log. |
-| `hold` | The agent is not retired, or it was retired with no `result`. |
+| `done` | The agent is retired, with or without a `result`. No one will work in its worktree again. |
+| `hold` | The agent is not retired. |
 
 ## Which agent owns a path
 
