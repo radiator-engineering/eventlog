@@ -215,3 +215,15 @@ fn docs_snapshot_rejects_invalid_exclude() {
             .stderr(predicates::str::contains("invalid docs.exclude"));
     }
 }
+
+#[test]
+fn docs_action_missing_policy_points_at_reactors_setup() {
+    let (dir, log) = fixture("true");
+    fs::remove_file(dir.path().join(".context/eventlog-setup.toml")).unwrap();
+    action(&dir, &log)
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains(
+            "run eventlog-reactors setup apply first",
+        ));
+}

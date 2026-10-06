@@ -181,7 +181,7 @@ fn docs() -> anyhow::Result<i32> {
     let config_path = root.join(crate::setup::SETUP_CONFIG);
     let text = std::fs::read_to_string(&config_path).with_context(|| {
         format!(
-            "read {}; run eventlog setup apply first",
+            "read {}; run eventlog-reactors setup apply first",
             config_path.display()
         )
     })?;
