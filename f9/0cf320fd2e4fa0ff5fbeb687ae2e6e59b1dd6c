@@ -1,0 +1,24 @@
+reactors/tests/docs_snapshot.rs
+  s_43391b7d8bc4a4::t_170b2f1896a25d 218-225,229
+  s_43391b7d8bc4a4::t_c498e3ee37e80a 226-228
+docs/how-to/run-a-log-driven-repo.md
+  s_43391b7d8bc4a4::t_170b2f1896a25d 131,133
+reactors/src/cmd/action.rs
+  s_43391b7d8bc4a4::t_170b2f1896a25d 184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f90cf320fd2e4fa0ff5fbeb687ae2e6e59b1dd6c",
+  "prompts": {},
+  "sessions": {
+    "s_43391b7d8bc4a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02b2343b-a12b-49b9-b5bc-87b7d7589d22",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Jacob Martin <martinjaco@gmail.com>"
+    }
+  }
+}
