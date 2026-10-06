@@ -40,17 +40,13 @@ pub enum Command {
     Open(OpenArgs),
     /// Interactive terminal UI over the log.
     Tui(TuiArgs),
-    /// Reactor runtime.
-    React(ReactArgs),
     /// Hook guard for agent tool calls.
     Guard(GuardArgs),
     /// Create a new coordination log and scaffold.
     Init(InitArgs),
-    /// Preview or apply the reusable reactor configuration.
+    /// Preview or apply the log's project setup.
     Setup(SetupArgs),
-    /// Run a packaged reactor action.
-    Action(ActionArgs),
-    /// Record idempotent reactor/worker lifecycle claims.
+    /// Record idempotent agent lifecycle claims (for supervisor hooks such as Drove's).
     Lifecycle(LifecycleArgs),
     /// Diagnose common setup problems.
     Doctor(DoctorArgs),
@@ -165,62 +161,6 @@ pub struct OpenArgs {
 pub struct TuiArgs {}
 
 #[derive(ClapArgs, Debug)]
-pub struct ReactArgs {
-    #[command(subcommand)]
-    pub inner: Option<ReactInner>,
-
-    #[command(flatten)]
-    pub opts: ReactOpts,
-}
-
-#[derive(Subcommand, Debug)]
-pub enum ReactInner {
-    /// Dry-run one reaction against a real sequence number.
-    Test(ReactTestArgs),
-}
-
-#[derive(ClapArgs, Debug)]
-pub struct ReactTestArgs {
-    /// The sequence number to react to.
-    pub seq: u64,
-
-    #[command(flatten)]
-    pub opts: ReactOpts,
-}
-
-/// Options shared by the live loop and its dry run.
-#[derive(ClapArgs, Clone, Debug)]
-pub struct ReactOpts {
-    /// Reactor name: the `by=` on every line it writes.
-    #[arg(long = "as")]
-    pub name: Option<String>,
-
-    /// Event types to react to, comma-separated.
-    #[arg(long, value_delimiter = ',')]
-    pub on: Vec<String>,
-
-    /// Extra `k=v` condition the driving event must meet (repeatable).
-    #[arg(long)]
-    pub filter: Vec<String>,
-
-    /// How long to wait for a veto after declaring intent (for example `2s`).
-    #[arg(long, default_value = "0s")]
-    pub window: String,
-
-    /// Snapshot git before and after, and report writes outside the claim.
-    #[arg(long)]
-    pub git: bool,
-
-    /// How long the action command may run (for example `300s`).
-    #[arg(long, default_value = "600s")]
-    pub timeout: String,
-
-    /// The action command, after `--`.
-    #[arg(last = true)]
-    pub command: Vec<String>,
-}
-
-#[derive(ClapArgs, Debug)]
 pub struct GuardArgs {
     /// Which agent's payload shape to expect (default: detect from the shape).
     #[arg(long, value_enum)]
@@ -251,30 +191,12 @@ pub struct SetupArgs {
 
 #[derive(Subcommand, Debug)]
 pub enum SetupInner {
-    /// Show the exact project configuration setup would create or upgrade.
+    /// Show the files and lines setup would create.
     Preview,
-    /// Create missing project setup configuration.
+    /// Create the missing log, templates and git metadata lines.
     Apply,
-    /// Validate and preserve project configuration before upgrading assets.
+    /// Same as apply: add what is missing, never overwrite an edited file.
     Upgrade,
-}
-
-#[derive(ClapArgs, Debug)]
-pub struct ActionArgs {
-    #[command(subcommand)]
-    pub inner: ActionInner,
-}
-
-#[derive(Subcommand, Debug)]
-pub enum ActionInner {
-    /// Commit exactly EVENTLOG_PATHS without consuming unrelated staging.
-    Commit {
-        /// Direct-mode message; also passed as EVENTLOG_COMMIT_MESSAGE to a configured command.
-        #[arg(long, default_value = "chore(eventlog): apply reactor result")]
-        message: String,
-    },
-    /// Run the configured documentation command and report changed doc paths.
-    Docs,
 }
 
 #[derive(ClapArgs, Debug)]
@@ -290,7 +212,7 @@ pub enum LifecycleInner {
         agent: String,
         #[arg(long)]
         model: Option<String>,
-        #[arg(long, default_value = "reactor")]
+        #[arg(long, default_value = "agent")]
         role: String,
         #[arg(long, value_delimiter = ',')]
         paths: Vec<String>,
@@ -402,11 +324,9 @@ pub fn run() -> i32 {
         Command::Claims(_) => crate::cmd::claims::run(&args),
         Command::Open(_) => crate::cmd::open::run(&args),
         Command::Tui(_) => crate::cmd::tui::run(&args),
-        Command::React(_) => crate::cmd::react::run(&args),
         Command::Guard(_) => crate::cmd::guard::run(&args),
         Command::Init(_) => crate::cmd::init::run(&args),
         Command::Setup(_) => crate::cmd::setup::run(&args),
-        Command::Action(_) => crate::cmd::action::run(&args),
         Command::Lifecycle(_) => crate::cmd::lifecycle::run(&args),
         Command::Doctor(_) => crate::cmd::doctor::run(&args),
         Command::Protect(_) => crate::cmd::protect::run(&args),

@@ -1,17 +1,19 @@
-# React command: `src/cmd/react.rs`
+# React command: `reactors/src/cmd/react.rs`
 
-Status: `eventlog react` and `eventlog react test` are implemented. This page
+Status: `eventlog-reactors react` and `eventlog-reactors react test` are
+implemented. Up to eventlog 0.5 they were `eventlog react` and
+`eventlog react test`, with the same flags. This page
 covers the CLI wiring: turning flags into a `ReactorConfig` and running the
 live loop or a single dry-run pass. The loop itself is documented in
 Reactor loop; the two steps this command wires in are
 the rule voter and the action runner.
 
 ```sh
-eventlog react --as <name> --on <t1,t2> [--filter k=v]... [--window <dur>] \
-               [--git] [--timeout <dur>] -- <command>...
+eventlog-reactors react --as <name> --on <t1,t2> [--filter k=v]... [--window <dur>] \
+                        [--git] [--timeout <dur>] -- <command>...
 
-eventlog react test <seq> --as <name> [--on <t1,t2>] [--filter k=v]... \
-               [--window <dur>] [--git] [--timeout <dur>] -- <command>...
+eventlog-reactors react test <seq> --as <name> [--on <t1,t2>] [--filter k=v]... \
+                        [--window <dur>] [--git] [--timeout <dur>] -- <command>...
 ```
 
 | Flag | Meaning |
@@ -28,7 +30,7 @@ Durations accept bare digits (seconds, matching the old `PASS_TIMEOUT`
 environment variable) or a number suffixed `s`, `m`, or `h` — for example
 `30`, `30s`, `5m`, `1h`.
 
-## `eventlog react` — the live loop
+## `eventlog-reactors react` — the live loop
 
 Builds a `ReactorConfig` from the flags above and calls `supervise` (see
 Reactor loop), which restarts the reactor on a panic or an
@@ -37,7 +39,7 @@ returns, the lock directory is released, and the process exits 0 without
 counting as a restart. Absent a stop signal, it exits the process only
 after 5 restarts inside a 10-minute window.
 
-## `eventlog react test <seq>` — the dry run
+## `eventlog-reactors react test <seq>` — the dry run
 
 Reads the event at `<seq>` from the log, runs one pass of `Reactor::handle`
 (see Reactor loop) with `dry = true`, and prints each event
@@ -88,8 +90,9 @@ stderr tail is already a tail, and the failure reason comes last.
 
 ## Tests
 
-`tests/cmd_react.rs` (4 tests) runs the built `eventlog` binary against a
-temporary repository and a real action command:
+`reactors/tests/cmd_react.rs` (4 tests) runs the built `eventlog-reactors`
+binary against a temporary repository and a real action command. It appends
+the driving events with the `eventlog` binary:
 
 - `react test <seq>` against a fixture `result` event prints an `intent`
   and a `committed` `ack`, and leaves the log byte-for-byte unchanged.
@@ -101,7 +104,7 @@ temporary repository and a real action command:
 - A `veto for=<seq>` appended inside a `--window 2s` stops the action from
   running and closes the pass as `outcome=vetoed`.
 
-Run them with:
+Run them from the workspace root, so cargo also builds `eventlog`:
 
 ```sh
 cargo test
@@ -112,4 +115,6 @@ cargo test
 - Reactor loop — `ReactorConfig`, `Reactor`, the `Steps` trait, and `supervise`.
 - Rule voter — `authorize` and `check`, the first half of `RealSteps`.
 - Action runner — `run` and `snapshot`, the second half of `RealSteps`.
-- [`eventlog` command list](eventlog-cli-surface.md)
+- [Action](action.md) — the packaged commands a reactor runs after `--`.
+- [Reactors](../../reactors/README.md) — what reactors are and how to opt in.
+- [`eventlog` command list](../reference/eventlog-cli-surface.md)

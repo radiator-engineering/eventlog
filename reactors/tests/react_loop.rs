@@ -12,8 +12,8 @@ use eventlog::log::Log;
 use eventlog::model::config::Config;
 use eventlog::model::event::Event;
 use eventlog::query::State;
-use eventlog::react::lock::{ReactorLock, Token};
-use eventlog::react::{GitSnapshot, Outcome, Reactor, ReactorConfig, Steps};
+use eventlog_reactors::react::lock::{ReactorLock, Token};
+use eventlog_reactors::react::{GitSnapshot, Outcome, Reactor, ReactorConfig, Steps};
 
 /// Records the seq of every driving event the loop asked it to act on.
 #[derive(Clone, Default)]

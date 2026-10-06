@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 
 use anyhow::{Context, Result};
 
-use crate::model::paths::RelPath;
+use eventlog::model::paths::RelPath;
 
 const DROPPED_OUTCOME_KEYS: &[&str] = &["seq", "ts", "prev", "by"];
 /// Enough context to diagnose a failed action while always fitting an ack

@@ -1,5 +1,5 @@
 use eventlog::model::paths::validate_paths;
-use eventlog::react::action::{ActionEnv, newly_dirty, outside, run, snapshot, touched};
+use eventlog_reactors::react::action::{ActionEnv, newly_dirty, outside, run, snapshot, touched};
 use std::path::PathBuf;
 use std::process::Command;
 use std::time::{Duration, Instant};

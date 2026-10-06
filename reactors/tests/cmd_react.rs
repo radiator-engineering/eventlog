@@ -1,4 +1,4 @@
-//! `eventlog react` and `eventlog react test` (spec section 7, plan task 17).
+//! `eventlog-reactors react` and `eventlog-reactors react test` (spec section 7, plan task 17).
 //!
 //! `react test` is a dry run: it prints the events one reaction would append
 //! and leaves the log byte-for-byte alone. `react` is the live loop: it
@@ -11,17 +11,19 @@ use std::time::{Duration, Instant};
 
 use assert_cmd::Command;
 
+mod common;
+
 fn setup_repo(dir: &Path) {
     std::fs::create_dir_all(dir.join(".context")).unwrap();
 }
 
 fn bin() -> PathBuf {
-    assert_cmd::cargo::cargo_bin("eventlog")
+    common::reactors_bin()
 }
 
-/// Append one event through the CLI and return the seq it was given.
+/// Append one event through the `eventlog` CLI and return the seq it was given.
 fn append(dir: &Path, args: &[&str]) -> u64 {
-    let output = Command::new(bin())
+    let output = Command::new(common::core_bin())
         .current_dir(dir)
         .arg("append")
         .args(args)

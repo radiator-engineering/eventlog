@@ -2,12 +2,12 @@
 
 use serde_json::{Map, Value, json};
 
-use crate::cmd::agents::{REACTOR_ON, active_agents, phase_label};
+use crate::cmd::agents::{active_agents, phase_label};
 use crate::context::age::age_between;
 use crate::context::worktree::{Change, WorkTree};
 use crate::model::config::ContextConfig;
 use crate::model::event::Event;
-use crate::query::State;
+use crate::query::{ACKED_TYPES, State};
 
 const HISTORY_TYPES: &[&str] = &["result", "decision", "violation", "observed", "note"];
 const HISTORY_LEN: usize = 15;
@@ -352,7 +352,8 @@ fn artifacts(history: &[&Event], exists: &dyn Fn(&str) -> bool) -> Vec<String> {
 }
 
 /// Reactor unacked counts and staleness, excluding the controller itself
-/// (which never acks and would otherwise always look unacked).
+/// (which never acks and would otherwise always look unacked). Empty for a
+/// log without reactors: only `ack`, `intent` and `veto` writers count.
 fn reactor_health(input: &PacketInput, tip_ts: &str) -> Vec<String> {
     use chrono::DateTime;
     let secs_before_tip = |ts: &str| -> Option<i64> {
@@ -366,7 +367,10 @@ fn reactor_health(input: &PacketInput, tip_ts: &str) -> Vec<String> {
         .values()
         .filter(|r| r.name != "controller")
         .filter_map(|r| {
-            let unacked = input.state.unacked(&r.name, REACTOR_ON, input.events).len();
+            let unacked = input
+                .state
+                .unacked(&r.name, ACKED_TYPES, input.events)
+                .len();
             let stale = r
                 .last_ack_ts
                 .as_deref()

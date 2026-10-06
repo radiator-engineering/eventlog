@@ -1,4 +1,4 @@
-//! Explain one event: causes, effects, and reactor verdict.
+//! Explain one event: causes, effects, and, when the log has acks, the verdict.
 
 use std::io::{self, Write};
 

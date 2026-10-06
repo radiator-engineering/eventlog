@@ -1,0 +1,37 @@
+[package]
+name = "eventlog-reactors"
+version = "0.5.1"
+description = "Optional reactors for an eventlog coordination log: commit a result's paths, document what was committed"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+homepage = "https://github.com/radiator-engineering/eventlog"
+repository = "https://github.com/radiator-engineering/eventlog"
+
+[[bin]]
+name = "eventlog-reactors"
+path = "src/main.rs"
+
+[lib]
+name = "eventlog_reactors"
+path = "src/lib.rs"
+
+[dependencies]
+eventlog-cli = { path = "..", version = "0.5.1" }
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+ctrlc = { version = "3.5.2", features = ["termination"] }
+globset = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tempfile = "3"
+toml = "0.8"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+
+[package.metadata.dist]
+formula = "eventlog-reactors"

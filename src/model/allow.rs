@@ -13,7 +13,7 @@ use std::collections::BTreeMap;
 pub const CONTROLLER_CORE: &[&str] =
     &["spawn", "prompt", "claim", "decision", "retire", "approval"];
 
-/// Types any `by=`-tagged reactor may write by default.
+/// Types any `by=`-tagged writer (a worker or a reactor) may write by default.
 const REACTOR_TYPES: &[&str] = &[
     "ack",
     "note",
@@ -38,7 +38,7 @@ pub struct Allowlist(BTreeMap<String, Vec<String>>);
 
 impl Allowlist {
     /// The built-in default: only `controller` writes the core types; any
-    /// `by=`-tagged reactor writes the reactor types.
+    /// `by=`-tagged writer writes the `by=` types.
     pub fn builtin() -> Self {
         let mut map: BTreeMap<String, Vec<String>> = BTreeMap::new();
         for ty in CONTROLLER_CORE {

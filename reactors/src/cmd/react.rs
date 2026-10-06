@@ -15,14 +15,14 @@ use std::time::Duration;
 use anyhow::Context;
 
 use crate::cli::{Args as CliArgs, Command, ReactInner, ReactOpts};
-use crate::log::Log;
-use crate::model::config::{self, Config};
-use crate::model::event::Event;
-use crate::model::paths::{self, RelPath};
-use crate::query::State;
 use crate::react::action::{self, ActionEnv};
 use crate::react::voter::{self, Authorized};
 use crate::react::{GitSnapshot, Outcome, Reactor, ReactorConfig, Steps, supervise};
+use eventlog::log::Log;
+use eventlog::model::config::{self, Config};
+use eventlog::model::event::Event;
+use eventlog::model::paths::{self, RelPath};
+use eventlog::query::State;
 
 // Keep this in sync with log::append's field validator. Diagnostics are
 // assembled here, after lossy stderr decoding and spillover formatting, so

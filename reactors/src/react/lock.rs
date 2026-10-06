@@ -14,7 +14,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use crate::log::lock::LockError;
+use eventlog::log::lock::LockError;
 
 /// How many times `acquire` retries while another process is mid-write of its
 /// token, or while a reclaim is in flight.

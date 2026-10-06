@@ -1,6 +1,10 @@
 # Log reactors
 
-A reactor is a long-lived `eventlog react` process that acts on matching
+Optional add-on. Reactors run from the separate `eventlog-reactors` binary
+(`cargo install eventlog-reactors`); the log works without them. Up to
+eventlog 0.5 the command was `eventlog react`.
+
+A reactor is a long-lived `eventlog-reactors react` process that acts on matching
 events without a prompt: a committer on `result`, a deployer on `approval`.
 A bug here is a duplicate commit or a double deploy, not a stale note. The
 runtime owns everything except the action script.
@@ -45,7 +49,8 @@ runtime owns everything except the action script.
   `seq_done`. There is no cursor file and no `git log --grep` marker.
 - **Lock.** `<log>.<name>.reactor.lock/` holds pid, start time, hostname and
   boot id. A second instance refuses to start. Never delete the dir; a stale
-  one is reclaimed on the next start.
+  one is reclaimed on the next start. `eventlog-reactors doctor` reports
+  each lock as live or stale.
 - **Stop.** SIGINT, SIGTERM or SIGHUP ends the loop, releases the lock and
   exits 0. Restarting: append `retire agent=<name>`, stop it, start it, then
   append `spawn` and a fresh `claim` (a retire closes claims).
@@ -73,7 +78,7 @@ Any other value is a full replacement in the form
 
 ## Before trusting a reactor
 
-1. `eventlog react test <seq> --as <name> --git -- <cmd>` prints the intent
+1. `eventlog-reactors react test <seq> --as <name> --git -- <cmd>` prints the intent
    and ack the pass would write, and writes nothing.
 2. Start a second instance while the first runs. It must refuse.
 3. Fire one event, then a second. `eventlog why <seq>` on each shows one

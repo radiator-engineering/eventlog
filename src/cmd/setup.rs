@@ -7,56 +7,23 @@ pub fn run(args: &Args) -> anyhow::Result<i32> {
         anyhow::bail!("setup::run called with wrong subcommand");
     };
     let root = std::env::current_dir().context("current directory")?;
-    let changes = crate::scaffold::setup_changes(&root)?;
-    match setup.inner {
-        SetupInner::Preview => {
-            if changes.is_empty() {
-                println!("setup: no changes");
-            } else {
-                for change in &changes {
-                    println!(
-                        "create {}",
-                        change
-                            .path
-                            .strip_prefix(&root)
-                            .unwrap_or(&change.path)
-                            .display()
-                    );
-                }
-                println!("ensure .context/events.jsonl and non-overwriting init assets");
-                print_example();
-            }
-        }
-        SetupInner::Apply | SetupInner::Upgrade => {
-            // Validation above happened before this non-overwriting bootstrap,
-            // so a customized owned config can never leave a partial setup.
-            crate::scaffold::init(&root)?;
-            crate::scaffold::apply_setup(&changes)?;
-            if changes.is_empty() {
-                println!("setup: no changes");
-            } else {
-                for change in &changes {
-                    println!(
-                        "wrote {}",
-                        change
-                            .path
-                            .strip_prefix(&root)
-                            .unwrap_or(&change.path)
-                            .display()
-                    );
-                }
-                print_example();
-            }
+    let plan = crate::scaffold::setup_plan(&root);
+    let applying = matches!(setup.inner, SetupInner::Apply | SetupInner::Upgrade);
+    if applying {
+        // init never overwrites a file, so an edited template survives.
+        crate::scaffold::init(&root)?;
+    }
+    if plan.is_empty() {
+        println!("setup: no changes");
+    }
+    for line in &plan {
+        if applying {
+            // "create x" becomes "created x", and likewise for each verb.
+            let (verb, rest) = line.split_once(' ').unwrap_or((line, ""));
+            println!("{}d {rest}", verb.trim_end_matches('e'));
+        } else {
+            println!("{line}");
         }
     }
     Ok(0)
-}
-
-fn print_example() {
-    println!(
-        "Drove hook argv example: [\"eventlog\", \"lifecycle\", \"start\", agent, \"--model\", model, \"--paths\", paths]"
-    );
-    println!(
-        "Reactor argv example: [\"eventlog\", \"react\", \"--as\", \"committer\", \"--on\", \"result\", \"--git\", \"--\", \"eventlog\", \"action\", \"commit\"]"
-    );
 }

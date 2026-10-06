@@ -7,10 +7,10 @@
 
 use std::path::Path;
 
-use crate::model::config::Config;
-use crate::model::event::Event;
-use crate::model::paths::{self, RelPath};
-use crate::query::State;
+use eventlog::model::config::Config;
+use eventlog::model::event::Event;
+use eventlog::model::paths::{self, RelPath};
+use eventlog::query::State;
 
 /// The split of a driving event's `paths=`: what the reactor may touch, and
 /// what the writer asked for but never claimed.

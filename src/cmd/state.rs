@@ -1,14 +1,14 @@
-//! Folded state summary: active agents, claims, decisions, reactors.
+//! Folded state summary: active agents, claims, decisions, and, when the log
+//! has any `ack`, `intent` or `veto` writers (reactors), their ack status.
 
 use std::io::{self, Write};
 
 use serde_json::{Map, Value};
 
 use crate::cli::{Args as CliArgs, Command};
-use crate::cmd::agents::{
-    REACTOR_ON, active_agents, format_age, format_event_line, load_context, phase_label,
-};
+use crate::cmd::agents::{active_agents, format_age, format_event_line, load_context, phase_label};
 use crate::model::event::Event;
+use crate::query::ACKED_TYPES;
 
 pub fn run(args: &CliArgs) -> anyhow::Result<i32> {
     let Command::State(state_args) = &args.command else {
@@ -79,10 +79,9 @@ fn print_text(ctx: &crate::cmd::agents::QueryContext) -> anyhow::Result<()> {
         }
     }
 
-    writeln!(out, "reactors:")?;
-    if state.reactors.is_empty() {
-        writeln!(out, "  (none)")?;
-    } else {
+    // A log without reactors has no ack writers; say nothing about them.
+    if !state.reactors.is_empty() {
+        writeln!(out, "reactors:")?;
         for reactor in state.reactors.values() {
             let last_ack = reactor
                 .last_ack_seq
@@ -93,7 +92,7 @@ fn print_text(ctx: &crate::cmd::agents::QueryContext) -> anyhow::Result<()> {
                 .as_deref()
                 .map(format_age)
                 .unwrap_or_else(|| "-".into());
-            let unacked = state.unacked(&reactor.name, REACTOR_ON, &ctx.events).len();
+            let unacked = state.unacked(&reactor.name, ACKED_TYPES, &ctx.events).len();
             writeln!(
                 out,
                 "  {}  last_ack={}  age={}  unacked={}",
@@ -181,7 +180,7 @@ fn state_report(ctx: &crate::cmd::agents::QueryContext) -> Value {
                         row.insert("last_ack_ts".into(), ts.clone().into());
                         row.insert("age".into(), format_age(ts).into());
                     }
-                    let unacked = state.unacked(&reactor.name, REACTOR_ON, &ctx.events);
+                    let unacked = state.unacked(&reactor.name, ACKED_TYPES, &ctx.events);
                     row.insert("unacked_count".into(), unacked.len().into());
                     row.insert(
                         "unacked".into(),

@@ -1,10 +1,9 @@
 # Setup: `eventlog setup`
 
-Status: implemented. `src/scaffold/mod.rs` holds `setup_changes` and
-`apply_setup`; `src/cmd/setup.rs` exposes them as `eventlog setup`. `setup`
-scaffolds the project-owned reactor policy that `eventlog lifecycle` and
-`eventlog action` read: identities, models, timeouts, documentation roots,
-and the invocation used in Drove hook argv.
+Status: implemented. `src/scaffold/mod.rs` holds `setup_plan` and `init`;
+`src/cmd/setup.rs` exposes them as `eventlog setup`. `setup` sets up the
+log and nothing else. It writes no reactor files and prints nothing about
+reactors.
 
 ```sh
 eventlog setup preview
@@ -14,98 +13,48 @@ eventlog setup upgrade
 
 | Subcommand | Effect |
 |---|---|
-| `preview` | Print the files `apply` or `upgrade` would create or change. Writes nothing. |
-| `apply` | Run `eventlog init` (non-destructive), then create `.context/eventlog-setup.toml` and `.context/eventlog-reactors.star` if they do not already exist. |
-| `upgrade` | Validate the existing `.context/eventlog-setup.toml`, then regenerate `.context/eventlog-reactors.star` from it. Fails before writing anything if the config does not parse. |
+| `preview` | Print what `apply` would add. Writes nothing. |
+| `apply` | Run `eventlog init`: create the missing files and lines below. Never overwrites a file that exists. |
+| `upgrade` | The same as `apply`. A later eventlog may add a template or a line; `upgrade` adds it and keeps your edits. |
 
-None of the three touches `.context/events.jsonl`, restarts a running
-reactor, or advances a checkpoint.
+Each subcommand prints one line per missing item, or `setup: no changes`
+when nothing is missing:
 
-## `.context/eventlog-setup.toml`
+| Line | Item |
+|---|---|
+| `create .context/events.jsonl` | The empty log. |
+| `create .context/EVENTLOG.md` | The event vocabulary, from a template. |
+| `create .context/eventlog.toml` | The log configuration, from a template. |
+| `ignore <line>` | A missing `.gitignore` line: `.context/events.jsonl`, `.context/events.jsonl.lock`, or `.context/layout.json`. |
+| `attribute .context/events.jsonl -text` | The missing `.gitattributes` line. |
 
-Project-managed policy, separate from `.context/eventlog.toml` (the log
-vocabulary):
+`apply` and `upgrade` print the same lines, for the items they added. A
+second run prints `setup: no changes`.
 
-```toml
-version = 2
+## Reactors are separate
 
-[commit]
-identity = "committer"
-model = "composer-2.5-fast"
-timeout = "600s"
-command = []
-
-[docs]
-identity = "doc-worker"
-model = "claude-sonnet"
-timeout = "600s"
-roots = ["docs", "README.md"]
-exclude = []
-command = []
-
-[invocation]
-eventlog = "eventlog"
-```
-
-`docs.roots` are single, relative, on-disk paths — no glob, no comma list,
-no `..` or absolute path (`invalid_docs_roots_fail_setup_without_mutation_or_panic`
-in `tests/scaffold.rs` checks all four). `docs.exclude` lists paths the
-docs action leaves out of its before/after snapshot, so another process
-writing there during a docs run does not fail the action. An entry holding
-`*`, `?`, `[` or `{` is a glob matched against the whole relative path
-(`*` stops at `/`, `**` crosses it); any other entry is a path prefix, so
-`"graft/"` covers everything under `graft`. Entries must be relative, with
-no `.`, `..` or empty segment; the docs action fails on an invalid one. The default is
-empty, which keeps every path outside the log checked. `docs.command` is an argv list run
-directly, never through a shell; leave it empty and set a local stub for
-tests. `commit.command` is the same kind of argv list; an empty list (the
-default) keeps `eventlog action commit` in direct `git commit` mode. Set it
-to run a model-backed commit author in a disposable clone instead — see
-[Action](action.md#configured-commit-author). An argv entry that is exactly
-`{model}` is replaced with `commit.model`. `upgrade` keeps every field you
-edit by hand — see
-`setup_is_repeatable_preserves_customization_and_rejects_malformed_config` in
-`tests/scaffold.rs` — and rejects the file only when it fails to parse as
-TOML against the schema above.
-
-## `.context/eventlog-reactors.star`
-
-A generated Drove helper, carrying a `# eventlog-reactors managed
-body-sha256=<hash>` header over its body. `upgrade` regenerates the file
-when the hash still matches the last generated body, or when the file holds
-the older, unhashed template; it refuses to overwrite a file whose body was
-hand-edited, so a customized helper is never silently discarded. Load it
-into an existing Drovefile:
-
-```python
-load(".context/eventlog-reactors.star", "eventlog_reactors")
-main = workspace("main", panes = eventlog_reactors())
-```
-
-`eventlog_reactors()` returns a commit-reactor tab and a docs-reactor tab,
-each with `on_start` and `on_stop` panes wired to `eventlog lifecycle start`
-and `stop` (see [Lifecycle](lifecycle.md)) and a `serve` pane wired to
-`eventlog react ... -- eventlog action ...` (see [Action](action.md)).
+Up to eventlog 0.5, `eventlog setup` also wrote the reactor policy
+(`.context/eventlog-setup.toml`) and a Drove helper
+(`.context/eventlog-reactors.star`). Those files now belong to the optional
+`eventlog-reactors` binary: see [Reactor setup](../reactors/setup.md).
+`eventlog setup` ignores both files when they exist, and never changes or
+deletes them.
 
 ## Tests
 
-`tests/scaffold.rs` covers: repeated `apply` is a no-op; `upgrade` preserves
-hand-edited settings and regenerates the Drove helper from them; `upgrade`
-refuses a malformed config without changing it; a config with an invalid
-`docs.roots` entry fails every `setup` subcommand without writing a file or
-panicking; and a rendered `Drovefile` referencing `eventlog_reactors()`
-passes `drove render`. The render test is an explicit integration check
-requiring an installed Drove; the default suite has no Drove dependency:
+`tests/no_reactors.rs` runs `setup preview`, `apply`, and `upgrade` in a
+fresh git repository. It checks that no reactor file appears, that
+`.gitignore` holds no reactor line, and that no command prints the word
+"reactor". `tests/scaffold.rs` checks that a second `init` leaves every file
+byte-for-byte the same.
 
 ```sh
 cargo test
-# With Drove installed:
-cargo test --test scaffold setup_helper_renders_with_drove -- --ignored
 ```
 
 ## See also
 
-- [Lifecycle](lifecycle.md) — the `eventlog lifecycle start`/`stop` commands `setup`'s generated Drove hooks call.
-- [Action](action.md) — the `eventlog action commit`/`docs` commands `setup`'s generated reactors run.
-- [Scaffold and setup: `init`, `doctor`, `protect`](scaffold.md) — the non-destructive bootstrap `setup apply` runs first.
+- [Scaffold and setup: `init`, `doctor`, `protect`](scaffold.md) — the bootstrap `setup apply` runs.
+- [Reactor setup](../reactors/setup.md) — `eventlog-reactors setup`, the optional reactor policy.
+- [Lifecycle](lifecycle.md) — `eventlog lifecycle start`/`stop` for a supervisor's hooks.
 - [`eventlog` command list](eventlog-cli-surface.md)

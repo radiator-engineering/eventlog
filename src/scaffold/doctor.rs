@@ -14,7 +14,6 @@ use crate::model::config::{self, Config};
 use crate::model::event::Event;
 use crate::model::vocab::REFERENCE_FIELDS;
 use crate::query::{self, Phase, State};
-use crate::react::lock::Token;
 use crate::skill;
 
 #[derive(Clone, Debug, Default)]
@@ -167,7 +166,6 @@ fn check_log(repo_root: &Path, cfg: &Config) -> Vec<Row> {
     rows.extend(check_strict_history(&report.events, cfg, repo_root));
     rows.extend(check_references(&report.events));
     rows.extend(check_open_lifecycles(&report.events, cfg));
-    rows.extend(check_stale_locks(&log));
     rows
 }
 
@@ -292,50 +290,6 @@ fn check_open_lifecycles(events: &[Event], cfg: &Config) -> Vec<Row> {
             Some(state.open_lifecycles.join(", ")),
         )]
     }
-}
-
-fn check_stale_locks(log: &Path) -> Vec<Row> {
-    let parent = match log.parent() {
-        Some(p) => p,
-        None => return Vec::new(),
-    };
-    let prefix = match log.file_name().and_then(|n| n.to_str()) {
-        Some(name) => format!("{name}."),
-        None => return Vec::new(),
-    };
-    let me = Token::current();
-    let mut rows = Vec::new();
-    let read = match fs::read_dir(parent) {
-        Ok(r) => r,
-        Err(_) => return rows,
-    };
-    for entry in read.flatten() {
-        let name = entry.file_name();
-        let Some(name) = name.to_str() else {
-            continue;
-        };
-        if !name.starts_with(&prefix) || !name.ends_with(".reactor.lock") {
-            continue;
-        }
-        let lock_dir = entry.path();
-        if !lock_dir.is_dir() {
-            continue;
-        }
-        let token = fs::read_to_string(lock_dir.join("token"))
-            .ok()
-            .and_then(|t| Token::from_json(&t));
-        let stale = token.as_ref().is_none_or(|t| !t.is_live(&me));
-        rows.push(row(
-            if stale { Status::Warn } else { Status::Ok },
-            format!("reactor lock {name}"),
-            if stale {
-                Some("stale or unreadable".into())
-            } else {
-                None
-            },
-        ));
-    }
-    rows
 }
 
 fn check_skill_stamp() -> Row {

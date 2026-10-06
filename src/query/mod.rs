@@ -337,6 +337,10 @@ fn retain_open<T>(items: &mut Vec<T>, closed: &[usize]) {
     });
 }
 
+/// The event types an `ack` writer (a reactor) is expected to ack, for
+/// [`State::unacked`].
+pub const ACKED_TYPES: &[&str] = &["result", "decision"];
+
 impl State {
     /// Every live claim of `agent`, in claim order.
     pub fn claims_for(&self, agent: &str) -> Vec<&str> {

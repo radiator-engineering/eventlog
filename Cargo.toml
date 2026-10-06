@@ -1,12 +1,17 @@
 [package]
 name = "eventlog-cli"
 version = "0.5.1"
-description = "Append-only JSONL coordination log for multi-agent repos: one controller writes, reactors act on events"
+description = "Append-only JSONL coordination log for multi-agent repos: one controller writes, every agent reads"
 edition = "2024"
 rust-version = "1.88"
 license = "Apache-2.0"
 homepage = "https://github.com/radiator-engineering/eventlog"
 repository = "https://github.com/radiator-engineering/eventlog"
+
+[workspace]
+members = [".", "reactors"]
+# Testing at the root covers the log and the optional reactors together.
+default-members = [".", "reactors"]
 
 [[bin]]
 name = "eventlog"
