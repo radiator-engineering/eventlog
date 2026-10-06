@@ -35,7 +35,7 @@ pub struct ContextConfig {
 impl ContextConfig {
     /// Checked only by `eventlog context` and `eventlog context check`, not
     /// by config load: a bad `[context]` table must not break every other
-    /// command (`react`'s reactors included).
+    /// command.
     pub fn validate(&self) -> anyhow::Result<()> {
         if self.floor_percent > 100 || self.backstop_percent > 100 {
             anyhow::bail!(

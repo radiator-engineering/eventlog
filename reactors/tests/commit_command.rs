@@ -45,7 +45,7 @@ fn configured_commit_runs_model_and_reports_commit_despite_late_failure() {
         "test \"$EVENTLOG_MODEL\" = configured-model && test \"$1\" = configured-model && git commit -qm 'feat: model-authored change' && exit 7",
     );
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    let output = Command::cargo_bin("eventlog")
+    let output = Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -83,7 +83,7 @@ fn configured_commit_cannot_publish_out_of_scope_changes() {
         fixture("printf unexpected > outside.txt; git add outside.txt; git commit -qm 'bad scope'");
     let head = git(&dir, &["rev-parse", "HEAD"]);
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -104,7 +104,7 @@ fn configured_command_failure_without_commit_preserves_source() {
     let dir = fixture("exit 9");
     let head = git(&dir, &["rev-parse", "HEAD"]);
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -129,7 +129,7 @@ fn configured_relative_command_is_overlaid_before_bootstrap() {
     )
     .unwrap();
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env(
@@ -153,7 +153,7 @@ fn configured_commit_rejects_outside_changes_even_if_later_reverted() {
         "git commit -qm target; printf bad > outside.txt; git add outside.txt; git commit -qm outside; git rm -q outside.txt; git commit -qm revert",
     );
     let head = git(&dir, &["rev-parse", "HEAD"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -169,7 +169,7 @@ fn configured_commit_preserves_concurrent_source_edits() {
     let dir =
         fixture("printf concurrent > \"$SOURCE_TEST_ROOT/target.txt\"; git commit -qm target");
     let head = git(&dir, &["rev-parse", "HEAD"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("SOURCE_TEST_ROOT", dir.path())
@@ -191,7 +191,7 @@ fn configured_commit_reports_all_commits_and_syncs_authorized_content() {
         "git commit -qm first; printf formatted > target.txt; git add target.txt; git commit -qm second",
     );
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    let result = Command::cargo_bin("eventlog")
+    let result = Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -222,7 +222,7 @@ fn configured_commit_reports_all_commits_and_syncs_authorized_content() {
 fn clean_authorized_scope_skips_model_execution() {
     let dir = fixture("exit 9");
     fs::write(dir.path().join("target.txt"), "before\n").unwrap();
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -245,7 +245,7 @@ fn configured_commit_can_create_the_first_commit() {
     )
     .unwrap();
     fs::write(dir.path().join("target.txt"), "first\n").unwrap();
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -258,7 +258,7 @@ fn configured_commit_can_create_the_first_commit() {
 #[test]
 fn configured_commit_inherits_the_driving_event_on_stdin() {
     let dir = fixture("test \"$(cat)\" = '{\"seq\":42}' && git commit -qm 'from stdin'");
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -274,7 +274,7 @@ fn configured_commit_syncs_deletions_without_consuming_other_staging() {
     let dir = fixture("git commit -qm deletion");
     fs::remove_file(dir.path().join("target.txt")).unwrap();
     let staged = git(&dir, &["diff", "--cached", "--binary"]);
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path())
         .env("EVENTLOG_PATHS", "target.txt")
@@ -293,7 +293,7 @@ fn configured_commit_syncs_deletions_without_consuming_other_staging() {
 fn configured_commit_uses_repo_relative_paths_from_a_subdirectory() {
     let dir = fixture("git commit -qm 'feat: root policy from subdirectory'");
     fs::create_dir(dir.path().join("nested")).unwrap();
-    Command::cargo_bin("eventlog")
+    Command::cargo_bin("eventlog-reactors")
         .unwrap()
         .current_dir(dir.path().join("nested"))
         .env("EVENTLOG_PATHS", "target.txt")

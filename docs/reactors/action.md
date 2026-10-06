@@ -1,22 +1,23 @@
-# Action: `eventlog action`
+# Action: `eventlog-reactors action`
 
-Status: implemented. `src/cmd/action.rs` holds `commit` and `docs`, two
-packaged actions meant to run as the command after `--` in
-`eventlog react ... -- eventlog action ...`. Both read `EVENTLOG_PATHS`,
+Status: implemented. `reactors/src/cmd/action.rs` holds `commit` and `docs`,
+two packaged actions meant to run as the command after `--` in
+`eventlog-reactors react ... -- eventlog-reactors action ...`. Up to eventlog
+0.5 they were `eventlog action commit` and `eventlog action docs`. Both read `EVENTLOG_PATHS`,
 `EVENTLOG_LOG`, and the other environment variables `react` sets, and both
 use argv throughout — no shell, so a reactor's configuration is never
 interpolated into one.
 
 Before either command runs, `action` changes to the repository's Git
 toplevel, so `EVENTLOG_PATHS` and `docs.roots` resolve correctly even when
-the reactor invokes `eventlog action` from a subdirectory.
+the reactor invokes `eventlog-reactors action` from a subdirectory.
 
 ```sh
-eventlog action commit [--message <msg>]
-eventlog action docs
+eventlog-reactors action commit [--message <msg>]
+eventlog-reactors action docs
 ```
 
-## `eventlog action commit`
+## `eventlog-reactors action commit`
 
 Stages and commits exactly the files named in `EVENTLOG_PATHS`, and nothing
 else already staged:
@@ -27,7 +28,7 @@ else already staged:
    the overlapping paths in `detail`, so a reactor never absorbs unrelated
    staged work into its own commit — see
    `commit_action_rejects_glob_and_directory_scopes_with_staged_target` in
-   `tests/scaffold.rs`.
+   `reactors/tests/setup.rs`.
 3. If `.context/eventlog-setup.toml`'s `[commit].command` is empty (the
    default), runs `git add -- <path>` for each resolved path, one at a time,
    then `git commit --only -m <message> -- <paths>`. `--only` commits just
@@ -70,12 +71,12 @@ author instead of the direct `git commit` mode above:
    unauthorized path, reports `outcome=failed` and nothing is published.
 
 A clean `EVENTLOG_PATHS` (nothing to commit) reports `outcome=skipped`
-before either mode runs. `tests/commit_command.rs` covers the configured
+before either mode runs. `reactors/tests/commit_command.rs` covers the configured
 path: authorized-path validation, unrelated-staging preservation, multiple
 commits, a late nonzero exit after a successful commit, and rejection of an
 unauthorized change, a merge commit, and rewritten history.
 
-## `eventlog action docs`
+## `eventlog-reactors action docs`
 
 Runs the project's configured documentation command and reports what it
 changed:
@@ -87,7 +88,7 @@ changed:
    compares that result's writer to `docs.identity`; if they match, skips
    with `outcome=skipped` instead of running the command, breaking the
    `docs result → commit ack → docs run` loop a doc worker's own commit
-   would otherwise start. `tests/scaffold.rs`'s
+   would otherwise start. `reactors/tests/setup.rs`'s
    `docs_action_emits_one_result_and_skips_its_own_result` covers this end
    to end, and `docs_action_validates_each_cumulative_ack_ref` checks every
    commit ref on a cumulative ack, not just the first.
@@ -117,16 +118,16 @@ changed:
 
 ## Tests
 
-`tests/scaffold.rs` covers: a commit that keeps unrelated staged work
+`reactors/tests/setup.rs` covers: a commit that keeps unrelated staged work
 intact; a commit that rejects a glob or directory scope overlapping an
 already-staged path; a docs run that reports added, deleted, and
 already-dirty files under `docs.roots`; a docs run that fails on out-of-scope
 paths without committing; a docs run that emits exactly one `result` and
 then skips its own resulting ack; and validation of every ref on a
-cumulative ack. `tests/commit_command.rs` covers the configured commit
-author described above. `tests/docs_snapshot.rs` covers the log-and-sidecar
+cumulative ack. `reactors/tests/commit_command.rs` covers the configured
+commit author described above. `reactors/tests/docs_snapshot.rs` covers the log-and-sidecar
 exclusion, the `docs.exclude` prefix and glob exclusion (and that a path
-outside it still fails), and the `skipped` no-change outcome. Run them with:
+outside it still fails), and the `skipped` no-change outcome. Run them from the workspace root:
 
 ```sh
 cargo test
@@ -134,7 +135,8 @@ cargo test
 
 ## See also
 
-- [Setup](setup.md) — the `.context/eventlog-setup.toml` `[commit]` and `[docs]` tables `action` reads.
-- [Lifecycle](lifecycle.md) — spawning and claiming the agent that runs an action.
-- [React command](react-command.md) — `eventlog react`, which invokes an action as its command.
-- [`eventlog` command list](eventlog-cli-surface.md)
+- [Reactor setup](setup.md) — the `.context/eventlog-setup.toml` `[commit]` and `[docs]` tables `action` reads.
+- [Lifecycle](../reference/lifecycle.md) — spawning and claiming the agent that runs an action.
+- [React command](react-command.md) — `eventlog-reactors react`, which invokes an action as its command.
+- [Reactors](../../reactors/README.md) — what reactors are and how to opt in.
+- [`eventlog` command list](../reference/eventlog-cli-surface.md)

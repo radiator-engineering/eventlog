@@ -26,7 +26,8 @@ pub fn init(repo_root: &Path) -> anyhow::Result<()>;
   run (decision [`init-templates`](../../.context/DECISIONS.md)).
 - Appends any missing line from a fixed set to `.gitignore`:
   `.context/events.jsonl`, `.context/events.jsonl.lock`,
-  `.context/*.reactor.lock/`, `.context/layout.json`.
+  `.context/layout.json`. The optional `eventlog-reactors setup apply` adds
+  `.context/*.reactor.lock/` (see [Reactor setup](../reactors/setup.md)).
 - Appends `.context/events.jsonl -text` to `.gitattributes` if not already
   present.
 
@@ -57,7 +58,6 @@ pub fn run(repo_root: &Path, cfg: &Config, opts: &Options) -> anyhow::Result<i32
 | `strict rule` | `[FAIL]` per event that breaks a strict history rule: a `result`/`progress`/`claim`/`retire` from an agent that isn't open at the prior `seq`, a `claim` naming paths that don't exist, or a `claim` on a path another live claim already owns. |
 | `reference` | `[FAIL]` per event whose reference field (see `REFERENCE_FIELDS`) points at a `seq` that doesn't exist or isn't earlier than the event itself. |
 | `open lifecycles` | `[WARN]` listing any agent or intent still open at the log's tip; `[ OK ]` if none. |
-| `reactor lock <name>` | `[WARN]` per `*.reactor.lock` directory whose token is missing, unreadable, or not live (see [reactor lock liveness](../explanation/reactor-lock-liveness.md)). |
 | `skill stamp` | `[WARN]` if the installed skill's `.eventlog-version` doesn't match this binary's version, or the skill isn't installed. |
 | `old script on PATH` | `[WARN]` per legacy shell script (`append-event.sh`, `eventlog-view.sh`, and others) still resolvable on `PATH`. |
 
@@ -129,5 +129,5 @@ cargo test
 ## See also
 
 - [eventlog CLI surface](eventlog-cli-surface.md) — where `init`, `doctor`, and `protect` sit among the other commands.
-- [Reactor lock liveness](../explanation/reactor-lock-liveness.md) — what the `reactor lock` check in `doctor` is verifying.
-- [Setup](setup.md) — `eventlog setup`, which runs `init` non-destructively before scaffolding reactor policy.
+- [Setup](setup.md) — `eventlog setup`, which previews and runs `init`.
+- [Reactors](../../reactors/README.md) — `eventlog-reactors doctor` checks the reactor setup and each reactor lock; `eventlog doctor` does not.

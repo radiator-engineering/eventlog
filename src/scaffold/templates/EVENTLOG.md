@@ -37,20 +37,21 @@ Parallel-work events:
 | `progress`  | agent, msg, ref                                  | short note while a worker runs                 |
 | `seam`      | agents, subject, ref                             | a cross-worker dependency found mid-work       |
 | `violation` | agent, paths                                     | worker changed files outside its claim         |
-| `ack`       | by, seq_done, outcome, ref, for                  | a reactor acted on event seq_done; `for=<seq>` closes the writer's own open `intent` |
-| `note`      | msg                                              | reactor or operator note                       |
-| `intent`    | by, for, paths                                     | reactor declared intent before acting          |
-| `veto`      | by, for, reason                                    | reactor blocked an action                      |
-| `observed`  | by, for, paths                                     | unclaimed files turned dirty while a reactor acted (no blame) |
+| `ack`       | by, seq_done, outcome, ref, for                  | a `by=` writer acted on event seq_done; `for=<seq>` closes its own open `intent` |
+| `note`      | msg                                              | operator or agent note                         |
+| `intent`    | by, for, paths                                     | a `by=` writer declared intent before acting   |
+| `veto`      | by, for, reason                                    | a `by=` writer blocked an action               |
+| `observed`  | by, for, paths                                     | unclaimed files turned dirty while a `by=` writer acted (no blame) |
 | `rebuild`   | trigger, as_of, reason, tokens_before, tokens_after, kept_turns | the controller's context was rebuilt from the log |
 
-Any line not written by the controller carries `by=<writer>`. Reactors resume
-from their own `ack` lines, never a side file.
+Any line not written by the controller carries `by=<writer>`. A writer that
+acts on events (a reactor, from the optional `eventlog-reactors`) resumes from
+its own `ack` lines, never a side file.
 
 ## `decision key=log-writers`
 
 The value `controller-plus-reactors` keeps the built-in allowlist (controller
-writes coordination types; any `by=`-tagged reactor writes `ack`, `note`,
+writes coordination types; any `by=`-tagged writer writes `ack`, `note`,
 `escalate`, `violation`, `intent`, `veto`, `result`, `progress`, …).
 
 Any other value is `name:type1|type2;name2:type3` and **replaces the whole
@@ -69,7 +70,6 @@ Example: `decision key=log-writers value=build-worker:result|progress` lets
 | `eventlog verify` | walk the hash chain |
 | `eventlog agents` / `state` / `why` | folded views |
 | `eventlog claims <agent> <base> [head]` | claim coverage vs git diff |
-| `eventlog react --as <name> --on t1,t2 -- cmd…` | reactor runtime |
 | `eventlog guard` / `guard install` | hook guard for Claude, Cursor, Codex |
 | `eventlog init` | create this scaffold |
 | `eventlog doctor [--fix] [--protect]` | diagnose setup |
@@ -77,6 +77,9 @@ Example: `decision key=log-writers value=build-worker:result|progress` lets
 | `eventlog skill install` | install the coordination skill |
 
 Run `eventlog vocab` for required and optional fields per type.
+
+Optional: `eventlog-reactors` adds reactors, agents that act on events (for
+example, commit the paths a `result` names). The log never needs them.
 
 ## Read it
 

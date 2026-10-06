@@ -5,7 +5,7 @@ use eventlog::model::config::Config;
 use eventlog::model::event::Event;
 use eventlog::model::paths::validate_paths;
 use eventlog::query::{self, State};
-use eventlog::react::voter::{self, Veto};
+use eventlog_reactors::react::voter::{self, Veto};
 
 fn synth(lines: &[&str]) -> Vec<Event> {
     lines

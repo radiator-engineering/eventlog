@@ -31,8 +31,8 @@ pub(super) fn run(
     let index_before = read_optional(&index_path)?;
     let mut originals = BTreeMap::new();
     for path in paths {
-        let rel = crate::model::paths::validate_paths(path)?;
-        let resolved = crate::model::paths::canonicalize(&root, &rel[0])?;
+        let rel = eventlog::model::paths::validate_paths(path)?;
+        let resolved = eventlog::model::paths::canonicalize(&root, &rel[0])?;
         originals.insert(path.clone(), file_state(&resolved)?);
     }
 

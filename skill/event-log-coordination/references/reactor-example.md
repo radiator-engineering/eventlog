@@ -1,4 +1,7 @@
-# Committer action for `eventlog react`
+# Committer action for `eventlog-reactors react`
+
+Optional add-on: install `eventlog-reactors` first. Up to eventlog 0.5 these
+commands were `eventlog react` and `eventlog action`.
 
 The runtime owns locking, resume, intent, voting, the veto window, Git
 accounting and acknowledgments. Use the packaged commit action to preserve
@@ -7,12 +10,13 @@ spaces and glob characters:
 
 ```sh
 eventlog lifecycle start committer --role commit-reactor
-eventlog react --as committer --on result --git -- eventlog action commit
+eventlog-reactors react --as committer --on result --git -- eventlog-reactors action commit
 ```
 
 Run the reactor in a persistent pane. A supervisor calls `lifecycle stop
-committer` when it stops that process. Generated Drove hooks wire this pair
-automatically.
+committer` when it stops that process. The Drove helper from
+`eventlog-reactors setup` wires this pair automatically, with
+`--role reactor`.
 
 The action reads `EVENTLOG_PATHS`, commits only that authorized set, and
 reports `outcome` and actual commit `ref` values for the runtime's ack.
@@ -24,7 +28,7 @@ Test against seq 42 in a disposable repository. This executes the action;
 the runtime prints its coordination events instead of appending them:
 
 ```sh
-eventlog react test 42 --as committer --git -- eventlog action commit
+eventlog-reactors react test 42 --as committer --git -- eventlog-reactors action commit
 ```
 
 Add `--filter agent=<worker>` to react to one worker's results only, and

@@ -8,9 +8,9 @@ use anyhow::Context;
 use serde::Deserialize;
 
 use crate::cli::{ActionInner, Args, Command};
-use crate::log::Log;
-use crate::log::append::{AppendRequest, append};
-use crate::model::config as log_config;
+use eventlog::log::Log;
+use eventlog::log::append::{AppendRequest, append};
+use eventlog::model::config as log_config;
 
 pub fn run(args: &Args) -> anyhow::Result<i32> {
     let Command::Action(action) = &args.command else {
@@ -60,7 +60,7 @@ fn commit(message: &str) -> anyhow::Result<i32> {
         report("skipped", "no changes in EVENTLOG_PATHS", None);
         return Ok(0);
     }
-    let policy = match std::fs::read_to_string(crate::scaffold::SETUP_CONFIG) {
+    let policy = match std::fs::read_to_string(crate::setup::SETUP_CONFIG) {
         Ok(text) => toml::from_str::<SetupConfig>(&text).context("parse commit setup config")?,
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => SetupConfig::default(),
         Err(err) => return Err(err).context("read commit setup config"),
@@ -178,10 +178,10 @@ fn default_docs_identity() -> String {
 
 fn docs() -> anyhow::Result<i32> {
     let root = std::env::current_dir().context("current directory")?;
-    let config_path = root.join(crate::scaffold::SETUP_CONFIG);
+    let config_path = root.join(crate::setup::SETUP_CONFIG);
     let text = std::fs::read_to_string(&config_path).with_context(|| {
         format!(
-            "read {}; run eventlog setup apply first",
+            "read {}; run eventlog-reactors setup apply first",
             config_path.display()
         )
     })?;
@@ -375,7 +375,7 @@ fn action_paths() -> anyhow::Result<Vec<String>> {
     if raw.trim().is_empty() {
         return Ok(Vec::new());
     }
-    let paths = crate::model::paths::validate_paths(&raw)
+    let paths = eventlog::model::paths::validate_paths(&raw)
         .map_err(|err| anyhow::anyhow!("invalid EVENTLOG_PATHS: {err}"))?;
     Ok(paths
         .into_iter()
@@ -479,7 +479,7 @@ fn snapshot_path(
     // another reactor works. All other files, including .context content,
     // remain subject to the documentation roots check unless docs.exclude
     // names them.
-    if crate::model::paths::is_log_or_lock(log_path, path) {
+    if eventlog::model::paths::is_log_or_lock(log_path, path) {
         return Ok(());
     }
     let relative = path

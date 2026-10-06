@@ -1,4 +1,5 @@
-//! Explain one event: what led to it, what it drove, and how reactors acted on it.
+//! Explain one event: what led to it, what it drove, and, in a log with
+//! `ack` writers (reactors), how they acted on it.
 //!
 //! Spec section 8 (`why`). Reference fields are walked numerically via
 //! [`Event::seq_ref`]; `origin` on an ack names the writer whose latest
@@ -86,7 +87,8 @@ fn push_unique(out: &mut Vec<Event>, event: Event) {
 }
 
 fn verdict_for(event: &Event, effects: &[Event], state: &State) -> String {
-    if !matches!(event.r#type.as_str(), "result" | "decision") {
+    // A log without ack writers has no verdict to give.
+    if !matches!(event.r#type.as_str(), "result" | "decision") || state.reactors.is_empty() {
         return String::new();
     }
 
@@ -110,8 +112,7 @@ fn verdict_for(event: &Event, effects: &[Event], state: &State) -> String {
         );
     }
 
-    // `--on` lives in reactor config (Task 14); until it is loaded, every
-    // reactor filter is unknown and we report the missing ack plainly.
-    let _ = state;
+    // A reactor's `--on` filter lives with the reactor, not in the log, so a
+    // missing ack is reported plainly.
     "no ack references this seq".to_string()
 }

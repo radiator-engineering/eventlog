@@ -22,12 +22,12 @@ use std::time::{Duration, Instant};
 
 use globset::Glob;
 
-use crate::log::Log;
-use crate::log::append::{AppendRequest, append};
-use crate::model::config::Config;
-use crate::model::event::Event;
-use crate::model::vocab::TypeSpec;
-use crate::query::{State, fold};
+use eventlog::log::Log;
+use eventlog::log::append::{AppendRequest, append};
+use eventlog::model::config::Config;
+use eventlog::model::event::Event;
+use eventlog::model::vocab::TypeSpec;
+use eventlog::query::{State, fold};
 
 pub use lock::ReactorLock;
 

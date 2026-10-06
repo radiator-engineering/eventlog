@@ -43,7 +43,7 @@ claims from `state` directly if you need them as JSON.
 
 ## `state`
 
-Prints a full snapshot in six sections:
+Prints a snapshot in five sections, plus a sixth when the log has reactors:
 
 - **active agents** — every agent with no `retired_at`, with its phase and
   spawn seq.
@@ -53,14 +53,18 @@ Prints a full snapshot in six sections:
 - **open escalations** / **open intents** — `state.escalations` and
   `state.intents`, one formatted event line each (see [View: text
   format](view.md#text-format) for the line format).
-- **reactors** — one line per reactor: `last_ack_seq`, `age` (now minus
-  `last_ack_ts`, as `Nd`/`Nh`/`Nm`/`Ns`), and `unacked` — the count from
-  `state.unacked(reactor, ["result", "decision"], events)`, i.e. `result` and
-  `decision` events above the reactor's last ack.
+- **reactors** — printed only when the log has a `by=` writer of `ack`,
+  `intent`, or `veto` (a reactor). One line per reactor: `last_ack_seq`,
+  `age` (now minus `last_ack_ts`, as `Nd`/`Nh`/`Nm`/`Ns`), and `unacked` —
+  the count from `state.unacked(reactor, ACKED_TYPES, events)`, i.e. `result`
+  and `decision` events above the reactor's last ack. A log without reactors
+  prints no `reactors:` heading at all.
 
 `--json` prints one object with `active_agents`, `open_claims`, `decisions`,
 `open_escalations`, `open_intents`, and `reactors` (each reactor row also
-carries the `unacked` seq list, not just the count).
+carries the `unacked` seq list, not just the count). `reactors` is always
+present, so the JSON shape does not change; it is an empty array for a log
+without reactors.
 
 ## `why`
 
@@ -73,9 +77,12 @@ carries the `unacked` seq list, not just the count).
 - **event** — the event itself.
 - **effects** — every event elsewhere in the log whose `for`, `for_ack`,
   `seq_done`, or `intent` field points back at this seq.
-- **verdict** — set only when the event is a `result` or `decision`: if an
-  effect is an `ack` with `seq_done` equal to this seq, the verdict is that
-  ack's `outcome` (e.g. `committed`, `skipped`); otherwise empty.
+- **verdict** — set only when the event is a `result` or `decision` and
+  the log has at least one `ack`, `intent`, or `veto` writer (a reactor). If
+  an effect is an `ack` with `seq_done` equal to this seq, the verdict names
+  that ack's writer, seq, and `outcome` (e.g. `committed`, `skipped`);
+  otherwise it is `no ack references this seq`. In a log without reactors
+  the verdict is empty, so `why` prints no `verdict:` section.
 
 Text output prints causes, the event, and effects as formatted lines, then
 the verdict if non-empty. `--json` prints one object: `causes` and `effects`

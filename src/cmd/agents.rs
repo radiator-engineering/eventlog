@@ -223,8 +223,6 @@ pub(crate) fn active_agents(state: &State) -> Vec<&query::AgentState> {
         .collect()
 }
 
-pub(crate) const REACTOR_ON: &[&str] = &["result", "decision"];
-
 pub(crate) fn format_age(ts: &str) -> String {
     use chrono::{DateTime, Utc};
     let Ok(ack) = DateTime::parse_from_rfc3339(ts) else {

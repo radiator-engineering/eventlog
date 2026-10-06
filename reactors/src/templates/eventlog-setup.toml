@@ -1,0 +1,29 @@
+# eventlog-reactors setup v2 -- created by `eventlog-reactors setup`; this is
+# project-managed reactor policy, opt-in and separate from the log itself.
+# Upgrade preserves valid custom settings and rejects malformed TOML.
+version = 2
+
+[commit]
+identity = "committer"
+model = "composer-2.5-fast"
+timeout = "600s"
+
+# Optional commit-author argv. An empty list keeps the direct --message mode.
+# Commands run in an isolated checkout with authorized paths already staged.
+# EVENTLOG_MODEL contains the model; a literal {model} argv entry is replaced.
+command = []
+
+[docs]
+identity = "doc-worker"
+model = "claude-sonnet"
+timeout = "600s"
+roots = ["docs", "README.md"]
+# Replace this argv list with a project-local command. It is executed directly,
+# never through a shell, so spaces and special characters are data, not code.
+command = []
+
+[invocation]
+# The executables the generated Drove helper runs. `eventlog` records the
+# reactor lifecycle; `reactors` runs the reactor loop and its actions.
+eventlog = "eventlog"
+reactors = "eventlog-reactors"

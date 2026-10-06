@@ -1,7 +1,8 @@
 load("drove/reactors.star", "reactor")
 
-# Everything here runs the `eventlog` binary this repo ships
-# (`cargo install --path .`), not the retired shell toolkit.
+# Everything here runs the `eventlog` and `eventlog-reactors` binaries this
+# repo ships (install both: `--path .` and `--path reactors`), not the
+# retired shell toolkit.
 
 # The herdr session this layout lives in, so `drove up` works from any shell.
 # An explicit --session flag or a HERDR_SESSION in the environment still wins.

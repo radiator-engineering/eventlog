@@ -13,11 +13,9 @@ fn every_frozen_command_is_recognized() {
         "claims",
         "open",
         "tui",
-        "react",
         "guard",
         "init",
         "setup",
-        "action",
         "lifecycle",
         "doctor",
         "protect",
@@ -33,6 +31,29 @@ fn every_frozen_command_is_recognized() {
             .assert()
             .success();
     }
+}
+
+/// The reactor runtime and its actions live in `eventlog-reactors`.
+#[test]
+fn reactor_commands_are_not_part_of_the_log() {
+    for c in ["react", "action"] {
+        Command::cargo_bin("eventlog")
+            .unwrap()
+            .arg(c)
+            .arg("--help")
+            .assert()
+            .failure();
+    }
+    let help = Command::cargo_bin("eventlog")
+        .unwrap()
+        .arg("--help")
+        .output()
+        .unwrap();
+    assert!(
+        !String::from_utf8_lossy(&help.stdout)
+            .to_lowercase()
+            .contains("reactor")
+    );
 }
 
 #[test]

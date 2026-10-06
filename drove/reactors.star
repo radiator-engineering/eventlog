@@ -1,12 +1,12 @@
 def reactor(name, agent, model, on, action, filters = [], git = False, after = [], timeout = "900s"):
-    """One `eventlog react` runtime in its own herdr tab.
+    """One `eventlog-reactors react` runtime in its own herdr tab.
 
     The Rust runtime owns the lock, resume, intent, voter, veto window,
     violation check and ack; `action` is the script it runs per event
     (.context/bin/*-action.sh). No shell supervisor sits in between.
     """
     slug = name + "-reactor"
-    cmd = ["eventlog", "react", "--as", agent, "--on", on, "--timeout", timeout]
+    cmd = ["eventlog-reactors", "react", "--as", agent, "--on", on, "--timeout", timeout]
     for f in filters:
         cmd += ["--filter", f]
     if git:
@@ -18,6 +18,6 @@ def reactor(name, agent, model, on, action, filters = [], git = False, after = [
              ready = output("watching"),
              after = after,
              on_start = ["eventlog", "append", "spawn", "agent=" + agent, "model=" + model,
-                         "role=" + slug, "runtime=eventlog-react"],
+                         "role=" + slug, "runtime=eventlog-reactors"],
              on_stop = ["eventlog", "append", "retire", "agent=" + agent, "disposition=stopped"]),
     ])

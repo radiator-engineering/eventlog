@@ -64,7 +64,8 @@ the log. It does nothing:
 
 - in headless sessions (`claude -p`, the SDK);
 - when `EVENTLOG_AS` names a writer other than `controller`;
-- when `LOG_DRIVEN_WORKER` is set, as in a worker a reactor launches;
+- when `LOG_DRIVEN_WORKER` is set, as in a worker that a reactor (from the
+  optional `eventlog-reactors`) launches;
 - when `HERDR_PANE_ID` is set and `.context/layout.json` names a different
   pane as the controller's (the rule the controller stop hook uses);
 - when `EVENTLOG_CONTEXT=off`;
@@ -215,8 +216,9 @@ eventlog context
 
 The output reflects the log now, so events after the rebuild also appear.
 
-To check a reactor's own health, run `eventlog state --json` and read
-`reactors`. A controller `ack` (for example closing an intent, step 6) makes
+If the repo runs reactors, check their health with `eventlog state --json`
+and read `reactors`. The array is empty in a log without reactors. A
+controller `ack` (for example one that closes an intent, step 6) makes
 `controller` appear there too, even though the packet's own reactor section
 leaves the controller out.
 
@@ -227,7 +229,7 @@ Claude Code with `--debug-file <path>` and search that file for
 
 ## Related
 
-- [Run a log-driven repo](run-a-log-driven-repo.md): the controller, the
-  reactors and the log this mod reads.
+- [Run a log-driven repo](run-a-log-driven-repo.md): the controller, its
+  workers, and the log this mod reads.
 - [`.context/EVENTLOG.md`](../../.context/EVENTLOG.md): the event vocabulary,
   including `rebuild`.

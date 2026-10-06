@@ -2,6 +2,8 @@ use assert_cmd::Command;
 use std::{fs, process::Command as Git};
 use tempfile::TempDir;
 
+mod common;
+
 fn fixture(script: &str) -> (TempDir, std::path::PathBuf) {
     let dir = TempDir::new().unwrap();
     for args in [
@@ -49,16 +51,13 @@ fn fixture(script: &str) -> (TempDir, std::path::PathBuf) {
 }
 
 fn action(dir: &TempDir, log: &std::path::Path) -> Command {
-    let mut command = Command::cargo_bin("eventlog").unwrap();
+    let mut command = Command::cargo_bin("eventlog-reactors").unwrap();
     command
         .current_dir(dir.path())
         .env("EVENTLOG_LOG", log)
         .env("EVENTLOG_TYPE", "ack")
         .env("EVENTLOG_SEQ", "2")
-        .env(
-            "EVENTLOG_TEST_BIN",
-            assert_cmd::cargo::cargo_bin("eventlog"),
-        )
+        .env("EVENTLOG_TEST_BIN", common::core_bin())
         .args(["action", "docs"]);
     command
 }
@@ -215,4 +214,16 @@ fn docs_snapshot_rejects_invalid_exclude() {
             .failure()
             .stderr(predicates::str::contains("invalid docs.exclude"));
     }
+}
+
+#[test]
+fn docs_action_missing_policy_points_at_reactors_setup() {
+    let (dir, log) = fixture("true");
+    fs::remove_file(dir.path().join(".context/eventlog-setup.toml")).unwrap();
+    action(&dir, &log)
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains(
+            "run eventlog-reactors setup apply first",
+        ));
 }

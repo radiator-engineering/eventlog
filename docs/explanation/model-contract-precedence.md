@@ -3,7 +3,8 @@
 `src/model` shipped before any `eventlog` command works, the same way the CLI
 surface shipped before any command was implemented (why the CLI surface
 shipped first). Later tasks — `log`, `query`,
-`react`, `guard`, `scaffold`, `tui` — all read and write `Event`, `Config`,
+`react` (now in the optional `eventlog-reactors` crate), `guard`, `scaffold`,
+`tui` — all read and write `Event`, `Config`,
 `Vocabulary`, and `Allowlist`. If two of those tasks could each change a
 model signature to suit itself, one could add a field to `Event` that another
 task's serializer did not expect, or change what `Allowlist::permits` returns
@@ -22,7 +23,7 @@ three places, applied in this order:
 
 1. **The built-in default** (`Allowlist::builtin`): only `controller` writes
    `spawn`, `prompt`, `claim`, `decision`, `retire`, and `approval`; any
-   reactor writes the rest.
+   `by=`-tagged writer (a worker or a reactor) writes the rest.
 2. **The config file** (`Allowlist::merge_file`, from `.context/eventlog.toml`):
    replaces the writer list for exactly the types the file names.
 3. **`decision key=log-writers` lines in the log** (`Allowlist::apply_decision`),
