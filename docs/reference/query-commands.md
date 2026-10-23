@@ -43,7 +43,7 @@ claims from `state` directly if you need them as JSON.
 
 ## `state`
 
-Prints a snapshot in five sections, plus a sixth when the log has reactors:
+Prints a snapshot in five sections, plus a sixth when the log has a `by=` writer of `ack`, `intent`, or `veto`:
 
 - **active agents** — every agent with no `retired_at`, with its phase and
   spawn seq.
@@ -54,17 +54,19 @@ Prints a snapshot in five sections, plus a sixth when the log has reactors:
   `state.intents`, one formatted event line each (see [View: text
   format](view.md#text-format) for the line format).
 - **reactors** — printed only when the log has a `by=` writer of `ack`,
-  `intent`, or `veto` (a reactor). One line per reactor: `last_ack_seq`,
+  `intent`, or `veto` (for example an agent from
+  [eventlog-reactors](https://github.com/radiator-engineering/eventlog-reactors)).
+  One line per such writer: `last_ack_seq`,
   `age` (now minus `last_ack_ts`, as `Nd`/`Nh`/`Nm`/`Ns`), and `unacked` —
   the count from `state.unacked(reactor, ACKED_TYPES, events)`, i.e. `result`
-  and `decision` events above the reactor's last ack. A log without reactors
+  and `decision` events above the writer's last ack. A log without such writers
   prints no `reactors:` heading at all.
 
 `--json` prints one object with `active_agents`, `open_claims`, `decisions`,
 `open_escalations`, `open_intents`, and `reactors` (each reactor row also
 carries the `unacked` seq list, not just the count). `reactors` is always
 present, so the JSON shape does not change; it is an empty array for a log
-without reactors.
+without such writers.
 
 ## `why`
 
@@ -78,10 +80,10 @@ without reactors.
 - **effects** — every event elsewhere in the log whose `for`, `for_ack`,
   `seq_done`, or `intent` field points back at this seq.
 - **verdict** — set only when the event is a `result` or `decision` and
-  the log has at least one `ack`, `intent`, or `veto` writer (a reactor). If
+  the log has at least one `ack`, `intent`, or `veto` writer. If
   an effect is an `ack` with `seq_done` equal to this seq, the verdict names
   that ack's writer, seq, and `outcome` (e.g. `committed`, `skipped`);
-  otherwise it is `no ack references this seq`. In a log without reactors
+  otherwise it is `no ack references this seq`. In a log without such writers
   the verdict is empty, so `why` prints no `verdict:` section.
 
 Text output prints causes, the event, and effects as formatted lines, then

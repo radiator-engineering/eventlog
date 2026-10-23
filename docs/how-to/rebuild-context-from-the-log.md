@@ -64,8 +64,8 @@ the log. It does nothing:
 
 - in headless sessions (`claude -p`, the SDK);
 - when `EVENTLOG_AS` names a writer other than `controller`;
-- when `LOG_DRIVEN_WORKER` is set, as in a worker that a reactor (from the
-  optional `eventlog-reactors`) launches;
+- when `LOG_DRIVEN_WORKER` is set, as in a worker that a supervisor
+  launches;
 - when `HERDR_PANE_ID` is set and `.context/layout.json` names a different
   pane as the controller's (the rule the controller stop hook uses);
 - when `EVENTLOG_CONTEXT=off`;
@@ -216,11 +216,10 @@ eventlog context
 
 The output reflects the log now, so events after the rebuild also appear.
 
-If the repo runs reactors, check their health with `eventlog state --json`
-and read `reactors`. The array is empty in a log without reactors. A
-controller `ack` (for example one that closes an intent, step 6) makes
-`controller` appear there too, even though the packet's own reactor section
-leaves the controller out.
+To check which agents write `ack`, `intent` or `veto`, run
+`eventlog state --json` and read `reactors`. The array is empty in a log with
+no `by=` writer of those types. A controller `ack` (for example one that
+closes an intent, step 6) makes `controller` appear there too, even though the packet's own ack-health section leaves the controller out.
 
 If no `rebuild` event appears, check the requirements in section 1. Start
 Claude Code with `--debug-file <path>` and search that file for

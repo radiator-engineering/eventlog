@@ -1,21 +1,9 @@
 # eventlog CLI surface
 
-Status: scaffolded. Every command parses; `verify` ([reference](verify.md)),
-`schema` ([reference](schema.md)), `view` ([reference](view.md)), `claims`
-([reference](claims.md)), `open` ([reference](open.md)), `agents`, `state`,
-`why` ([reference](query-commands.md)), `append`, `vocab`
-([reference](append.md)), `tui` ([reference](tui.md)), `guard`
-([reference](guard.md)), `init`,
-`doctor`, `protect` ([reference](scaffold.md)), `setup`
-([reference](setup.md)), `lifecycle` ([reference](lifecycle.md)), `skill`,
-`context` ([reference](context.md)), and `completions` ([reference](skill.md))
-are implemented, the rest still print `eventlog <name>: not implemented` to
-stderr and exit 1. This page documents the frozen command set so later
-tasks can fill in behavior without changing names or flags.
+Status: implemented. Every command below runs; the table links each to its
+reference page. Run `eventlog --help` for the same list.
 
-The reactor commands are not part of `eventlog`. Up to eventlog 0.5 it had
-`react` and `action`; they moved to the optional `eventlog-reactors` binary
-(see [Reactor commands](#reactor-commands-eventlog-reactors) below).
+The reactor commands (`react`, `action`) are not part of `eventlog`. They live in [eventlog-reactors](https://github.com/radiator-engineering/eventlog-reactors).
 
 ## Global flags
 
@@ -56,29 +44,15 @@ Every command accepts:
 top-level command listings; use `eventlog claims --help` to see it, or run
 `eventlog check-claims` directly.
 
-## Reactor commands: `eventlog-reactors`
-
-The optional `eventlog-reactors` binary (crate `eventlog-reactors`, in
-`reactors/`) takes the same global flags, `--log` and `--json`:
-
-| Command | Purpose |
-|---|---|
-| `react` | Reactor runtime: live loop, or `test <seq>` to dry-run one reaction against a real sequence number ([reference](../reactors/react-command.md)). |
-| `action` | Run a packaged reactor action ([reference](../reactors/action.md)). Subcommands: `commit`, `docs`. |
-| `setup` | Preview, apply, or upgrade the reactor policy and its Drove helper ([reference](../reactors/setup.md)). Subcommands: `preview`, `apply`, `upgrade`. |
-| `doctor` | Check the reactor setup and each reactor lock ([reactors README](../../reactors/README.md)). |
-
 ## Building and checking the surface
 
 ```sh
 cargo build
 cargo test        # tests/cli_surface.rs asserts every eventlog command above is recognized,
-                  # and reactors/tests/cli_surface.rs does the same for eventlog-reactors
 ```
 
 Source: `src/cli.rs` defines the command enum and dispatch table; each
-`src/cmd/<name>.rs` implements that command. `reactors/src/cli.rs` and
-`reactors/src/cmd/` do the same for `eventlog-reactors`.
+`src/cmd/<name>.rs` implements that command.
 
 ## See also
 
@@ -97,7 +71,4 @@ Source: `src/cli.rs` defines the command enum and dispatch table; each
 - [Worktree facts](worktree-facts.md) — `eventlog worktree-facts`, the provider that `offcut` reads.
 - [Context](context.md) — `eventlog context`, `context check`, `context install`, and the `[context]` settings.
 - [Lifecycle](lifecycle.md) — `eventlog lifecycle`, idempotent spawn/claim/retire for a supervised agent.
-- [React command](../reactors/react-command.md) — `eventlog-reactors react` and `react test`, wiring the reactor loop to the rule voter and the action runner.
-- [Action](../reactors/action.md) — `eventlog-reactors action`, packaged commit and docs reactor actions.
-- [Reactor setup](../reactors/setup.md) — `eventlog-reactors setup`, the reactor policy and Drove helper.
 - [Skill and completions](skill.md) — installing the embedded skill and generating shell completions.

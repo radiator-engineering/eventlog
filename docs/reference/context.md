@@ -24,8 +24,9 @@ intent. It writes nothing.
 
 The packet has these sections, in order: a header that says the reader is the
 controller, decisions in force, agents, recent history, the artifact index,
-reactor health (only when the log has `ack` writers and one of them has
-unacked events or a stale ack; a log without reactors never shows it), open
+ack health (only when the log has a `by=` writer of `ack`, `intent`, or `veto`,
+and one of them has unacked events or a stale ack; a log without such a writer
+never shows it), open
 work, and the current task. The same log and working tree always give the same
 bytes. Ages count from the newest event, not from the clock.
 

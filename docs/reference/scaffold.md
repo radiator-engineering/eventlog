@@ -26,8 +26,7 @@ pub fn init(repo_root: &Path) -> anyhow::Result<()>;
   run (decision [`init-templates`](../../.context/DECISIONS.md)).
 - Appends any missing line from a fixed set to `.gitignore`:
   `.context/events.jsonl`, `.context/events.jsonl.lock`,
-  `.context/layout.json`. The optional `eventlog-reactors setup apply` adds
-  `.context/*.reactor.lock/` (see [Reactor setup](../reactors/setup.md)).
+  `.context/layout.json`.
 - Appends `.context/events.jsonl -text` to `.gitattributes` if not already
   present.
 
@@ -130,4 +129,3 @@ cargo test
 
 - [eventlog CLI surface](eventlog-cli-surface.md) — where `init`, `doctor`, and `protect` sit among the other commands.
 - [Setup](setup.md) — `eventlog setup`, which previews and runs `init`.
-- [Reactors](../../reactors/README.md) — `eventlog-reactors doctor` checks the reactor setup and each reactor lock; `eventlog doctor` does not.

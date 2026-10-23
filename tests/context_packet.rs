@@ -214,6 +214,12 @@ fn reactor_health_pins_never_acked_wording() {
     ));
     let md = render(&events, &clean(), 12_000, &[]).markdown();
     assert!(md.contains("- committer unacked=2 last_ack=never"), "{md}");
+    assert!(md.contains("Ack health"), "{md}");
+    assert!(!md.contains("Reactor health"), "{md}");
+    let p = render(&events, &clean(), 12_000, &[]);
+    let v = p.to_json(&ContextConfig::default());
+    assert!(v["sections"]["ack_health"].is_array(), "{v}");
+    assert!(v["sections"].get("reactors").is_none(), "{v}");
 }
 
 fn lines_of(p: &eventlog::context::packet::Packet, key: &str) -> usize {

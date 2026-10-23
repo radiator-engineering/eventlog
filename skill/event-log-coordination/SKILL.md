@@ -4,9 +4,8 @@ description: >-
   Use when several coding agents share one repo and need one ordered record of
   who was spawned, what they own, what they reported and what was decided:
   spawning workers, claiming files, accepting results, recording decisions or
-  approvals, or running an optional reactor (eventlog-reactors) that acts on
-  log events. Also use when a repo has a .context/events.jsonl, when the
-  eventlog guard blocks a command, or when a reactor duplicates or skips work.
+  or approvals. Also use when a repo has a .context/events.jsonl or when the
+  eventlog guard blocks a command.
 metadata:
   author: jjm@radiator.live
 ---
@@ -16,9 +15,8 @@ metadata:
 The `eventlog` CLI keeps an append-only JSONL log at `.context/events.jsonl`.
 The controller is the only writer. Workers report back; the controller
 records. Every event is small and points at artifacts by `ref=`. The log
-works alone. Reactors, agents that act on events and record their own `ack`,
-are an optional add-on from the separate `eventlog-reactors` binary (see
-"Optional: reactors" below).
+needs no other process. Agents that act on events and record their own `ack`
+live in the separate eventlog-reactors project.
 
 **You run every command below. The user never does.** On first use in a
 session run `eventlog doctor --fix` (idempotent). It installs the guard hook
@@ -80,14 +78,13 @@ absolute paths, leading `~`, and traversal above the root are rejected.
    `violation agent=<name> paths=<list>`.
 5. `result` with `paths=`, then `retire`. A `seam agents=a,b subject=...`
    the moment a report names a cross-worker dependency.
-6. Commit the files the `result` names. If the repo runs the optional commit
-   reactor, it commits them instead; then never run `git commit` yourself.
+6. Commit the files the `result` names.
 
 ## Supervised agents: `eventlog lifecycle`
 
-A supervisor (a Drove hook, or any process manager) records a long-running
+A supervisor (a process-manager hook) records a long-running
 agent's spawn, claim and retire with `eventlog lifecycle`. Use argv directly
-in a Drove hook; do not concatenate shell strings:
+in the hook; do not concatenate shell strings:
 
 ```python
 on_start = ["eventlog", "lifecycle", "start", agent, "--model", model,
@@ -106,7 +103,7 @@ run it from a worker brief.
 `eventlog view --last 20`, `view -f`, `view --since <seq|rfc3339>`,
 `view --grep <text>`, `state`, `agents`, `why <seq>`, `open <seq>`, `tui`.
 `state` adds a `reactors:` section, and `why` a `verdict:`, only when the log
-has a reactor's `ack`, `intent` or `veto` lines.
+has `ack`, `intent` or `veto` lines from a `by=` writer.
 
 **Run any read that names the log file as its own command.** The guard
 denies a compound command (`;`, `&&`, `|`, `$(`, newline) that names
@@ -117,100 +114,9 @@ and denies `jq . .context/events.jsonl | grep x`. It also denies any `Edit` or
 fails open only on non-JSON. `eventlog protect` adds the OS append-only flag
 for anything the hook does not see.
 
-## Optional: reactors (`eventlog-reactors`)
-
-Skip this section in a repo without `.context/eventlog-setup.toml` or
-reactor panes. Up to eventlog 0.5 these commands were `eventlog react`,
-`eventlog action` and the reactor part of `eventlog setup`; they now live in
-the separate `eventlog-reactors` binary (`cargo install eventlog-reactors`).
-
-A reactor acts on matching events with no prompt. The runtime owns lock,
-resume, intent, voter, action, violation check and ack; you supply the
-action. Drive a committer on `result`, which carries `paths=`
-(`decision` has no `paths` field):
-
-```sh
-eventlog-reactors react --as committer --on result --git -- bash .context/bin/commit-action.sh
-eventlog-reactors react test <seq> --as committer --git -- bash .context/bin/commit-action.sh   # dry run
-```
-
-### Reactor setup
-
-Run `eventlog-reactors setup preview`, inspect the output, then
-`eventlog-reactors setup apply`. It runs the log setup, then writes the
-project-managed `.context/eventlog-setup.toml` and the Drove helper
-`.context/eventlog-reactors.star`, and ignores `.context/*.reactor.lock/`.
-The policy declares the committer/doc-worker identities, default models
-(`composer-2.5-fast` and `claude-sonnet`), timeouts, documentation roots, an
-argv-form docs command, and `[invocation]` (`eventlog`, and the optional
-`reactors`, default `eventlog-reactors`). `setup` never rewrites an existing
-`Drovefile`, restarts a reactor, removes a lock/history file, or advances a
-checkpoint. `upgrade` is conservative: it preserves valid project edits,
-regenerates an unedited helper (a 0.5 helper moves to `eventlog-reactors`),
-and fails before writing when the configuration is malformed.
-`eventlog-reactors doctor` reports the setup and each reactor lock.
-
-The generated helper's hooks call `eventlog lifecycle start <id> --role
-reactor ...`; add `--role reactor` to a hand-written reactor hook to keep the
-0.5 role.
-
-### Packaged actions
-
-Package reactor actions as direct argv:
-
-```sh
-eventlog-reactors react --as committer --on result --git -- eventlog-reactors action commit
-eventlog-reactors react --as doc-worker --on ack --filter by=committer --filter outcome=committed --git -- eventlog-reactors action docs
-```
-
-`action commit` stages and commits only validated `EVENTLOG_PATHS`; it rejects
-target paths that were already staged and keeps unrelated staged work intact.
-An optional `[commit].command` argv invokes the project's commit-author model
-in a disposable clone, after authorized additions, edits and deletions have
-been copied and staged. The command must create commits there. It receives
-`EVENTLOG_MODEL`, the concrete `EVENTLOG_PATHS`, the driving event on stdin,
-and `EVENTLOG_COMMIT_MESSAGE`; an argv entry exactly `{model}` is replaced
-with `[commit].model`. Model labels alone do not invoke a model. For example,
-configure `command = ["python3", ".context/bin/model-command.py", "commit"]`
-and have that thin command invoke Cursor with `EVENTLOG_MODEL`.
-
-Every produced commit is checked against the authorized paths before its
-history is published to the source branch. Unrelated staging is preserved;
-changed source HEAD/index/files abort publication. Multiple accepted commits
-are reported with all their OIDs. A command that commits successfully and
-then exits nonzero still reports the verified commits, with its exit status
-in the detail. No commit after a command failure is a failed action. A clean
-authorized scope skips without invoking the command. Without a configured
-command, direct `--message` behavior is retained. Commands are trusted local
-programs; the disposable clone is file/commit isolation, not an OS sandbox.
-
-`action docs` executes `[docs].command` as argv (no shell interpolation) and
-reports the added, deleted, or modified files below `[docs].roots`, including
-files already dirty before the command. The active log and its reserved
-sidecars are excluded from content snapshots so concurrent reactor writes
-do not fail the docs action; other files outside the roots remain checked,
-except paths listed in `[docs].exclude` (prefixes or globs, default empty).
-No documentation changes returns `skipped` without appending a result.
-Set `docs.command` to a local stub in
-tests. An empty command or a failing model command is a failed action, never a
-successful no-op. Under a reactor (when `EVENTLOG_LOG` and `EVENTLOG_REF` are
-set), it appends one `result` attributed to `[docs].identity`; when that result
-comes back through the doc worker it is skipped, preventing the doc-result
-loop. Native `react` still owns intent/ack/resume handling.
-
-Sanction reactors once: `decision key=log-writers value=controller-plus-reactors`.
-Run each reactor in a terminal pane that outlives any agent's turn, and record
-its `spawn` and `claim`. Details: `references/log-reactors.md`; script:
-`references/reactor-example.md`.
-
 ## Red flags
 
 - Writing `by=` as the controller, or `--as` after the fields.
 - A `result` with no open `spawn`. Accepted worker work needs a result before
   retirement; supervisor `lifecycle stop` needs no preceding result.
 - Answering "add a type" with a new `append`; edit `eventlog.toml` first.
-- With reactors: `git add -A` in a committer. Stage `EVENTLOG_PATHS` only.
-- With reactors: restarting a reactor from an agent's tool shell. It dies with
-  the turn.
-- With reactors: running `eventlog react` or `eventlog action`, the 0.5 names.
-  Run `eventlog-reactors react` and `eventlog-reactors action`.

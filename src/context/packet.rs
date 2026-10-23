@@ -99,8 +99,8 @@ pub fn build(input: &PacketInput, budget: usize) -> Packet {
     let reactors = reactor_health(input, &tip_ts);
     if !reactors.is_empty() {
         sections.push(Section {
-            key: "reactors",
-            title: "Reactor health",
+            key: "ack_health",
+            title: "Ack health",
             lines: reactors,
             omitted: 0,
         });
