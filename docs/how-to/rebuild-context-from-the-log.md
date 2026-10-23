@@ -216,10 +216,10 @@ eventlog context
 
 The output reflects the log now, so events after the rebuild also appear.
 
-To check `ack` writers, run `eventlog state --json` and read `reactors`. The
-array is empty in a log without `ack` writers. A controller `ack` (for
-example one that closes an intent, step 6) makes `controller` appear there
-too, even though the packet's own ack-health section leaves the controller out.
+To check which agents write `ack`, `intent` or `veto`, run
+`eventlog state --json` and read `reactors`. The array is empty in a log with
+no `by=` writer of those types. A controller `ack` (for example one that
+closes an intent, step 6) makes `controller` appear there too, even though the packet's own ack-health section leaves the controller out.
 
 If no `rebuild` event appears, check the requirements in section 1. Start
 Claude Code with `--debug-file <path>` and search that file for

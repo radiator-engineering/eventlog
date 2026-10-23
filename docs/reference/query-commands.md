@@ -43,7 +43,7 @@ claims from `state` directly if you need them as JSON.
 
 ## `state`
 
-Prints a snapshot in five sections, plus a sixth when the log has `ack` writers:
+Prints a snapshot in five sections, plus a sixth when the log has a `by=` writer of `ack`, `intent`, or `veto`:
 
 - **active agents** — every agent with no `retired_at`, with its phase and
   spawn seq.
