@@ -2,9 +2,9 @@
 
 `eventlog` is a Rust CLI for coordinating several coding agents in one repo through an append-only event log. One controller writes small events to `.context/events.jsonl` (`spawn`, `claim`, `result`, `decision`, `retire`); every agent and every human reads the same file. Walk the log to event N and you know exactly what the system knew at event N.
 
-The log works alone. Reactors, agents that act on log events without a prompt, are an optional add-on in a separate binary. See [Optional: reactors](#optional-reactors).
+Agents that act on log events without a prompt (reactors) live in a separate repo, [eventlog-reactors](https://github.com/radiator-engineering/eventlog-reactors). The log needs none of them.
 
-This repo runs on the tool it ships, reactors included. Its own log, decisions, and worker briefs live in `.context/`; AGENTS.md says who may write what.
+This repo runs on the tool it ships. Its own log, decisions, and worker briefs live in `.context/`; AGENTS.md says who may write what.
 
 ## Install
 
@@ -51,21 +51,9 @@ Then work as usual. `eventlog view --last 20` shows each `rebuild` event with it
 1. The controller appends `spawn`, `prompt`, and `claim` for a worker. The worker edits only the paths it claimed.
 2. When the worker reports back, the controller runs `eventlog claims <worker> main`. It lists changed files that the claim does not cover.
 3. The controller appends `result ... paths=<files>`, then `retire`.
-4. The controller commits the files the `result` names. With the optional commit reactor, the reactor commits them instead.
+4. The controller commits the files the `result` names.
 
 Nothing edits or truncates the log: a hook guard blocks the agents' tool calls that would, and `eventlog protect` makes the kernel refuse everything else.
-
-## Optional: reactors
-
-A reactor is a long-running agent that waits for one event type, acts on it, and appends an `ack`. The separate `eventlog-reactors` binary ships two. The commit reactor commits exactly the paths a `result` names. The docs reactor then updates the docs for that commit. You do not need either to use the log.
-
-```sh
-cargo install eventlog-reactors --locked   # or, from a checkout: cargo install --path reactors --locked
-eventlog-reactors setup preview
-eventlog-reactors setup apply
-```
-
-[reactors/README.md](reactors/README.md) covers when you want reactors, their setup, the Drove helper, `eventlog-reactors doctor`, and the move from eventlog 0.5, where these commands were `eventlog react` and `eventlog action`.
 
 ## Documentation
 
@@ -73,7 +61,6 @@ eventlog-reactors setup apply
 - [Rebuild context from the log](docs/how-to/rebuild-context-from-the-log.md): install and use the `eventlog-context` mod.
 - [Cut a release](docs/how-to/cut-a-release.md): generate the changelog with git-cliff, tag, and publish.
 - [Command reference](docs/reference/eventlog-cli-surface.md): every subcommand, with a page per command in `docs/reference/`.
-- [Reactors](reactors/README.md): the optional `eventlog-reactors` binary, with its reference pages in `docs/reactors/`.
 - [Design notes](docs/explanation/): the invariants worth understanding before you change the code.
 - [Decisions](.context/DECISIONS.md): every design decision this repo has taken, dated, with the log seq that recorded it.
 - [Design spec](docs/superpowers/specs/2026-09-06-event-log-cli-design.md) and [build plan](docs/superpowers/plans/2026-09-06-eventlog-cli.md): how the tool was designed and built.
@@ -83,8 +70,6 @@ The `event-log-coordination` skill for Claude Code lives in `skill/` and ships i
 ## Layout
 
 - `src/` the `eventlog` crate: `model` (event, config, vocabulary), `log` (read, lock, append), `query` (fold to state), `guard` (hook guard), `context` (the context packet), `scaffold`, `skill`, `tui`, `cmd`.
-- `reactors/` the optional `eventlog-reactors` crate: the reactor runtime, the packaged commit and docs actions, reactor setup, and `doctor`.
 - `skill/` the coordination skill, embedded at build time.
 - `mods/eventlog-context/` the Claude Code mod, embedded at build time and written by `eventlog context install`.
-- `.context/` this repo's own log, decisions, briefs, and reactor action scripts.
-- `Drovefile` the herdr layout: controller pane, log view, and the two reactor panes.
+- `.context/` this repo's own log, decisions, and briefs.

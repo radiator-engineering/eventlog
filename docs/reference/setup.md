@@ -2,8 +2,7 @@
 
 Status: implemented. `src/scaffold/mod.rs` holds `setup_plan` and `init`;
 `src/cmd/setup.rs` exposes them as `eventlog setup`. `setup` sets up the
-log and nothing else. It writes no reactor files and prints nothing about
-reactors.
+log and nothing else.
 
 ```sh
 eventlog setup preview
@@ -31,21 +30,11 @@ when nothing is missing:
 `apply` and `upgrade` print the same lines, for the items they added. A
 second run prints `setup: no changes`.
 
-## Reactors are separate
-
-Up to eventlog 0.5, `eventlog setup` also wrote the reactor policy
-(`.context/eventlog-setup.toml`) and a Drove helper
-(`.context/eventlog-reactors.star`). Those files now belong to the optional
-`eventlog-reactors` binary: see [Reactor setup](../reactors/setup.md).
-`eventlog setup` ignores both files when they exist, and never changes or
-deletes them.
-
 ## Tests
 
 `tests/no_reactors.rs` runs `setup preview`, `apply`, and `upgrade` in a
-fresh git repository. It checks that no reactor file appears, that
-`.gitignore` holds no reactor line, and that no command prints the word
-"reactor". `tests/scaffold.rs` checks that a second `init` leaves every file
+fresh git repository. It checks that the commands create only the files
+listed above. `tests/scaffold.rs` checks that a second `init` leaves every file
 byte-for-byte the same.
 
 ```sh
@@ -55,6 +44,5 @@ cargo test
 ## See also
 
 - [Scaffold and setup: `init`, `doctor`, `protect`](scaffold.md) — the bootstrap `setup apply` runs.
-- [Reactor setup](../reactors/setup.md) — `eventlog-reactors setup`, the optional reactor policy.
 - [Lifecycle](lifecycle.md) — `eventlog lifecycle start`/`stop` for a supervisor's hooks.
 - [`eventlog` command list](eventlog-cli-surface.md)

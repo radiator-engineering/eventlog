@@ -33,11 +33,3 @@ same repo, so it can, and `eventlog protect` still allows appends. Single
 writer holds for peers only because the brief says "do not append to
 `.context/events.jsonl`". Put that line in every brief. `eventlog doctor`
 reports any line whose writer the allowlist does not sanction.
-
-## Where a reactor lives
-
-Reactors are optional; they come from the separate `eventlog-reactors`
-binary. Give a reactor its own pane, split off the owning agent's tab and
-named for it, and run `eventlog-reactors react` foregrounded there. Record
-`spawn agent=<name> pane=<pane_id> runtime=eventlog-reactors`, and tell the owning agent in its
-brief that the reactor is already running.

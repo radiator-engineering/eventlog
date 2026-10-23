@@ -3,8 +3,7 @@
 Status: implemented. `src/cmd/lifecycle.rs` exposes `start` and `stop`, so a
 supervisor (a Drove `on_start`/`on_stop` hook, or any other process manager)
 can spawn and retire a long-running agent through argv, without hand-writing
-`spawn`, `claim`, and `retire` events. A reactor from the optional
-`eventlog-reactors` is one such agent; any supervised worker is another.
+`spawn`, `claim`, and `retire` events. Any supervised long-running agent can use it.
 
 ```sh
 eventlog lifecycle start <agent> [--model <model>] [--role <role>] [--paths <p1,p2,...>]
@@ -14,7 +13,7 @@ eventlog lifecycle stop <agent>
 | Flag | Meaning |
 |---|---|
 | `--model <model>` | Recorded on the `spawn` event, if one is written. |
-| `--role <role>` | Recorded on the `spawn` event. Default `agent`. Up to eventlog 0.5 the default was `reactor`. The Drove helper from `eventlog-reactors setup` passes `--role reactor`. |
+| `--role <role>` | Recorded on the `spawn` event. Default `agent`. |
 | `--paths <p1,p2,...>` | Comma-separated paths or globs the agent claims. |
 
 Call it with a literal argv list, not an interpolated shell string:
@@ -46,8 +45,7 @@ worker: a worker never appends to the log (see the coordination skill).
 Appends `retire agent=<agent> disposition=stopped` if `<agent>` has an open
 spawn; does nothing if it does not. Retirement needs no preceding result.
 It closes the agent's claims. Strict append rejects a later result with
-`open-spawn` until a fresh `start`. If the agent is a reactor, a non-strict
-repair result can reach it and be vetoed `unclaimed-paths`.
+`open-spawn` until a fresh `start`.
 
 ## Tests
 
@@ -62,6 +60,4 @@ cargo test
 
 ## See also
 
-- [Reactor setup](../reactors/setup.md) — generates Drove hooks that call `lifecycle start`/`stop` for the optional reactors.
-- [Action](../reactors/action.md) — the reactor commands a lifecycle-managed reactor runs.
 - [`eventlog` command list](eventlog-cli-surface.md)
