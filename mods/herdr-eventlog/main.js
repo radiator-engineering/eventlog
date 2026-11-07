@@ -12,6 +12,7 @@ const POLL_MS = 3000;
 const SLOW_EVERY = 5; // agents and state refresh every 5th poll
 const KEEP = 4000; // events kept in memory
 const FIRST_LOAD = 1500;
+const LIST_CAP = 400;
 const ROW_H = 44;
 const MAX_TEXT_LINES = 3000;
 
@@ -231,12 +232,12 @@ export default class EventLog extends View {
 
   /** A virtual list that fills the rest of its column, with a scrollbar. */
   vlist(name, items, rowH, key, row) {
-    const id = `${name}-${this.uid}`;
-    return div().flex_1().min_h(0).relative()
-      .child(div().absolute().inset_0()
-        .child(v_virtual_list(id, items.length, rowH, (i) => key(items[i]),
-          (range) => items.slice(range.start, range.end).map(row)).size_full()))
-      .child(Scrollbar.vertical(id).viewport_from_layout().absolute().inset_0());
+    // A plain scroll column: v_virtual_list drew no rows in the dock panel.
+    const shown = items.slice(0, LIST_CAP);
+    return v_flex().id(`${name}-${this.uid}`).flex_1().min_h(0).overflow_y_scrollbar()
+      .children(shown.map(row))
+      .when(items.length > shown.length, (el) => el.child(div().p(10).text_size(11).text_color(theme().dim)
+        .child(`Showing the newest ${shown.length}; search or filter to narrow.`)));
   }
 
   header() {
